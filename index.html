@@ -902,17 +902,36 @@ svg {
         Finançament màxim ordinari
         <input class="form-control llb-readonly" id="llb-standard-rate" readonly value="">
       </label>
-      <label class="form-label llb-field" for="llb-code">
-        Codi de l’actuació
-        <input class="form-control" id="llb-code" placeholder="Ex. A.UR.3.2">
+      <div class="llb-wide">
+        <h3>Classificació i codi de l’actuació</h3>
+      </div>
+      <label class="form-label llb-field" for="llb-area">
+        Àmbit
+        <select class="form-select" id="llb-area">
+          <option value="A">A — Transformacions físiques</option>
+          <option value="B">B — Transició ecològica</option>
+          <option value="C">C — Acció sociocomunitària</option>
+        </select>
       </label>
-      <label class="form-label llb-field" for="llb-title">
+      <label class="form-label llb-field" for="llb-subarea">
+        Subàmbit
+        <select class="form-select" id="llb-subarea"></select>
+      </label>
+      <label class="form-label llb-field llb-wide" for="llb-action-field">
+        Camp d’actuació
+        <select class="form-select" id="llb-action-field"></select>
+      </label>
+      <label class="form-label llb-field" for="llb-action-number">
+        Número d’actuació
+        <input class="form-control" id="llb-action-number" type="number" min="1" step="1" value="1">
+      </label>
+      <label class="form-label llb-field" for="llb-generated-code">
+        Codi generat automàticament
+        <input class="form-control llb-readonly" id="llb-generated-code" readonly value="A.UR.1.1">
+      </label>
+      <label class="form-label llb-field llb-wide" for="llb-title">
         Títol de l’actuació
         <input class="form-control" id="llb-title" placeholder="Nom breu de l’actuació">
-      </label>
-      <label class="form-label llb-field llb-wide" for="llb-scope">
-        Àmbit o descripció breu
-        <textarea class="form-control" id="llb-scope" rows="2" placeholder="Objecte, destinataris o àmbit territorial"></textarea>
       </label>
     </div>
 
@@ -1085,6 +1104,134 @@ svg {
       if (!root) return;
 
       var municipalities = [{"n":"Abella de la Conca","p":162,"r":75},{"n":"Abrera","p":13207,"r":70},{"n":"Àger","p":635,"r":75},{"n":"Agramunt","p":5638,"r":70},{"n":"Aguilar de Segarra","p":293,"r":75},{"n":"Agullana","p":881,"r":75},{"n":"Aiguafreda","p":2569,"r":75},{"n":"Aiguamúrcia","p":1002,"r":75},{"n":"Aiguaviva","p":805,"r":75},{"n":"Aitona","p":2575,"r":75},{"n":"Alamús, els","p":837,"r":75},{"n":"Alàs i Cerc","p":320,"r":75},{"n":"Albagés, l'","p":339,"r":75},{"n":"Albanyà","p":158,"r":75},{"n":"Albatàrrec","p":2312,"r":75},{"n":"Albesa","p":1582,"r":75},{"n":"Albi, l'","p":764,"r":75},{"n":"Albinyana","p":2718,"r":75},{"n":"Albiol, l'","p":556,"r":75},{"n":"Albons","p":852,"r":75},{"n":"Alcanar","p":10048,"r":70},{"n":"Alcanó","p":247,"r":75},{"n":"Alcarràs","p":10556,"r":70},{"n":"Alcoletge","p":3679,"r":75},{"n":"Alcover","p":5357,"r":70},{"n":"Aldea, l'","p":4725,"r":75},{"n":"Aldover","p":910,"r":75},{"n":"Aleixar, l'","p":1026,"r":75},{"n":"Alella","p":10251,"r":70},{"n":"Alfara de Carles","p":355,"r":75},{"n":"Alfarràs","p":2790,"r":75},{"n":"Alfés","p":284,"r":75},{"n":"Alforja","p":2031,"r":75},{"n":"Algerri","p":424,"r":75},{"n":"Alguaire","p":3057,"r":75},{"n":"Alins","p":270,"r":75},{"n":"Alió","p":499,"r":75},{"n":"Almacelles","p":7197,"r":70},{"n":"Almatret","p":292,"r":75},{"n":"Almenar","p":3357,"r":75},{"n":"Almoster","p":1383,"r":75},{"n":"Alòs de Balaguer","p":117,"r":75},{"n":"Alp","p":1724,"r":75},{"n":"Alpens","p":267,"r":75},{"n":"Alpicat","p":6556,"r":70},{"n":"Alt Àneu","p":456,"r":75},{"n":"Altafulla","p":5856,"r":70},{"n":"Amer","p":2419,"r":75},{"n":"Ametlla de Mar, l'","p":7436,"r":70},{"n":"Ametlla del Vallès, l'","p":9473,"r":70},{"n":"Ampolla, l'","p":3809,"r":75},{"n":"Amposta","p":23047,"r":60},{"n":"Anglès","p":5904,"r":70},{"n":"Anglesola","p":1395,"r":75},{"n":"Arbeca","p":2166,"r":75},{"n":"Arboç, l'","p":5701,"r":70},{"n":"Arbolí","p":138,"r":75},{"n":"Arbúcies","p":6635,"r":70},{"n":"Arenys de Mar","p":16982,"r":70},{"n":"Arenys de Munt","p":9527,"r":70},{"n":"Argelaguer","p":467,"r":75},{"n":"Argençola","p":245,"r":75},{"n":"Argentera, l'","p":139,"r":75},{"n":"Argentona","p":12891,"r":70},{"n":"Armentera, l'","p":1076,"r":75},{"n":"Arnes","p":460,"r":75},{"n":"Arres","p":58,"r":75},{"n":"Arsèguel","p":85,"r":75},{"n":"Artés","p":6211,"r":70},{"n":"Artesa de Lleida","p":1545,"r":75},{"n":"Artesa de Segre","p":3594,"r":75},{"n":"Ascó","p":1594,"r":75},{"n":"Aspa","p":232,"r":75},{"n":"Avellanes i Santa Linya, les","p":434,"r":75},{"n":"Avià","p":2263,"r":75},{"n":"Avinyó","p":2325,"r":75},{"n":"Avinyonet de Puigventós","p":1669,"r":75},{"n":"Avinyonet del Penedès","p":1787,"r":75},{"n":"Badalona","p":230642,"r":50},{"n":"Badia del Vallès","p":13058,"r":70},{"n":"Bagà","p":2167,"r":75},{"n":"Baix Pallars","p":350,"r":75},{"n":"Balaguer","p":17667,"r":70},{"n":"Balenyà","p":4007,"r":75},{"n":"Balsareny","p":3354,"r":75},{"n":"Banyeres del Penedès","p":3392,"r":75},{"n":"Banyoles","p":20887,"r":60},{"n":"Barbens","p":910,"r":75},{"n":"Barberà de la Conca","p":486,"r":75},{"n":"Barberà del Vallès","p":34031,"r":60},{"n":"Barcelona","p":1713247,"r":50},{"n":"Baronia de Rialb, la","p":216,"r":75},{"n":"Bàscara","p":1048,"r":75},{"n":"Bassella","p":215,"r":75},{"n":"Batea","p":1873,"r":75},{"n":"Bausen","p":62,"r":75},{"n":"Begues","p":7545,"r":70},{"n":"Begur","p":4286,"r":75},{"n":"Belianes","p":512,"r":75},{"n":"Bellaguarda","p":287,"r":75},{"n":"Bellcaire d'Empordà","p":722,"r":75},{"n":"Bellcaire d'Urgell","p":1272,"r":75},{"n":"Bell-lloc d'Urgell","p":2359,"r":75},{"n":"Bellmunt del Priorat","p":288,"r":75},{"n":"Bellmunt d'Urgell","p":174,"r":75},{"n":"Bellprat","p":69,"r":75},{"n":"Bellpuig","p":5531,"r":70},{"n":"Bellvei","p":2464,"r":75},{"n":"Bellver de Cerdanya","p":2289,"r":75},{"n":"Bellvís","p":2239,"r":75},{"n":"Benavent de Segrià","p":1565,"r":75},{"n":"Benifallet","p":708,"r":75},{"n":"Benissanet","p":1191,"r":75},{"n":"Berga","p":17539,"r":70},{"n":"Besalú","p":2591,"r":75},{"n":"Bescanó","p":5087,"r":70},{"n":"Beuda","p":202,"r":75},{"n":"Bigues i Riells del Fai","p":10124,"r":70},{"n":"Biosca","p":185,"r":75},{"n":"Bisbal de Montsant, la","p":214,"r":75},{"n":"Bisbal del Penedès, la","p":4270,"r":75},{"n":"Bisbal d'Empordà, la","p":11731,"r":70},{"n":"Biure","p":227,"r":75},{"n":"Blancafort","p":392,"r":75},{"n":"Blanes","p":42446,"r":60},{"n":"Boadella i les Escaules","p":264,"r":75},{"n":"Bolvir","p":493,"r":75},{"n":"Bonastre","p":778,"r":75},{"n":"Bòrdes, Es","p":281,"r":75},{"n":"Bordils","p":1824,"r":75},{"n":"Borges Blanques, les","p":6458,"r":70},{"n":"Borges del Camp, les","p":2313,"r":75},{"n":"Borrassà","p":802,"r":75},{"n":"Borredà","p":434,"r":75},{"n":"Bossòst","p":1178,"r":75},{"n":"Bot","p":545,"r":75},{"n":"Botarell","p":1156,"r":75},{"n":"Bovera","p":252,"r":75},{"n":"Bràfim","p":705,"r":75},{"n":"Breda","p":3964,"r":75},{"n":"Bruc, el","p":2294,"r":75},{"n":"Brull, el","p":297,"r":75},{"n":"Brunyola i Sant Martí Sapresa","p":399,"r":75},{"n":"Cabacés","p":295,"r":75},{"n":"Cabanabona","p":70,"r":75},{"n":"Cabanelles","p":286,"r":75},{"n":"Cabanes","p":998,"r":75},{"n":"Cabanyes, les","p":1064,"r":75},{"n":"Cabó","p":87,"r":75},{"n":"Cabra del Camp","p":1387,"r":75},{"n":"Cabrera d'Anoia","p":1777,"r":75},{"n":"Cabrera de Mar","p":5053,"r":70},{"n":"Cabrils","p":7755,"r":70},{"n":"Cadaqués","p":2906,"r":75},{"n":"Calaf","p":3627,"r":75},{"n":"Calafell","p":32429,"r":60},{"n":"Calders","p":1121,"r":75},{"n":"Caldes de Malavella","p":8644,"r":70},{"n":"Caldes de Montbui","p":18554,"r":70},{"n":"Caldes d'Estrac","p":3348,"r":75},{"n":"Calella","p":20775,"r":60},{"n":"Calldetenes","p":2724,"r":75},{"n":"Callús","p":2193,"r":75},{"n":"Calonge de Segarra","p":179,"r":75},{"n":"Calonge i Sant Antoni","p":12268,"r":70},{"n":"Camarasa","p":800,"r":75},{"n":"Camarles","p":3499,"r":75},{"n":"Cambrils","p":37068,"r":60},{"n":"Camós","p":700,"r":75},{"n":"Campdevànol","p":3240,"r":75},{"n":"Campelles","p":163,"r":75},{"n":"Campins","p":588,"r":75},{"n":"Campllong","p":534,"r":75},{"n":"Camprodon","p":2560,"r":75},{"n":"Canejan","p":96,"r":75},{"n":"Canet d'Adri","p":742,"r":75},{"n":"Canet de Mar","p":15191,"r":70},{"n":"Canonja, la","p":5993,"r":70},{"n":"Canovelles","p":17445,"r":70},{"n":"Cànoves i Samalús","p":3393,"r":75},{"n":"Cantallops","p":367,"r":75},{"n":"Canyelles","p":5494,"r":70},{"n":"Capafonts","p":101,"r":75},{"n":"Capçanes","p":446,"r":75},{"n":"Capellades","p":5598,"r":70},{"n":"Capmany","p":677,"r":75},{"n":"Capolat","p":93,"r":75},{"n":"Cardedeu","p":19050,"r":70},{"n":"Cardona","p":4540,"r":75},{"n":"Carme","p":860,"r":75},{"n":"Caseres","p":250,"r":75},{"n":"Cassà de la Selva","p":11167,"r":70},{"n":"Casserres","p":1665,"r":75},{"n":"Castell d'Aro, Platja d'Aro i s'Agaró","p":12889,"r":70},{"n":"Castell de l'Areny","p":68,"r":75},{"n":"Castell de Mur","p":159,"r":75},{"n":"Castellar de la Ribera","p":131,"r":75},{"n":"Castellar de n'Hug","p":166,"r":75},{"n":"Castellar del Riu","p":151,"r":75},{"n":"Castellar del Vallès","p":25395,"r":60},{"n":"Castellbell i el Vilar","p":4163,"r":75},{"n":"Castellbisbal","p":13058,"r":70},{"n":"Castellcir","p":802,"r":75},{"n":"Castelldans","p":955,"r":75},{"n":"Castelldefels","p":69689,"r":50},{"n":"Castellet i la Gornal","p":2773,"r":75},{"n":"Castellfollit de la Roca","p":960,"r":75},{"n":"Castellfollit de Riubregós","p":153,"r":75},{"n":"Castellfollit del Boix","p":469,"r":75},{"n":"Castellgalí","p":2411,"r":75},{"n":"Castellnou de Bages","p":1471,"r":75},{"n":"Castellnou de Seana","p":733,"r":75},{"n":"Castelló de Farfanya","p":548,"r":75},{"n":"Castelló d'Empúries","p":12275,"r":70},{"n":"Castellolí","p":670,"r":75},{"n":"Castellserà","p":987,"r":75},{"n":"Castellterçol","p":2742,"r":75},{"n":"Castellvell del Camp","p":3001,"r":75},{"n":"Castellví de la Marca","p":1718,"r":75},{"n":"Castellví de Rosanes","p":2166,"r":75},{"n":"Catllar, el","p":5387,"r":70},{"n":"Cava","p":38,"r":75},{"n":"Cellera de Ter, la","p":2033,"r":75},{"n":"Celrà","p":5613,"r":70},{"n":"Centelles","p":7860,"r":70},{"n":"Cercs","p":1236,"r":75},{"n":"Cerdanyola del Vallès","p":58264,"r":50},{"n":"Cervelló","p":9726,"r":70},{"n":"Cervera","p":9630,"r":70},{"n":"Cervià de les Garrigues","p":637,"r":75},{"n":"Cervià de Ter","p":1030,"r":75},{"n":"Cistella","p":285,"r":75},{"n":"Ciutadilla","p":186,"r":75},{"n":"Clariana de Cardener","p":160,"r":75},{"n":"Cogul, el","p":162,"r":75},{"n":"Colera","p":489,"r":75},{"n":"Coll de Nargó","p":585,"r":75},{"n":"Collbató","p":4820,"r":75},{"n":"Colldejou","p":157,"r":75},{"n":"Collsuspina","p":390,"r":75},{"n":"Colomers","p":206,"r":75},{"n":"Coma i la Pedra, la","p":278,"r":75},{"n":"Conca de Dalt","p":439,"r":75},{"n":"Conesa","p":113,"r":75},{"n":"Constantí","p":7155,"r":70},{"n":"Copons","p":352,"r":75},{"n":"Corbera de Llobregat","p":16044,"r":70},{"n":"Corbera d'Ebre","p":1024,"r":75},{"n":"Corbins","p":1490,"r":75},{"n":"Corçà","p":1285,"r":75},{"n":"Cornellà de Llobregat","p":92255,"r":50},{"n":"Cornellà del Terri","p":2413,"r":75},{"n":"Cornudella de Montsant","p":1014,"r":75},{"n":"Creixell","p":4244,"r":75},{"n":"Crespià","p":253,"r":75},{"n":"Cruïlles, Monells i Sant Sadurní de l'Heura","p":1347,"r":75},{"n":"Cubelles","p":17648,"r":70},{"n":"Cubells","p":354,"r":75},{"n":"Cunit","p":16304,"r":70},{"n":"Darnius","p":561,"r":75},{"n":"Das","p":261,"r":75},{"n":"Deltebre","p":12074,"r":70},{"n":"Dosrius","p":6307,"r":70},{"n":"Duesaigües","p":219,"r":75},{"n":"Escala, l'","p":10641,"r":70},{"n":"Esparreguera","p":22639,"r":60},{"n":"Espinelves","p":262,"r":75},{"n":"Espluga Calba, l'","p":324,"r":75},{"n":"Espluga de Francolí, l'","p":3892,"r":75},{"n":"Esplugues de Llobregat","p":48424,"r":60},{"n":"Espolla","p":399,"r":75},{"n":"Esponellà","p":444,"r":75},{"n":"Espot","p":377,"r":75},{"n":"Espunyola, l'","p":260,"r":75},{"n":"Esquirol, l'","p":2303,"r":75},{"n":"Estamariu","p":134,"r":75},{"n":"Estany, l'","p":391,"r":75},{"n":"Estaràs","p":161,"r":75},{"n":"Esterri d'Àneu","p":914,"r":75},{"n":"Esterri de Cardós","p":63,"r":75},{"n":"Falset","p":2892,"r":75},{"n":"Far d'Empordà, el","p":624,"r":75},{"n":"Farrera","p":120,"r":75},{"n":"Fatarella, la","p":841,"r":75},{"n":"Febró, la","p":35,"r":75},{"n":"Figaró-Montmany","p":1187,"r":75},{"n":"Fígols","p":41,"r":75},{"n":"Fígols i Alinyà","p":235,"r":75},{"n":"Figuera, la","p":116,"r":75},{"n":"Figueres","p":49556,"r":60},{"n":"Figuerola del Camp","p":343,"r":75},{"n":"Flaçà","p":1174,"r":75},{"n":"Flix","p":3342,"r":75},{"n":"Floresta, la","p":159,"r":75},{"n":"Fogars de la Selva","p":1705,"r":75},{"n":"Fogars de Montclús","p":493,"r":75},{"n":"Foixà","p":298,"r":75},{"n":"Folgueroles","p":2262,"r":75},{"n":"Fondarella","p":828,"r":75},{"n":"Fonollosa","p":1571,"r":75},{"n":"Fontanals de Cerdanya","p":516,"r":75},{"n":"Fontanilles","p":170,"r":75},{"n":"Fontcoberta","p":1482,"r":75},{"n":"Font-rubí","p":1436,"r":75},{"n":"Foradada","p":194,"r":75},{"n":"Forallac","p":1786,"r":75},{"n":"Forès","p":39,"r":75},{"n":"Fornells de la Selva","p":2813,"r":75},{"n":"Fortià","p":789,"r":75},{"n":"Franqueses del Vallès, les","p":20855,"r":60},{"n":"Freginals","p":445,"r":75},{"n":"Fuliola, la","p":1277,"r":75},{"n":"Fulleda","p":87,"r":75},{"n":"Gaià","p":174,"r":75},{"n":"Galera, la","p":731,"r":75},{"n":"Gallifa","p":171,"r":75},{"n":"Gandesa","p":3151,"r":75},{"n":"Garcia","p":555,"r":75},{"n":"Garidells, els","p":211,"r":75},{"n":"Garriga, la","p":17386,"r":70},{"n":"Garrigàs","p":479,"r":75},{"n":"Garrigoles","p":183,"r":75},{"n":"Garriguella","p":989,"r":75},{"n":"Gavà","p":48181,"r":60},{"n":"Gavet de la Conca","p":257,"r":75},{"n":"Gelida","p":8192,"r":70},{"n":"Ger","p":501,"r":75},{"n":"Gimenells i el Pla de la Font","p":1072,"r":75},{"n":"Ginestar","p":799,"r":75},{"n":"Girona","p":108352,"r":50},{"n":"Gironella","p":5082,"r":70},{"n":"Gisclareny","p":28,"r":75},{"n":"Godall","p":600,"r":75},{"n":"Golmés","p":1914,"r":75},{"n":"Gombrèn","p":206,"r":75},{"n":"Gósol","p":207,"r":75},{"n":"Granada, la","p":2281,"r":75},{"n":"Granadella, la","p":751,"r":75},{"n":"Granera","p":83,"r":75},{"n":"Granja d'Escarp, la","p":994,"r":75},{"n":"Granollers","p":65123,"r":50},{"n":"Granyanella","p":154,"r":75},{"n":"Granyena de les Garrigues","p":174,"r":75},{"n":"Granyena de Segarra","p":149,"r":75},{"n":"Gratallops","p":227,"r":75},{"n":"Gualba","p":1753,"r":75},{"n":"Gualta","p":437,"r":75},{"n":"Guardiola de Berguedà","p":962,"r":75},{"n":"Guiamets, els","p":253,"r":75},{"n":"Guils de Cerdanya","p":559,"r":75},{"n":"Guimerà","p":253,"r":75},{"n":"Guingueta d'Àneu, la","p":276,"r":75},{"n":"Guissona","p":7715,"r":70},{"n":"Guixers","p":125,"r":75},{"n":"Gurb","p":2738,"r":75},{"n":"Horta de Sant Joan","p":1156,"r":75},{"n":"Hospitalet de Llobregat, l'","p":292161,"r":50},{"n":"Hostalets de Pierola, els","p":3254,"r":75},{"n":"Hostalric","p":4464,"r":75},{"n":"Igualada","p":42449,"r":60},{"n":"Isona i Conca Dellà","p":1034,"r":75},{"n":"Isòvol","p":314,"r":75},{"n":"Ivars de Noguera","p":318,"r":75},{"n":"Ivars d'Urgell","p":1598,"r":75},{"n":"Ivorra","p":101,"r":75},{"n":"Jafre","p":384,"r":75},{"n":"Jonquera, la","p":3410,"r":75},{"n":"Jorba","p":849,"r":75},{"n":"Josa i Tuixén","p":110,"r":75},{"n":"Juià","p":320,"r":75},{"n":"Juncosa","p":379,"r":75},{"n":"Juneda","p":3523,"r":75},{"n":"Les","p":1052,"r":75},{"n":"Linyola","p":2755,"r":75},{"n":"Llacuna, la","p":961,"r":75},{"n":"Lladó","p":823,"r":75},{"n":"Lladorre","p":246,"r":75},{"n":"Lladurs","p":186,"r":75},{"n":"Llagosta, la","p":13254,"r":70},{"n":"Llagostera","p":9579,"r":70},{"n":"Llambilles","p":732,"r":75},{"n":"Llanars","p":517,"r":75},{"n":"Llançà","p":5033,"r":70},{"n":"Llardecans","p":444,"r":75},{"n":"Llavorsí","p":343,"r":75},{"n":"Lleida","p":147369,"r":50},{"n":"Llers","p":1268,"r":75},{"n":"Lles de Cerdanya","p":294,"r":75},{"n":"Lliçà d'Amunt","p":16519,"r":70},{"n":"Lliçà de Vall","p":6891,"r":70},{"n":"Llimiana","p":130,"r":75},{"n":"Llinars del Vallès","p":10931,"r":70},{"n":"Llívia","p":1572,"r":75},{"n":"Lloar, el","p":100,"r":75},{"n":"Llobera","p":201,"r":75},{"n":"Llorac","p":105,"r":75},{"n":"Llorenç del Penedès","p":2426,"r":75},{"n":"Lloret de Mar","p":41944,"r":60},{"n":"Llosses, les","p":197,"r":75},{"n":"Lluçà","p":280,"r":75},{"n":"Maçanet de Cabrenys","p":768,"r":75},{"n":"Maçanet de la Selva","p":8065,"r":70},{"n":"Madremanya","p":277,"r":75},{"n":"Maià de Montcal","p":498,"r":75},{"n":"Maials","p":945,"r":75},{"n":"Maldà","p":240,"r":75},{"n":"Malgrat de Mar","p":19630,"r":70},{"n":"Malla","p":286,"r":75},{"n":"Manlleu","p":21321,"r":60},{"n":"Manresa","p":80692,"r":50},{"n":"Marçà","p":624,"r":75},{"n":"Margalef","p":110,"r":75},{"n":"Marganell","p":311,"r":75},{"n":"Martorell","p":28989,"r":60},{"n":"Martorelles","p":4987,"r":75},{"n":"Mas de Barberans","p":535,"r":75},{"n":"Masarac i Vilarnadal","p":291,"r":75},{"n":"Masdenverge","p":1145,"r":75},{"n":"Masies de Roda, les","p":758,"r":75},{"n":"Masies de Voltregà, les","p":3345,"r":75},{"n":"Masllorenç","p":568,"r":75},{"n":"Masnou, el","p":24727,"r":60},{"n":"Masó, la","p":308,"r":75},{"n":"Maspujols","p":917,"r":75},{"n":"Masquefa","p":10111,"r":70},{"n":"Masroig, el","p":477,"r":75},{"n":"Massalcoreig","p":589,"r":75},{"n":"Massanes","p":881,"r":75},{"n":"Massoteres","p":226,"r":75},{"n":"Matadepera","p":9808,"r":70},{"n":"Mataró","p":131370,"r":50},{"n":"Mediona","p":2664,"r":75},{"n":"Menàrguens","p":802,"r":75},{"n":"Meranges","p":111,"r":75},{"n":"Mieres","p":368,"r":75},{"n":"Milà, el","p":194,"r":75},{"n":"Miralcamp","p":1359,"r":75},{"n":"Miravet","p":701,"r":75},{"n":"Moià","p":6807,"r":70},{"n":"Molar, el","p":301,"r":75},{"n":"Molins de Rei","p":27291,"r":60},{"n":"Mollerussa","p":16016,"r":70},{"n":"Mollet de Peralada","p":202,"r":75},{"n":"Mollet del Vallès","p":52759,"r":50},{"n":"Molló","p":350,"r":75},{"n":"Molsosa, la","p":101,"r":75},{"n":"Monistrol de Calders","p":764,"r":75},{"n":"Monistrol de Montserrat","p":3233,"r":75},{"n":"Montagut i Oix","p":1014,"r":75},{"n":"Montblanc","p":7568,"r":70},{"n":"Montbrió del Camp","p":3167,"r":75},{"n":"Montcada i Reixac","p":37446,"r":60},{"n":"Montclar","p":133,"r":75},{"n":"Montellà i Martinet","p":605,"r":75},{"n":"Montesquiu","p":1133,"r":75},{"n":"Montferrer i Castellbò","p":1161,"r":75},{"n":"Montferri","p":509,"r":75},{"n":"Montgai","p":643,"r":75},{"n":"Montgat","p":12835,"r":70},{"n":"Montmajor","p":471,"r":75},{"n":"Montmaneu","p":182,"r":75},{"n":"Montmell, el","p":1945,"r":75},{"n":"Montmeló","p":8868,"r":70},{"n":"Montoliu de Lleida","p":491,"r":75},{"n":"Montoliu de Segarra","p":182,"r":75},{"n":"Montornès de Segarra","p":87,"r":75},{"n":"Montornès del Vallès","p":17062,"r":70},{"n":"Mont-ral","p":176,"r":75},{"n":"Mont-ras","p":1690,"r":75},{"n":"Mont-roig del Camp","p":14652,"r":70},{"n":"Montseny","p":387,"r":75},{"n":"Móra d'Ebre","p":5841,"r":70},{"n":"Móra la Nova","p":3365,"r":75},{"n":"Morell, el","p":3811,"r":75},{"n":"Morera de Montsant, la","p":154,"r":75},{"n":"Muntanyola","p":700,"r":75},{"n":"Mura","p":234,"r":75},{"n":"Nalec","p":91,"r":75},{"n":"Naut Aran","p":1893,"r":75},{"n":"Navarcles","p":6277,"r":70},{"n":"Navàs","p":6242,"r":70},{"n":"Navata","p":1504,"r":75},{"n":"Navès","p":297,"r":75},{"n":"Nou de Berguedà, la","p":163,"r":75},{"n":"Nou de Gaià, la","p":602,"r":75},{"n":"Nulles","p":556,"r":75},{"n":"Odèn","p":230,"r":75},{"n":"Òdena","p":3756,"r":75},{"n":"Ogassa","p":222,"r":75},{"n":"Olèrdola","p":3953,"r":75},{"n":"Olesa de Bonesvalls","p":2134,"r":75},{"n":"Olesa de Montserrat","p":25000,"r":60},{"n":"Oliana","p":1869,"r":75},{"n":"Oliola","p":192,"r":75},{"n":"Olius","p":989,"r":75},{"n":"Olivella","p":4473,"r":75},{"n":"Olost","p":1204,"r":75},{"n":"Olot","p":39516,"r":60},{"n":"Oluges, les","p":167,"r":75},{"n":"Olvan","p":926,"r":75},{"n":"Omellons, els","p":187,"r":75},{"n":"Omells de na Gaia, els","p":126,"r":75},{"n":"Ordis","p":411,"r":75},{"n":"Organyà","p":851,"r":75},{"n":"Orís","p":352,"r":75},{"n":"Oristà","p":556,"r":75},{"n":"Orpí","p":176,"r":75},{"n":"Òrrius","p":814,"r":75},{"n":"Os de Balaguer","p":1094,"r":75},{"n":"Osor","p":429,"r":75},{"n":"Ossó de Sió","p":200,"r":75},{"n":"Pacs del Penedès","p":934,"r":75},{"n":"Palafolls","p":10026,"r":70},{"n":"Palafrugell","p":24556,"r":60},{"n":"Palamós","p":18921,"r":70},{"n":"Palau d'Anglesola, el","p":2225,"r":75},{"n":"Palau de Santa Eulàlia","p":124,"r":75},{"n":"Palau-sator","p":320,"r":75},{"n":"Palau-saverdera","p":1524,"r":75},{"n":"Palau-solità i Plegamans","p":15584,"r":70},{"n":"Pallaresos, els","p":5043,"r":70},{"n":"Pallejà","p":11976,"r":70},{"n":"Palma de Cervelló, la","p":3059,"r":75},{"n":"Palma d'Ebre, la","p":331,"r":75},{"n":"Palol de Revardit","p":463,"r":75},{"n":"Pals","p":2552,"r":75},{"n":"Papiol, el","p":4404,"r":75},{"n":"Pardines","p":168,"r":75},{"n":"Parets del Vallès","p":18899,"r":70},{"n":"Parlavà","p":435,"r":75},{"n":"Passanant i Belltall","p":149,"r":75},{"n":"Pau","p":558,"r":75},{"n":"Paüls","p":554,"r":75},{"n":"Pedret i Marzà","p":208,"r":75},{"n":"Penelles","p":431,"r":75},{"n":"Pera, la","p":449,"r":75},{"n":"Perafita","p":433,"r":75},{"n":"Perafort","p":1353,"r":75},{"n":"Peralada","p":2087,"r":75},{"n":"Peramola","p":339,"r":75},{"n":"Perelló, el","p":3005,"r":75},{"n":"Piera","p":17884,"r":70},{"n":"Piles, les","p":228,"r":75},{"n":"Pineda de Mar","p":30071,"r":60},{"n":"Pinell de Brai, el","p":948,"r":75},{"n":"Pinell de Solsonès","p":198,"r":75},{"n":"Pinós","p":274,"r":75},{"n":"Pira","p":512,"r":75},{"n":"Pla de Santa Maria, el","p":2412,"r":75},{"n":"Pla del Penedès, el","p":1392,"r":75},{"n":"Planes d'Hostoles, les","p":1747,"r":75},{"n":"Planoles","p":313,"r":75},{"n":"Plans de Sió, els","p":512,"r":75},{"n":"Poal, el","p":648,"r":75},{"n":"Pobla de Cérvoles, la","p":208,"r":75},{"n":"Pobla de Claramunt, la","p":2350,"r":75},{"n":"Pobla de Lillet, la","p":1106,"r":75},{"n":"Pobla de Mafumet, la","p":4187,"r":75},{"n":"Pobla de Massaluca, la","p":344,"r":75},{"n":"Pobla de Montornès, la","p":3470,"r":75},{"n":"Pobla de Segur, la","p":3179,"r":75},{"n":"Poboleda","p":345,"r":75},{"n":"Polinyà","p":8572,"r":70},{"n":"Pont d'Armentera, el","p":507,"r":75},{"n":"Pont de Bar, el","p":167,"r":75},{"n":"Pont de Molins","p":586,"r":75},{"n":"Pont de Suert, el","p":2425,"r":75},{"n":"Pont de Vilomara i Rocafort, el","p":4201,"r":75},{"n":"Pontils","p":123,"r":75},{"n":"Pontons","p":515,"r":75},{"n":"Pontós","p":295,"r":75},{"n":"Ponts","p":2639,"r":75},{"n":"Porqueres","p":4804,"r":75},{"n":"Porrera","p":407,"r":75},{"n":"Port de la Selva, el","p":1055,"r":75},{"n":"Portbou","p":1132,"r":75},{"n":"Portella, la","p":730,"r":75},{"n":"Pradell de la Teixeta","p":182,"r":75},{"n":"Prades","p":644,"r":75},{"n":"Prat de Comte","p":180,"r":75},{"n":"Prat de Llobregat, el","p":66251,"r":50},{"n":"Pratdip","p":784,"r":75},{"n":"Prats de Lluçanès","p":2759,"r":75},{"n":"Prats de Rei, els","p":553,"r":75},{"n":"Prats i Sansor","p":252,"r":75},{"n":"Preixana","p":400,"r":75},{"n":"Preixens","p":399,"r":75},{"n":"Premià de Dalt","p":10601,"r":70},{"n":"Premià de Mar","p":29348,"r":60},{"n":"Preses, les","p":1946,"r":75},{"n":"Prullans","p":270,"r":75},{"n":"Puigcerdà","p":10053,"r":70},{"n":"Puigdàlber","p":621,"r":75},{"n":"Puiggròs","p":270,"r":75},{"n":"Puigpelat","p":1225,"r":75},{"n":"Puig-reig","p":4558,"r":75},{"n":"Puigverd d'Agramunt","p":239,"r":75},{"n":"Puigverd de Lleida","p":1416,"r":75},{"n":"Pujalt","p":205,"r":75},{"n":"Quar, la","p":44,"r":75},{"n":"Quart","p":4161,"r":75},{"n":"Queralbs","p":202,"r":75},{"n":"Querol","p":614,"r":75},{"n":"Rabós","p":236,"r":75},{"n":"Rajadell","p":598,"r":75},{"n":"Ràpita, la","p":16230,"r":70},{"n":"Rasquera","p":788,"r":75},{"n":"Regencós","p":274,"r":75},{"n":"Rellinars","p":928,"r":75},{"n":"Renau","p":165,"r":75},{"n":"Reus","p":111911,"r":50},{"n":"Rialp","p":651,"r":75},{"n":"Riba, la","p":574,"r":75},{"n":"Riba-roja d'Ebre","p":1127,"r":75},{"n":"Ribera d'Ondara","p":436,"r":75},{"n":"Ribera d'Urgellet","p":982,"r":75},{"n":"Ribes de Freser","p":1839,"r":75},{"n":"Riells i Viabrea","p":4627,"r":75},{"n":"Riera de Gaià, la","p":1831,"r":75},{"n":"Riner","p":270,"r":75},{"n":"Ripoll","p":10812,"r":70},{"n":"Ripollet","p":39773,"r":60},{"n":"Riu de Cerdanya","p":96,"r":75},{"n":"Riudarenes","p":2524,"r":75},{"n":"Riudaura","p":526,"r":75},{"n":"Riudecanyes","p":1379,"r":75},{"n":"Riudecols","p":1280,"r":75},{"n":"Riudellots de la Selva","p":2121,"r":75},{"n":"Riudoms","p":6927,"r":70},{"n":"Riumors","p":258,"r":75},{"n":"Roca del Vallès, la","p":11021,"r":70},{"n":"Rocafort de Queralt","p":246,"r":75},{"n":"Roda de Berà","p":8240,"r":70},{"n":"Roda de Ter","p":6948,"r":70},{"n":"Rodonyà","p":518,"r":75},{"n":"Roquetes","p":8606,"r":70},{"n":"Roses","p":20175,"r":60},{"n":"Rosselló","p":3398,"r":75},{"n":"Rourell, el","p":385,"r":75},{"n":"Rubí","p":82825,"r":50},{"n":"Rubió","p":228,"r":75},{"n":"Rupià","p":323,"r":75},{"n":"Rupit i Pruit","p":277,"r":75},{"n":"Sabadell","p":224589,"r":50},{"n":"Sagàs","p":153,"r":75},{"n":"Salàs de Pallars","p":368,"r":75},{"n":"Saldes","p":301,"r":75},{"n":"Sales de Llierca","p":164,"r":75},{"n":"Sallent","p":7043,"r":70},{"n":"Salomó","p":525,"r":75},{"n":"Salou","p":31018,"r":60},{"n":"Salt","p":34603,"r":60},{"n":"Sanaüja","p":388,"r":75},{"n":"Sant Adrià de Besòs","p":38980,"r":60},{"n":"Sant Agustí de Lluçanès","p":106,"r":75},{"n":"Sant Andreu de la Barca","p":27069,"r":60},{"n":"Sant Andreu de Llavaneres","p":11910,"r":70},{"n":"Sant Andreu Salou","p":163,"r":75},{"n":"Sant Aniol de Finestres","p":381,"r":75},{"n":"Sant Antoni de Vilamajor","p":6722,"r":70},{"n":"Sant Bartomeu del Grau","p":931,"r":75},{"n":"Sant Boi de Llobregat","p":85317,"r":50},{"n":"Sant Boi de Lluçanès","p":600,"r":75},{"n":"Sant Cebrià de Vallalta","p":3855,"r":75},{"n":"Sant Celoni","p":18916,"r":70},{"n":"Sant Climent de Llobregat","p":4187,"r":75},{"n":"Sant Climent Sescebes","p":691,"r":75},{"n":"Sant Cugat del Vallès","p":97959,"r":50},{"n":"Sant Cugat Sesgarrigues","p":1037,"r":75},{"n":"Sant Esteve de la Sarga","p":118,"r":75},{"n":"Sant Esteve de Palautordera","p":3099,"r":75},{"n":"Sant Esteve Sesrovires","p":8112,"r":70},{"n":"Sant Feliu de Buixalleu","p":883,"r":75},{"n":"Sant Feliu de Codines","p":6821,"r":70},{"n":"Sant Feliu de Guíxols","p":23060,"r":60},{"n":"Sant Feliu de Llobregat","p":46688,"r":60},{"n":"Sant Feliu de Pallerols","p":1658,"r":75},{"n":"Sant Feliu Sasserra","p":634,"r":75},{"n":"Sant Ferriol","p":248,"r":75},{"n":"Sant Fost de Campsentelles","p":9400,"r":70},{"n":"Sant Fruitós de Bages","p":9324,"r":70},{"n":"Sant Gregori","p":4187,"r":75},{"n":"Sant Guim de Freixenet","p":1233,"r":75},{"n":"Sant Guim de la Plana","p":192,"r":75},{"n":"Sant Hilari Sacalm","p":6071,"r":70},{"n":"Sant Hipòlit de Voltregà","p":3649,"r":75},{"n":"Sant Iscle de Vallalta","p":1482,"r":75},{"n":"Sant Jaume de Frontanyà","p":25,"r":75},{"n":"Sant Jaume de Llierca","p":861,"r":75},{"n":"Sant Jaume dels Domenys","p":2819,"r":75},{"n":"Sant Jaume d'Enveja","p":3759,"r":75},{"n":"Sant Joan de les Abadesses","p":3393,"r":75},{"n":"Sant Joan de Mollet","p":536,"r":75},{"n":"Sant Joan de Vilatorrada","p":11109,"r":70},{"n":"Sant Joan Despí","p":35811,"r":60},{"n":"Sant Joan les Fonts","p":3159,"r":75},{"n":"Sant Jordi Desvalls","p":881,"r":75},{"n":"Sant Julià de Cerdanyola","p":234,"r":75},{"n":"Sant Julià de Ramis","p":3702,"r":75},{"n":"Sant Julià de Vilatorta","p":3336,"r":75},{"n":"Sant Julià del Llor i Bonmatí","p":1462,"r":75},{"n":"Sant Just Desvern","p":21045,"r":60},{"n":"Sant Llorenç de la Muga","p":247,"r":75},{"n":"Sant Llorenç de Morunys","p":982,"r":75},{"n":"Sant Llorenç d'Hortons","p":2621,"r":75},{"n":"Sant Llorenç Savall","p":2591,"r":75},{"n":"Sant Martí d'Albars","p":135,"r":75},{"n":"Sant Martí de Centelles","p":1261,"r":75},{"n":"Sant Martí de Llémena","p":727,"r":75},{"n":"Sant Martí de Riucorb","p":675,"r":75},{"n":"Sant Martí de Tous","p":1269,"r":75},{"n":"Sant Martí Sarroca","p":3476,"r":75},{"n":"Sant Martí Sesgueioles","p":353,"r":75},{"n":"Sant Martí Vell","p":270,"r":75},{"n":"Sant Mateu de Bages","p":640,"r":75},{"n":"Sant Miquel de Campmajor","p":257,"r":75},{"n":"Sant Miquel de Fluvià","p":858,"r":75},{"n":"Sant Mori","p":167,"r":75},{"n":"Sant Pau de Segúries","p":719,"r":75},{"n":"Sant Pere de Ribes","p":32613,"r":60},{"n":"Sant Pere de Riudebitlles","p":2512,"r":75},{"n":"Sant Pere de Torelló","p":2607,"r":75},{"n":"Sant Pere de Vilamajor","p":5069,"r":70},{"n":"Sant Pere Pescador","p":2285,"r":75},{"n":"Sant Pere Sallavinera","p":177,"r":75},{"n":"Sant Pol de Mar","p":5778,"r":70},{"n":"Sant Quintí de Mediona","p":2585,"r":75},{"n":"Sant Quirze de Besora","p":2163,"r":75},{"n":"Sant Quirze del Vallès","p":20175,"r":60},{"n":"Sant Quirze Safaja","p":664,"r":75},{"n":"Sant Ramon","p":483,"r":75},{"n":"Sant Sadurní d'Anoia","p":12930,"r":70},{"n":"Sant Sadurní d'Osormort","p":86,"r":75},{"n":"Sant Salvador de Guardiola","p":3596,"r":75},{"n":"Sant Vicenç de Castellet","p":10167,"r":70},{"n":"Sant Vicenç de Montalt","p":6829,"r":70},{"n":"Sant Vicenç de Torelló","p":2118,"r":75},{"n":"Sant Vicenç dels Horts","p":28760,"r":60},{"n":"Santa Bàrbara","p":3866,"r":75},{"n":"Santa Cecília de Voltregà","p":197,"r":75},{"n":"Santa Coloma de Cervelló","p":8275,"r":70},{"n":"Santa Coloma de Farners","p":14218,"r":70},{"n":"Santa Coloma de Gramenet","p":123250,"r":50},{"n":"Santa Coloma de Queralt","p":2832,"r":75},{"n":"Santa Cristina d'Aro","p":5972,"r":70},{"n":"Santa Eugènia de Berga","p":2350,"r":75},{"n":"Santa Eulàlia de Riuprimer","p":1516,"r":75},{"n":"Santa Eulàlia de Ronçana","p":7955,"r":70},{"n":"Santa Fe del Penedès","p":367,"r":75},{"n":"Santa Llogaia d'Àlguema","p":400,"r":75},{"n":"Santa Margarida de Montbui","p":10601,"r":70},{"n":"Santa Margarida i els Monjos","p":7775,"r":70},{"n":"Santa Maria de Besora","p":164,"r":75},{"n":"Santa Maria de Martorelles","p":867,"r":75},{"n":"Santa Maria de Merlès","p":179,"r":75},{"n":"Santa Maria de Miralles","p":144,"r":75},{"n":"Santa Maria de Palautordera","p":10060,"r":70},{"n":"Santa Maria d'Oló","p":1100,"r":75},{"n":"Santa Oliva","p":3711,"r":75},{"n":"Santa Pau","p":1578,"r":75},{"n":"Santa Perpètua de Mogoda","p":26101,"r":60},{"n":"Santa Susanna","p":4049,"r":75},{"n":"Santpedor","p":7739,"r":70},{"n":"Sarral","p":1647,"r":75},{"n":"Sarrià de Ter","p":5404,"r":70},{"n":"Sarroca de Bellera","p":111,"r":75},{"n":"Sarroca de Lleida","p":383,"r":75},{"n":"Saus, Camallera i Llampaies","p":908,"r":75},{"n":"Savallà del Comtat","p":49,"r":75},{"n":"Secuita, la","p":1848,"r":75},{"n":"Selva de Mar, la","p":223,"r":75},{"n":"Selva del Camp, la","p":5751,"r":70},{"n":"Senan","p":47,"r":75},{"n":"Sénia, la","p":5605,"r":70},{"n":"Senterada","p":161,"r":75},{"n":"Sentiu de Sió, la","p":448,"r":75},{"n":"Sentmenat","p":9528,"r":70},{"n":"Serinyà","p":1227,"r":75},{"n":"Seròs","p":1922,"r":75},{"n":"Serra de Daró","p":241,"r":75},{"n":"Setcases","p":196,"r":75},{"n":"Seu d'Urgell, la","p":13003,"r":70},{"n":"Seva","p":3818,"r":75},{"n":"Sidamon","p":757,"r":75},{"n":"Sils","p":6924,"r":70},{"n":"Sitges","p":32690,"r":60},{"n":"Siurana","p":188,"r":75},{"n":"Sobremunt","p":89,"r":75},{"n":"Soleràs, el","p":313,"r":75},{"n":"Solivella","p":639,"r":75},{"n":"Solsona","p":9741,"r":70},{"n":"Sora","p":225,"r":75},{"n":"Soriguera","p":449,"r":75},{"n":"Sort","p":2287,"r":75},{"n":"Soses","p":1884,"r":75},{"n":"Subirats","p":3287,"r":75},{"n":"Sudanell","p":920,"r":75},{"n":"Sunyer","p":310,"r":75},{"n":"Súria","p":6196,"r":70},{"n":"Susqueda","p":103,"r":75},{"n":"Tagamanent","p":329,"r":75},{"n":"Talamanca","p":209,"r":75},{"n":"Talarn","p":559,"r":75},{"n":"Talavera","p":281,"r":75},{"n":"Tallada d'Empordà, la","p":485,"r":75},{"n":"Taradell","p":6838,"r":70},{"n":"Tarragona","p":143260,"r":50},{"n":"Tàrrega","p":18991,"r":70},{"n":"Tarrés","p":125,"r":75},{"n":"Tarroja de Segarra","p":163,"r":75},{"n":"Tavèrnoles","p":354,"r":75},{"n":"Tavertet","p":128,"r":75},{"n":"Teià","p":6894,"r":70},{"n":"Térmens","p":1345,"r":75},{"n":"Terrades","p":337,"r":75},{"n":"Terrassa","p":232676,"r":50},{"n":"Tiana","p":9362,"r":70},{"n":"Tírvia","p":139,"r":75},{"n":"Tiurana","p":69,"r":75},{"n":"Tivenys","p":952,"r":75},{"n":"Tivissa","p":1657,"r":75},{"n":"Tona","p":8513,"r":70},{"n":"Torà","p":1230,"r":75},{"n":"Tordera","p":19047,"r":70},{"n":"Torelló","p":15334,"r":70},{"n":"Torms, els","p":135,"r":75},{"n":"Tornabous","p":828,"r":75},{"n":"Torre de Cabdella, la","p":760,"r":75},{"n":"Torre de Claramunt, la","p":4154,"r":75},{"n":"Torre de Fontaubella, la","p":120,"r":75},{"n":"Torre de l'Espanyol, la","p":642,"r":75},{"n":"Torrebesses","p":280,"r":75},{"n":"Torredembarra","p":18190,"r":70},{"n":"Torrefarrera","p":4950,"r":75},{"n":"Torrefeta i Florejacs","p":593,"r":75},{"n":"Torregrossa","p":2285,"r":75},{"n":"Torrelameu","p":816,"r":75},{"n":"Torrelavit","p":1575,"r":75},{"n":"Torrelles de Foix","p":2751,"r":75},{"n":"Torrelles de Llobregat","p":6162,"r":70},{"n":"Torrent","p":181,"r":75},{"n":"Torres de Segre","p":2295,"r":75},{"n":"Torre-serona","p":419,"r":75},{"n":"Torroella de Fluvià","p":774,"r":75},{"n":"Torroella de Montgrí","p":12507,"r":70},{"n":"Torroja del Priorat","p":128,"r":75},{"n":"Tortellà","p":848,"r":75},{"n":"Tortosa","p":36258,"r":60},{"n":"Toses","p":198,"r":75},{"n":"Tossa de Mar","p":6293,"r":70},{"n":"Tremp","p":6156,"r":70},{"n":"Ullà","p":1256,"r":75},{"n":"Ullastrell","p":2170,"r":75},{"n":"Ullastret","p":252,"r":75},{"n":"Ulldecona","p":6814,"r":70},{"n":"Ulldemolins","p":390,"r":75},{"n":"Ultramort","p":218,"r":75},{"n":"Urús","p":201,"r":75},{"n":"Vacarisses","p":7710,"r":70},{"n":"Vajol, la","p":110,"r":75},{"n":"Vall de Bianya, la","p":1342,"r":75},{"n":"Vall de Boí, la","p":1129,"r":75},{"n":"Vall de Cardós","p":391,"r":75},{"n":"Vall d'en Bas, la","p":3265,"r":75},{"n":"Vallbona d'Anoia","p":1420,"r":75},{"n":"Vallbona de les Monges","p":224,"r":75},{"n":"Vallcebre","p":260,"r":75},{"n":"Vallclara","p":91,"r":75},{"n":"Vallfogona de Balaguer","p":2008,"r":75},{"n":"Vallfogona de Ripollès","p":223,"r":75},{"n":"Vallfogona de Riucorb","p":97,"r":75},{"n":"Vallgorguina","p":3273,"r":75},{"n":"Vallirana","p":16239,"r":70},{"n":"Vall-llobrega","p":902,"r":75},{"n":"Vallmoll","p":1997,"r":75},{"n":"Vallromanes","p":2782,"r":75},{"n":"Valls","p":25540,"r":60},{"n":"Valls d'Aguilar, les","p":259,"r":75},{"n":"Valls de Valira, les","p":848,"r":75},{"n":"Vandellòs i l'Hospitalet de l'Infant","p":7151,"r":70},{"n":"Vansa i Fórnols, la","p":189,"r":75},{"n":"Veciana","p":170,"r":75},{"n":"Vendrell, el","p":41195,"r":60},{"n":"Ventalló","p":922,"r":75},{"n":"Verdú","p":874,"r":75},{"n":"Verges","p":1160,"r":75},{"n":"Vespella de Gaià","p":502,"r":75},{"n":"Vic","p":50405,"r":50},{"n":"Vidrà","p":167,"r":75},{"n":"Vidreres","p":8852,"r":70},{"n":"Vielha e Mijaran","p":5857,"r":70},{"n":"Vilabella","p":731,"r":75},{"n":"Vilabertran","p":962,"r":75},{"n":"Vilablareix","p":4079,"r":75},{"n":"Vilada","p":430,"r":75},{"n":"Viladamat","p":499,"r":75},{"n":"Viladasens","p":205,"r":75},{"n":"Viladecans","p":67536,"r":50},{"n":"Viladecavalls","p":7816,"r":70},{"n":"Vilademuls","p":898,"r":75},{"n":"Viladrau","p":1182,"r":75},{"n":"Vilafant","p":5664,"r":70},{"n":"Vilafranca del Penedès","p":42561,"r":60},{"n":"Vilagrassa","p":627,"r":75},{"n":"Vilajuïga","p":1180,"r":75},{"n":"Vilalba dels Arcs","p":613,"r":75},{"n":"Vilalba Sasserra","p":790,"r":75},{"n":"Vilaller","p":497,"r":75},{"n":"Vilallonga de Ter","p":396,"r":75},{"n":"Vilallonga del Camp","p":2494,"r":75},{"n":"Vilamacolum","p":401,"r":75},{"n":"Vilamalla","p":1202,"r":75},{"n":"Vilamaniscle","p":185,"r":75},{"n":"Vilamòs","p":174,"r":75},{"n":"Vilanant","p":405,"r":75},{"n":"Vilanova de Bellpuig","p":1149,"r":75},{"n":"Vilanova de la Barca","p":1160,"r":75},{"n":"Vilanova de l'Aguda","p":194,"r":75},{"n":"Vilanova de Meià","p":478,"r":75},{"n":"Vilanova de Prades","p":110,"r":75},{"n":"Vilanova de Sau","p":325,"r":75},{"n":"Vilanova de Segrià","p":1088,"r":75},{"n":"Vilanova del Camí","p":12886,"r":70},{"n":"Vilanova del Vallès","p":5697,"r":70},{"n":"Vilanova d'Escornalbou","p":615,"r":75},{"n":"Vilanova i la Geltrú","p":71305,"r":50},{"n":"Vilaplana","p":558,"r":75},{"n":"Vila-rodona","p":1388,"r":75},{"n":"Vila-sacra","p":879,"r":75},{"n":"Vila-sana","p":754,"r":75},{"n":"Vila-seca","p":24158,"r":60},{"n":"Vilassar de Dalt","p":9433,"r":70},{"n":"Vilassar de Mar","p":21234,"r":60},{"n":"Vilaür","p":163,"r":75},{"n":"Vilaverd","p":494,"r":75},{"n":"Vilella Alta, la","p":130,"r":75},{"n":"Vilella Baixa, la","p":202,"r":75},{"n":"Vilobí del Penedès","p":1157,"r":75},{"n":"Vilobí d'Onyar","p":3298,"r":75},{"n":"Vilopriu","p":220,"r":75},{"n":"Vilosell, el","p":178,"r":75},{"n":"Vimbodí i Poblet","p":889,"r":75},{"n":"Vinaixa","p":435,"r":75},{"n":"Vinebre","p":428,"r":75},{"n":"Vinyols i els Arcs","p":2470,"r":75},{"n":"Viver i Serrateix","p":178,"r":75},{"n":"Xerta","p":1186,"r":75}];
+      var classifications = {
+        A: {
+          label: "Transformacions físiques",
+          subareas: {
+            UR: {
+              label: "Urbanisme",
+              fields: [
+                { n: 1, t: "Polítiques urbanístiques i de rehabilitació urbana" },
+                { n: 2, t: "Espai públic" },
+                { n: 3, t: "Equipaments comunitaris" },
+                { n: 4, t: "Serveis tècnics urbans" },
+                { n: 5, t: "Rehabilitació/recuperació d’espais d’interès patrimonial i arquitectònic" },
+                { n: 6, t: "Altres intervencions" }
+              ]
+            },
+            HA: {
+              label: "Habitatge",
+              fields: [
+                { n: 7, t: "Millora de les condicions d’habitabilitat" },
+                { n: 8, t: "Mesures passives de millora de l’eficiència energètica" },
+                { n: 9, t: "Millora de l’accessibilitat" },
+                { n: 10, t: "Incorporació de tecnologies de la informació als edificis" },
+                { n: 11, t: "Altres intervencions" }
+              ]
+            },
+            EE: {
+              label: "Eficiència energètica",
+              fields: [
+                { n: 12, t: "Millora de l’eficiència energètica dels habitatges - mesures actives" },
+                { n: 13, t: "Mesures actives/passives de millora de l’eficiència energètica en equipaments" },
+                { n: 14, t: "Millora de l’eficiència hídrica en habitatges, equipaments i xarxes de subministrament" },
+                { n: 15, t: "Millora de l’eficiència energètica en l’espai urbà i serveis tècnics urbans" },
+                { n: 16, t: "Altres intervencions" }
+              ]
+            }
+          }
+        },
+        B: {
+          label: "Transició ecològica",
+          subareas: {
+            CC: {
+              label: "Emergència climàtica",
+              fields: [
+                { n: 17, t: "Polítiques ambientals de transició ecològica" },
+                { n: 18, t: "Adaptació de l’espai urbà al canvi climàtic" },
+                { n: 19, t: "Mobilitat sostenible i assequible" },
+                { n: 20, t: "Altres intervencions" }
+              ]
+            },
+            IV: {
+              label: "Infraestructura verda",
+              fields: [
+                { n: 21, t: "Ampliació de la infraestructura verda" },
+                { n: 22, t: "Millora de la infraestructura verda" },
+                { n: 23, t: "Biodiversitat urbana" },
+                { n: 24, t: "Altres intervencions" }
+              ]
+            },
+            EC: {
+              label: "Economia circular",
+              fields: [
+                { n: 25, t: "Sobirania alimentària" },
+                { n: 26, t: "Foment del consum responsable" },
+                { n: 27, t: "Bioeconomia" },
+                { n: 28, t: "Foment de la reutilització de l’aigua" },
+                { n: 29, t: "Prevenció de la generació i gestió de residus" },
+                { n: 30, t: "Altres intervencions" }
+              ]
+            }
+          }
+        },
+        C: {
+          label: "Acció sociocomunitària",
+          subareas: {
+            RD: {
+              label: "Convivència i reducció de les desigualtats",
+              fields: [
+                { n: 31, t: "Erradicació de situacions de vulnerabilitat, desprotecció i exclusió, així com desenvolupament d’accions i eines per minorar desigualtats socials" },
+                { n: 32, t: "Foment de l’empoderament de la ciutadania, l’associacionisme i les xarxes comunitàries" },
+                { n: 33, t: "Foment de la cohesió social" },
+                { n: 34, t: "Mesures de millora de la seguretat i convivència mitjançant actuacions en l’espai públic" },
+                { n: 35, t: "Altres intervencions" }
+              ]
+            },
+            EG: {
+              label: "Equitat de gènere i igualtat de tracte",
+              fields: [
+                { n: 36, t: "Promoció de l’equitat de gènere" },
+                { n: 37, t: "Combatre la violència masclista o de gènere" },
+                { n: 38, t: "Garantia dels drets humans, igualtat de tracte i no discriminació" },
+                { n: 39, t: "Aplicació de la transversalitat de gènere" },
+                { n: 40, t: "Altres intervencions" }
+              ]
+            },
+            SE: {
+              label: "Salut i esports",
+              fields: [
+                { n: 41, t: "Millora de la salut individual i comunitària" },
+                { n: 42, t: "Foment de l’envelliment actiu i prevenció de l’aïllament relacional i la soledat" },
+                { n: 43, t: "Prevenció del deteriorament o fractura de les xarxes familiars" },
+                { n: 44, t: "Foment de l’esport per a la millora de la salut i de la integració social" },
+                { n: 45, t: "Altres intervencions" }
+              ]
+            },
+            ED: {
+              label: "Educació, cultura i llengua",
+              fields: [
+                { n: 46, t: "Atenció a la infància, la població jove i la gent gran" },
+                { n: 47, t: "Millora dels nivells d’ensenyament de la població resident" },
+                { n: 48, t: "Reducció de la bretxa digital" },
+                { n: 49, t: "Foment de la cultura" },
+                { n: 50, t: "Altres intervencions" }
+              ]
+            },
+            ET: {
+              label: "Economia i treball",
+              fields: [
+                { n: 51, t: "Ocupació efectiva i de qualitat" },
+                { n: 52, t: "Promoció i diversificació del teixit productiu local" },
+                { n: 53, t: "Foment del comerç de proximitat" },
+                { n: 54, t: "Foment de l’economia social i solidària" },
+                { n: 55, t: "Atracció de nous residents" },
+                { n: 56, t: "Altres intervencions" }
+              ]
+            }
+          }
+        }
+      };
       var templates = {
         obra: [
           "Estudis previs, diagnosi tècnica i preparació de la intervenció",
@@ -1140,12 +1287,53 @@ svg {
       var exceptionWrap = root.querySelector("#llb-exception-wrap");
       var exceptionNote = root.querySelector("#llb-exception-note");
       var municipalityError = root.querySelector("#llb-municipality-error");
+      var areaSelect = root.querySelector("#llb-area");
+      var subareaSelect = root.querySelector("#llb-subarea");
+      var actionFieldSelect = root.querySelector("#llb-action-field");
+      var actionNumberInput = root.querySelector("#llb-action-number");
+      var generatedCodeInput = root.querySelector("#llb-generated-code");
       var typeSelect = root.querySelector("#llb-type");
       var rows = Array.from(root.querySelectorAll(".llb-year-row"));
       var currentMunicipality = null;
 
       function normalize(value) {
         return String(value || "").trim().toLocaleLowerCase("ca");
+      }
+
+      function addOption(select, value, label) {
+        var option = document.createElement("option");
+        option.value = value;
+        option.textContent = label;
+        select.appendChild(option);
+      }
+
+      function populateSubareas() {
+        var area = classifications[areaSelect.value];
+        subareaSelect.replaceChildren();
+        Object.keys(area.subareas).forEach(function (code) {
+          addOption(subareaSelect, code, code + " — " + area.subareas[code].label);
+        });
+        populateActionFields();
+      }
+
+      function populateActionFields() {
+        var subarea = classifications[areaSelect.value].subareas[subareaSelect.value];
+        actionFieldSelect.replaceChildren();
+        subarea.fields.forEach(function (field) {
+          addOption(actionFieldSelect, String(field.n), field.n + ". " + field.t);
+        });
+        updateActionCode();
+      }
+
+      function actionNumber() {
+        var number = Number(actionNumberInput.value);
+        return Number.isInteger(number) && number > 0 ? number : null;
+      }
+
+      function updateActionCode() {
+        var number = actionNumber();
+        generatedCodeInput.value = areaSelect.value + "." + subareaSelect.value + "." + actionFieldSelect.value + "." + (number || "—");
+        validate();
       }
 
       function numberValue(input) {
@@ -1253,6 +1441,7 @@ svg {
         data = data || rows.map(rowData);
         var errors = [];
         if (!currentMunicipality) errors.push("Selecciona un municipi de la llista.");
+        if (!actionNumber()) errors.push("Introdueix un número d’actuació enter i superior a zero.");
         if (!root.querySelector("#llb-title").value.trim()) errors.push("Afegeix el títol de l’actuació.");
         if (!data.some(function (item) { return item.total > 0; })) errors.push("Introdueix el cost total d’almenys una anualitat.");
         data.forEach(function (item) {
@@ -1272,15 +1461,26 @@ svg {
 
       function snapshot() {
         var result = calculate();
+        var area = classifications[areaSelect.value];
+        var subarea = area.subareas[subareaSelect.value];
+        var selectedField = subarea.fields.find(function (field) {
+          return String(field.n) === actionFieldSelect.value;
+        });
         return {
           municipality: currentMunicipality ? currentMunicipality.n : municipalityInput.value.trim(),
           population2025: currentMunicipality ? currentMunicipality.p : null,
           standardRatePercent: currentMunicipality ? currentMunicipality.r : null,
           appliedRatePercent: currentMunicipality ? appliedRate() : null,
           exceptional90Percent: exceptionInput.checked,
-          actionCode: root.querySelector("#llb-code").value.trim(),
+          actionCode: generatedCodeInput.value,
+          areaCode: areaSelect.value,
+          areaName: area.label,
+          subareaCode: subareaSelect.value,
+          subareaName: subarea.label,
+          actionFieldNumber: selectedField.n,
+          actionFieldName: selectedField.t,
+          actionNumber: actionNumber(),
           actionTitle: root.querySelector("#llb-title").value.trim(),
-          scope: root.querySelector("#llb-scope").value.trim(),
           actionType: typeSelect.options[typeSelect.selectedIndex].text,
           years: result.rows,
           totals: result.sums
@@ -1310,6 +1510,10 @@ svg {
           ["Població 2025", data.population2025],
           ["Finançament màxim ordinari (%)", data.standardRatePercent],
           ["Finançament aplicat (%)", data.appliedRatePercent],
+          ["Àmbit", data.areaCode + " — " + data.areaName],
+          ["Subàmbit", data.subareaCode + " — " + data.subareaName],
+          ["Camp d’actuació", data.actionFieldNumber + ". " + data.actionFieldName],
+          ["Número d’actuació", data.actionNumber],
           ["Codi", data.actionCode],
           ["Títol", data.actionTitle],
           ["Tipus", data.actionType],
@@ -1336,6 +1540,10 @@ svg {
       municipalityInput.addEventListener("input", resolveMunicipality);
       municipalityInput.addEventListener("change", resolveMunicipality);
       exceptionInput.addEventListener("change", calculate);
+      areaSelect.addEventListener("change", populateSubareas);
+      subareaSelect.addEventListener("change", populateActionFields);
+      actionFieldSelect.addEventListener("change", updateActionCode);
+      actionNumberInput.addEventListener("input", updateActionCode);
       root.querySelector("#llb-apply-template").addEventListener("click", applyTemplate);
       root.querySelector("#llb-title").addEventListener("input", function () { validate(); });
       rows.forEach(function (row) {
@@ -1347,6 +1555,7 @@ svg {
       root.querySelector("#llb-download-json").addEventListener("click", downloadJson);
       root.querySelector("#llb-print").addEventListener("click", function () { window.print(); });
 
+      populateSubareas();
       applyTemplate();
       resolveMunicipality();
       if (window.lucide) window.lucide.createIcons({ attrs: { width: 16, height: 16 } });
