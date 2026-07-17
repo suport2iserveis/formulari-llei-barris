@@ -1077,18 +1077,6 @@ svg {
         Nom del PMII o projecte
         <input class="form-control" id="llb-project-name" placeholder="Ex.: Pla de millora urbana integral de...">
       </label>
-      <label class="form-label llb-field" for="llb-contact-name">
-        Persona de contacte
-        <input class="form-control" id="llb-contact-name" autocomplete="name" placeholder="Nom i cognoms">
-      </label>
-      <label class="form-label llb-field" for="llb-contact-email">
-        Correu electrònic de contacte
-        <input class="form-control" id="llb-contact-email" type="email" autocomplete="email" placeholder="nom@ajuntament.cat">
-      </label>
-      <label class="form-label llb-field" for="llb-contact-phone">
-        Telèfon de contacte (opcional)
-        <input class="form-control" id="llb-contact-phone" type="tel" autocomplete="tel" placeholder="000 000 000">
-      </label>
       <div class="llb-form-grid llb-wide" id="llb-project-municipality-slot"></div>
     </div>
     <div id="llb-project-funding-slot"></div>
@@ -1571,9 +1559,6 @@ svg {
       var rows = Array.from(root.querySelectorAll(".llb-year-row"));
       var currentMunicipality = null;
       var projectNameInput = root.querySelector("#llb-project-name");
-      var contactNameInput = root.querySelector("#llb-contact-name");
-      var contactEmailInput = root.querySelector("#llb-contact-email");
-      var contactPhoneInput = root.querySelector("#llb-contact-phone");
       var saveStatus = root.querySelector("#llb-save-status");
       var projectTableBody = root.querySelector("#llb-project-table-body");
       var submitStatus = root.querySelector("#llb-submit-status");
@@ -1581,7 +1566,7 @@ svg {
       var PROJECT_SCHEMA = "iserveis-llb-project";
       var PROJECT_VERSION = 2;
       var SUBMISSION_RECIPIENT = "suport2@iserveis.cat";
-      var SUBMISSION_ENDPOINT = "";
+      var SUBMISSION_ENDPOINT = "https://script.google.com/macros/s/AKfycbyXMDX2TCxm_2ttXvgnVdtCUf3H_VeR-2LOXo2J7MC3qEZ1PkAIAhf5L5IfstkdlqTB/exec";
       var SUBMISSION_TOKEN = "llb-7f28dca4e9c041dfa36e2bb15c9477e2";
       var project = createEmptyProject();
       var editingId = null;
@@ -1607,9 +1592,6 @@ svg {
           version: PROJECT_VERSION,
           projectId: createId("project"),
           projectName: "",
-          contactName: "",
-          contactEmail: "",
-          contactPhone: "",
           municipality: "Vila-seca",
           exceptional90Percent: false,
           actions: [],
@@ -1906,9 +1888,6 @@ svg {
         var previousMunicipality = project.municipality;
         var previousExceptional = project.exceptional90Percent;
         project.projectName = projectNameInput.value.trim();
-        project.contactName = contactNameInput.value.trim();
-        project.contactEmail = contactEmailInput.value.trim();
-        project.contactPhone = contactPhoneInput.value.trim();
         project.municipality = currentMunicipality ? currentMunicipality.n : municipalityInput.value.trim();
         project.exceptional90Percent = Boolean(exceptionInput.checked);
         if (previousMunicipality !== project.municipality || previousExceptional !== project.exceptional90Percent) {
@@ -1983,8 +1962,6 @@ svg {
         var errors = [];
         if (!project.projectName) errors.push("Introdueix el nom del PMII o projecte.");
         if (!currentMunicipality) errors.push("Selecciona un municipi vàlid.");
-        if (!project.contactName) errors.push("Introdueix la persona de contacte.");
-        if (!project.contactEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(project.contactEmail)) errors.push("Introdueix un correu de contacte vàlid.");
         if (!project.actions.length) errors.push("Afegeix almenys una fitxa d’actuació.");
         project.actions.forEach(function (action) {
           actionErrors(action, project.actions).forEach(function (error) {
@@ -2331,9 +2308,6 @@ svg {
       function applyProjectToForm() {
         isLoading = true;
         projectNameInput.value = project.projectName || "";
-        contactNameInput.value = project.contactName || "";
-        contactEmailInput.value = project.contactEmail || "";
-        contactPhoneInput.value = project.contactPhone || "";
         municipalityInput.value = project.municipality || "Vila-seca";
         resolveMunicipality();
         exceptionInput.checked = Boolean(project.exceptional90Percent && currentMunicipality && currentMunicipality.p < 5000);
@@ -2471,9 +2445,6 @@ svg {
           [{ v: "Municipi", s: 2 }, { v: project.municipality, s: 5 }],
           [{ v: "Població 2025", s: 2 }, { v: currentMunicipality ? currentMunicipality.p : "", s: 5 }],
           [{ v: "Finançament aplicat", s: 2 }, { v: currentMunicipality ? appliedRate() / 100 : "", s: 4 }],
-          [{ v: "Persona de contacte", s: 2 }, { v: project.contactName, s: 5 }],
-          [{ v: "Correu", s: 2 }, { v: project.contactEmail, s: 5 }],
-          [{ v: "Telèfon", s: 2 }, { v: project.contactPhone, s: 5 }],
           [],
           [{ v: "Actuacions", s: 2 }, { v: totals.count, s: 5 }],
           [{ v: "Pressupost total", s: 2 }, { v: totals.total, s: 3 }],
@@ -2699,7 +2670,7 @@ svg {
         }).then(function () {
           project.lastSubmission = { id: submissionId, submittedAt: payload.submittedAt, recipient: SUBMISSION_RECIPIENT };
           persistProject("Projecte enviat");
-          setSubmitStatus("Projecte tramès amb l’identificador " + submissionId + ". iServeis rebrà l’Excel i el JSON; també s’enviarà un justificant al correu de contacte.", "success");
+          setSubmitStatus("Projecte tramès amb l’identificador " + submissionId + ". iServeis rebrà l’Excel i la còpia JSON a " + SUBMISSION_RECIPIENT + ".", "success");
         }).catch(function () {
           setSubmitStatus("No s’ha pogut enviar el projecte. Descarrega l’Excel o torna-ho a provar més tard.", "error");
         }).finally(function () {
@@ -2784,7 +2755,7 @@ svg {
         if (button.dataset.projectAction === "duplicate") duplicateAction(button.dataset.actionId);
         if (button.dataset.projectAction === "delete") deleteAction(button.dataset.actionId);
       });
-      [projectNameInput, contactNameInput, contactEmailInput, contactPhoneInput].forEach(function (control) {
+      [projectNameInput].forEach(function (control) {
         control.addEventListener("input", scheduleProjectSave);
         control.addEventListener("change", scheduleProjectSave);
       });
