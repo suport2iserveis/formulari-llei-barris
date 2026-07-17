@@ -914,6 +914,111 @@ svg {
       padding-top: 10px;
     }
 
+    #llb-budget-form .llb-project-table-wrap {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow-x: auto;
+    }
+
+    #llb-budget-form .llb-project-table {
+      border-collapse: collapse;
+      min-width: 780px;
+      width: 100%;
+    }
+
+    #llb-budget-form .llb-project-table th,
+    #llb-budget-form .llb-project-table td {
+      border-bottom: 1px solid var(--border);
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    #llb-budget-form .llb-project-table th {
+      background: color-mix(in srgb, var(--llb-brand) 12%, var(--card));
+      font-weight: 500;
+    }
+
+    #llb-budget-form .llb-project-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    #llb-budget-form .llb-project-table .llb-table-money {
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    #llb-budget-form .llb-row-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    #llb-budget-form .llb-row-actions .btn {
+      white-space: nowrap;
+    }
+
+    #llb-budget-form .llb-status {
+      border-radius: 999px;
+      display: inline-flex;
+      font-weight: 500;
+      padding: 3px 8px;
+      white-space: nowrap;
+    }
+
+    #llb-budget-form .llb-status.is-complete {
+      background: color-mix(in srgb, var(--viz-series-2) 18%, transparent);
+      color: var(--foreground);
+    }
+
+    #llb-budget-form .llb-status.is-incomplete {
+      background: color-mix(in srgb, var(--destructive) 12%, transparent);
+      color: var(--destructive);
+    }
+
+    #llb-budget-form .llb-empty-state,
+    #llb-budget-form .llb-editor-banner,
+    #llb-budget-form .llb-submit-status,
+    #llb-budget-form .llb-project-breakdown {
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 11px;
+    }
+
+    #llb-budget-form .llb-editor-banner,
+    #llb-budget-form .llb-project-breakdown {
+      background: color-mix(in srgb, var(--llb-brand) 8%, transparent);
+    }
+
+    #llb-budget-form .llb-project-breakdown {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    #llb-budget-form .llb-breakdown-item {
+      display: grid;
+      gap: 2px;
+    }
+
+    #llb-budget-form .llb-submit-status.is-success {
+      border-color: var(--viz-series-2);
+    }
+
+    #llb-budget-form .llb-submit-status.is-error {
+      border-color: var(--destructive);
+      color: var(--destructive);
+    }
+
+    #llb-budget-form .llb-import-input {
+      display: none;
+    }
+
+    #llb-budget-form .llb-dirty-indicator {
+      color: var(--muted-foreground);
+    }
+
     #llb-budget-form .llb-hidden {
       display: none;
     }
@@ -921,7 +1026,8 @@ svg {
     @media (max-width: 720px) {
       #llb-budget-form .llb-form-grid,
       #llb-budget-form .llb-budget-base,
-      #llb-budget-form .llb-year-row {
+      #llb-budget-form .llb-year-row,
+      #llb-budget-form .llb-project-breakdown {
         grid-template-columns: 1fr;
       }
 
@@ -961,15 +1067,80 @@ svg {
     <span class="llb-brand-label">Pressupost de fitxa d’actuació · Llei de barris</span>
   </header>
 
+  <section class="llb-section" aria-labelledby="llb-project-heading">
+    <div class="llb-section-head">
+      <h2 id="llb-project-heading">1. Projecte municipal</h2>
+      <span class="viz-badge llb-dirty-indicator" id="llb-save-status">Desament local actiu</span>
+    </div>
+    <div class="llb-form-grid">
+      <label class="form-label llb-field llb-wide" for="llb-project-name">
+        Nom del PMII o projecte
+        <input class="form-control" id="llb-project-name" placeholder="Ex.: Pla de millora urbana integral de...">
+      </label>
+      <label class="form-label llb-field" for="llb-contact-name">
+        Persona de contacte
+        <input class="form-control" id="llb-contact-name" autocomplete="name" placeholder="Nom i cognoms">
+      </label>
+      <label class="form-label llb-field" for="llb-contact-email">
+        Correu electrònic de contacte
+        <input class="form-control" id="llb-contact-email" type="email" autocomplete="email" placeholder="nom@ajuntament.cat">
+      </label>
+      <label class="form-label llb-field" for="llb-contact-phone">
+        Telèfon de contacte (opcional)
+        <input class="form-control" id="llb-contact-phone" type="tel" autocomplete="tel" placeholder="000 000 000">
+      </label>
+      <div class="llb-form-grid llb-wide" id="llb-project-municipality-slot"></div>
+    </div>
+    <div id="llb-project-funding-slot"></div>
+    <p class="text-small text-muted">Les dades del projecte i les fitxes es desen automàticament en aquest navegador. Utilitza la còpia JSON per continuar el projecte en un altre ordinador.</p>
+  </section>
+
+  <section class="llb-section" aria-labelledby="llb-project-actions-heading">
+    <div class="llb-section-head">
+      <h2 id="llb-project-actions-heading">2. Fitxes del projecte</h2>
+      <button class="btn btn-primary llb-no-print" id="llb-new-action-top" type="button"><i data-lucide="plus" aria-hidden="true"></i> Nova actuació</button>
+    </div>
+
+    <div class="viz-grid">
+      <div class="card viz-stat"><span class="text-muted">Actuacions</span><strong class="viz-stat-value" id="llb-project-count">0</strong></div>
+      <div class="card viz-stat"><span class="text-muted">Pressupost total</span><strong class="viz-stat-value" id="llb-project-total">0,00 €</strong></div>
+      <div class="card viz-stat"><span class="text-muted">Fons estimat</span><strong class="viz-stat-value" id="llb-project-fund">0,00 €</strong></div>
+      <div class="card viz-stat"><span class="text-muted">Aportació local</span><strong class="viz-stat-value" id="llb-project-local">0,00 €</strong></div>
+    </div>
+
+    <div class="llb-project-breakdown" id="llb-project-breakdown" aria-live="polite"></div>
+
+    <div class="llb-empty-state" id="llb-project-empty">Encara no hi ha cap fitxa desada. Omple la primera actuació i prem «Desar fitxa».</div>
+    <div class="llb-project-table-wrap llb-hidden" id="llb-project-table-wrap">
+      <table class="llb-project-table">
+        <thead>
+          <tr><th>Codi</th><th>Actuació</th><th>Tipus</th><th class="llb-table-money">Import</th><th>Estat</th><th>Accions</th></tr>
+        </thead>
+        <tbody id="llb-project-table-body"></tbody>
+      </table>
+    </div>
+
+    <div class="llb-actions llb-no-print">
+      <button class="btn btn-primary" id="llb-export-excel" type="button"><i data-lucide="file-spreadsheet" aria-hidden="true"></i> Descarregar Excel complet</button>
+      <button class="btn" id="llb-export-project" type="button"><i data-lucide="download" aria-hidden="true"></i> Còpia JSON</button>
+      <label class="btn" for="llb-import-project"><i data-lucide="upload" aria-hidden="true"></i> Importar projecte</label>
+      <input class="llb-import-input" id="llb-import-project" type="file" accept="application/json,.json">
+      <button class="btn" id="llb-send-project" type="button"><i data-lucide="send" aria-hidden="true"></i> Enviar a iServeis</button>
+    </div>
+    <div class="llb-submit-status llb-hidden" id="llb-submit-status" aria-live="polite"></div>
+    <p class="text-small text-muted">Destinatari configurat: <strong>suport2@iserveis.cat</strong>. Abans d’enviar, el sistema comprovarà les dades generals, els codis i els pressupostos de totes les fitxes.</p>
+  </section>
+
   <section class="llb-section" aria-labelledby="llb-place-heading">
     <div class="llb-section-head">
-      <h2 id="llb-place-heading">1. Municipi i actuació</h2>
-      <span class="viz-badge">Cens 2025</span>
+      <h2 id="llb-place-heading">3. Edició de la fitxa d’actuació</h2>
+      <span class="viz-badge" id="llb-editor-state">Fitxa nova</span>
     </div>
+    <div class="llb-editor-banner text-small" id="llb-editor-banner">Estàs preparant una fitxa nova. Quan estigui llesta, prem «Desar fitxa» per afegir-la al projecte.</div>
     <div class="llb-form-grid">
       <label class="form-label llb-field llb-wide" for="llb-municipality">
         Municipi
-        <input class="form-control" id="llb-municipality" list="llb-municipality-list" autocomplete="off" value="" placeholder="Escriu o selecciona un municipi">
+        <input class="form-control" id="llb-municipality" list="llb-municipality-list" autocomplete="off" value="Vila-seca" placeholder="Escriu o selecciona un municipi">
       </label>
       <datalist id="llb-municipality-list"></datalist>
       <label class="form-label llb-field" for="llb-population">
@@ -1029,7 +1200,7 @@ svg {
 
   <section class="llb-section" aria-labelledby="llb-type-heading">
     <div class="llb-section-head">
-      <h2 id="llb-type-heading">2. Estructura de l’actuació</h2>
+      <h2 id="llb-type-heading">4. Estructura de l’actuació</h2>
       <button class="btn btn-primary llb-no-print" id="llb-apply-template" type="button"><i data-lucide="wand-sparkles" aria-hidden="true"></i> Aplicar estructura</button>
     </div>
     <div class="llb-form-grid">
@@ -1044,13 +1215,13 @@ svg {
           <option value="hibrida">Servei o equipament híbrid i dinamització</option>
         </select>
       </label>
-      <p class="text-small text-muted llb-wide" id="llb-type-help">L’estructura i el repartiment percentual proposats es basen en les seqüències i imports comuns de fitxes d'actuació de la LLei de Barris. Pots editar els textos i percentatges després d’aplicar-los.</p>
+      <p class="text-small text-muted llb-wide" id="llb-type-help">L’estructura i el repartiment percentual proposats es basen en les seqüències i imports de les fitxes de Vila-seca. Pots editar els textos i percentatges després d’aplicar-los.</p>
     </div>
   </section>
 
   <section class="llb-section" aria-labelledby="llb-budget-heading">
     <div class="llb-section-head">
-      <h2 id="llb-budget-heading">3. Calendari i pressupost 2027–2031</h2>
+      <h2 id="llb-budget-heading">5. Calendari i pressupost 2027–2031</h2>
       <span class="text-small text-muted">Imports totals elegibles, amb IVA quan no sigui recuperable</span>
     </div>
 
@@ -1153,7 +1324,7 @@ svg {
 
   <section class="llb-section" aria-labelledby="llb-summary-heading">
     <div class="llb-section-head">
-      <h2 id="llb-summary-heading">4. Resum de finançament</h2>
+      <h2 id="llb-summary-heading">6. Resum i desament de la fitxa</h2>
       <span class="viz-badge" id="llb-summary-rate">—</span>
     </div>
     <div class="viz-grid">
@@ -1181,8 +1352,9 @@ svg {
     </div>
 
     <div class="llb-actions llb-no-print">
-      <button class="btn btn-primary" id="llb-download-csv" type="button"><i data-lucide="table" aria-hidden="true"></i> Descarregar CSV</button>
-      <button class="btn" id="llb-download-json" type="button"><i data-lucide="braces" aria-hidden="true"></i> Descarregar JSON</button>
+      <button class="btn btn-primary" id="llb-save-action" type="button"><i data-lucide="save" aria-hidden="true"></i> Desar fitxa</button>
+      <button class="btn" id="llb-new-action" type="button"><i data-lucide="plus" aria-hidden="true"></i> Nova actuació</button>
+      <button class="btn" id="llb-download-csv" type="button"><i data-lucide="table" aria-hidden="true"></i> CSV de la fitxa</button>
       <button class="btn" id="llb-print" type="button"><i data-lucide="printer" aria-hidden="true"></i> Imprimir o desar en PDF</button>
     </div>
     <p class="text-small text-muted llb-source-note">El repartiment percentual inicial és orientatiu i es basa en les fitxes de Vila-seca; es pot ajustar sempre que sumi el 100%. La mateixa taxa màxima s’aplica a cada anualitat i, si hi ha altres fonts, l’aportació del Fons es limita per evitar el sobrefinançament.</p>
@@ -1398,6 +1570,56 @@ svg {
       var allocationStatus = root.querySelector("#llb-allocation-status");
       var rows = Array.from(root.querySelectorAll(".llb-year-row"));
       var currentMunicipality = null;
+      var projectNameInput = root.querySelector("#llb-project-name");
+      var contactNameInput = root.querySelector("#llb-contact-name");
+      var contactEmailInput = root.querySelector("#llb-contact-email");
+      var contactPhoneInput = root.querySelector("#llb-contact-phone");
+      var saveStatus = root.querySelector("#llb-save-status");
+      var projectTableBody = root.querySelector("#llb-project-table-body");
+      var submitStatus = root.querySelector("#llb-submit-status");
+      var STORAGE_KEY = "iserveis.llb.project.v2";
+      var PROJECT_SCHEMA = "iserveis-llb-project";
+      var PROJECT_VERSION = 2;
+      var SUBMISSION_RECIPIENT = "suport2@iserveis.cat";
+      var SUBMISSION_ENDPOINT = "";
+      var SUBMISSION_TOKEN = "llb-7f28dca4e9c041dfa36e2bb15c9477e2";
+      var project = createEmptyProject();
+      var editingId = null;
+      var isLoading = false;
+      var saveTimer = null;
+
+      function createId(prefix) {
+        var random = "";
+        if (window.crypto && window.crypto.getRandomValues) {
+          var values = new Uint32Array(2);
+          window.crypto.getRandomValues(values);
+          random = values[0].toString(36) + values[1].toString(36);
+        } else {
+          random = Math.random().toString(36).slice(2) + Date.now().toString(36);
+        }
+        return (prefix || "id") + "-" + random;
+      }
+
+      function createEmptyProject() {
+        var now = new Date().toISOString();
+        return {
+          schema: PROJECT_SCHEMA,
+          version: PROJECT_VERSION,
+          projectId: createId("project"),
+          projectName: "",
+          contactName: "",
+          contactEmail: "",
+          contactPhone: "",
+          municipality: "Vila-seca",
+          exceptional90Percent: false,
+          actions: [],
+          draft: null,
+          activeActionId: null,
+          createdAt: now,
+          updatedAt: now,
+          lastSubmission: null
+        };
+      }
 
       function normalize(value) {
         return String(value || "").trim().toLocaleLowerCase("ca");
@@ -1514,7 +1736,7 @@ svg {
         }
 
         populationInput.value = integer.format(currentMunicipality.p) + " habitants";
-        standardRateInput.value = currentMunicipality.r + "%";
+        standardRateInput.value = appliedRate() + "%";
         appliedRateEl.textContent = appliedRate() + "%";
         municipalityError.classList.add("llb-hidden");
         var exceptional = currentMunicipality.p < 5000;
@@ -1576,6 +1798,7 @@ svg {
         root.querySelector("#llb-sum-local").textContent = euro.format(sums.local);
         root.querySelector("#llb-sum-other").textContent = euro.format(sums.other);
         root.querySelector("#llb-summary-rate").textContent = currentMunicipality ? appliedRate() + "% màxim" : "—";
+        standardRateInput.value = currentMunicipality ? appliedRate() + "%" : "";
         var allocationDifference = 100 - allocation.percentageTotal;
         allocationStatus.classList.toggle("is-error", Math.abs(allocationDifference) >= 0.001);
         if (Math.abs(allocationDifference) < 0.001) {
@@ -1599,6 +1822,7 @@ svg {
         validate(data, allocation);
         sums.budgetTotal = allocation.total;
         sums.assignedTotal = sums.total;
+        if (!isLoading) scheduleProjectSave();
         return { rows: data, sums: sums, allocation: allocation };
       }
 
@@ -1649,6 +1873,7 @@ svg {
           actionFieldName: selectedField.t,
           actionNumber: actionNumber(),
           actionTitle: root.querySelector("#llb-title").value.trim(),
+          actionTypeCode: typeSelect.value,
           actionType: typeSelect.options[typeSelect.selectedIndex].text,
           actionTotal: result.allocation.total,
           allocationPercentTotal: result.allocation.percentageTotal,
@@ -1657,12 +1882,509 @@ svg {
         };
       }
 
+      function cloneData(value) {
+        return JSON.parse(JSON.stringify(value));
+      }
+
+      function fileSlug(value) {
+        return String(value || "projecte")
+          .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-zA-Z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "")
+          .toLowerCase() || "projecte";
+      }
+
+      function actionHasContent() {
+        if (root.querySelector("#llb-title").value.trim()) return true;
+        if (numberValue(actionTotalInput) > 0) return true;
+        return rows.some(function (row) {
+          return numberValue(row.querySelector(".llb-other")) > 0;
+        });
+      }
+
+      function syncProjectCommonFromForm() {
+        var previousMunicipality = project.municipality;
+        var previousExceptional = project.exceptional90Percent;
+        project.projectName = projectNameInput.value.trim();
+        project.contactName = contactNameInput.value.trim();
+        project.contactEmail = contactEmailInput.value.trim();
+        project.contactPhone = contactPhoneInput.value.trim();
+        project.municipality = currentMunicipality ? currentMunicipality.n : municipalityInput.value.trim();
+        project.exceptional90Percent = Boolean(exceptionInput.checked);
+        if (previousMunicipality !== project.municipality || previousExceptional !== project.exceptional90Percent) {
+          refreshAllStoredFunding();
+        }
+      }
+
+      function refreshActionFunding(action) {
+        if (!action || !Array.isArray(action.years)) return action;
+        var municipality = municipalities.find(function (item) { return normalize(item.n) === normalize(project.municipality); }) || null;
+        var exceptional = Boolean(project.exceptional90Percent && municipality && municipality.p < 5000);
+        var ratePercent = municipality ? (exceptional ? 90 : municipality.r) : 0;
+        var sums = { total: 0, fund: 0, local: 0, other: 0 };
+        action.municipality = municipality ? municipality.n : project.municipality;
+        action.population2025 = municipality ? municipality.p : null;
+        action.standardRatePercent = municipality ? municipality.r : null;
+        action.appliedRatePercent = municipality ? ratePercent : null;
+        action.exceptional90Percent = exceptional;
+        action.years = action.years.map(function (item) {
+          var total = roundCurrency(Number(item.total) || 0);
+          var other = roundCurrency(Number(item.other) || 0);
+          var fund = total > 0 ? roundCurrency(Math.max(0, Math.min(total * ratePercent / 100, total - other))) : 0;
+          var local = roundCurrency(Math.max(0, total - fund - other));
+          var updated = Object.assign({}, item, {
+            total: total,
+            other: other,
+            fund: fund,
+            local: local,
+            effective: total > 0 ? fund / total * 100 : 0
+          });
+          sums.total += total;
+          sums.fund += fund;
+          sums.local += local;
+          sums.other += other;
+          return updated;
+        });
+        sums.total = roundCurrency(sums.total);
+        sums.fund = roundCurrency(sums.fund);
+        sums.local = roundCurrency(sums.local);
+        sums.other = roundCurrency(sums.other);
+        sums.budgetTotal = roundCurrency(Number(action.actionTotal) || 0);
+        sums.assignedTotal = sums.total;
+        action.totals = sums;
+        return action;
+      }
+
+      function refreshAllStoredFunding() {
+        project.actions = (project.actions || []).map(refreshActionFunding);
+        if (project.draft) project.draft = refreshActionFunding(project.draft);
+      }
+
+      function actionErrors(action, allActions) {
+        var errors = [];
+        if (!action) return ["No hi ha dades de l’actuació."];
+        if (!action.municipality) errors.push("Falta el municipi.");
+        if (!Number.isInteger(Number(action.actionNumber)) || Number(action.actionNumber) <= 0) errors.push("El número d’actuació no és vàlid.");
+        if (!String(action.actionTitle || "").trim()) errors.push("Falta el títol.");
+        if (!(Number(action.actionTotal) > 0)) errors.push("Falta l’import total.");
+        if (Math.abs((Number(action.allocationPercentTotal) || 0) - 100) >= 0.001) errors.push("La distribució anual no suma el 100%.");
+        (action.years || []).forEach(function (item) {
+          if (Number(item.other) > Number(item.total) + 0.001) errors.push(item.year + ": altres fonts superiors al cost.");
+          if (Number(item.allocationPercent) > 0 && !String(item.action || "").trim()) errors.push(item.year + ": falta l’actuació anual.");
+        });
+        if (Array.isArray(allActions)) {
+          var duplicateCount = allActions.filter(function (item) { return item.actionCode === action.actionCode; }).length;
+          if (duplicateCount > 1) errors.push("El codi està duplicat.");
+        }
+        return errors;
+      }
+
+      function projectValidationErrors() {
+        var errors = [];
+        if (!project.projectName) errors.push("Introdueix el nom del PMII o projecte.");
+        if (!currentMunicipality) errors.push("Selecciona un municipi vàlid.");
+        if (!project.contactName) errors.push("Introdueix la persona de contacte.");
+        if (!project.contactEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(project.contactEmail)) errors.push("Introdueix un correu de contacte vàlid.");
+        if (!project.actions.length) errors.push("Afegeix almenys una fitxa d’actuació.");
+        project.actions.forEach(function (action) {
+          actionErrors(action, project.actions).forEach(function (error) {
+            errors.push((action.actionCode || "Fitxa sense codi") + ": " + error);
+          });
+        });
+        return errors;
+      }
+
+      function aggregateProject() {
+        var result = {
+          count: project.actions.length,
+          total: 0,
+          fund: 0,
+          local: 0,
+          other: 0,
+          areas: { A: { count: 0, total: 0 }, B: { count: 0, total: 0 }, C: { count: 0, total: 0 } },
+          years: {}
+        };
+        [2027, 2028, 2029, 2030, 2031].forEach(function (year) {
+          result.years[year] = { total: 0, fund: 0, local: 0, other: 0 };
+        });
+        project.actions.forEach(function (action) {
+          result.total += Number(action.actionTotal) || 0;
+          result.fund += Number(action.totals && action.totals.fund) || 0;
+          result.local += Number(action.totals && action.totals.local) || 0;
+          result.other += Number(action.totals && action.totals.other) || 0;
+          if (result.areas[action.areaCode]) {
+            result.areas[action.areaCode].count += 1;
+            result.areas[action.areaCode].total += Number(action.actionTotal) || 0;
+          }
+          (action.years || []).forEach(function (item) {
+            if (!result.years[item.year]) result.years[item.year] = { total: 0, fund: 0, local: 0, other: 0 };
+            result.years[item.year].total += Number(item.total) || 0;
+            result.years[item.year].fund += Number(item.fund) || 0;
+            result.years[item.year].local += Number(item.local) || 0;
+            result.years[item.year].other += Number(item.other) || 0;
+          });
+        });
+        ["total", "fund", "local", "other"].forEach(function (key) { result[key] = roundCurrency(result[key]); });
+        return result;
+      }
+
+      function createTextElement(tag, text, className) {
+        var element = document.createElement(tag);
+        element.textContent = text;
+        if (className) element.className = className;
+        return element;
+      }
+
+      function renderProject() {
+        var totals = aggregateProject();
+        root.querySelector("#llb-project-count").textContent = String(totals.count);
+        root.querySelector("#llb-project-total").textContent = euro.format(totals.total);
+        root.querySelector("#llb-project-fund").textContent = euro.format(totals.fund);
+        root.querySelector("#llb-project-local").textContent = euro.format(totals.local);
+
+        var breakdown = root.querySelector("#llb-project-breakdown");
+        breakdown.replaceChildren();
+        ["A", "B", "C"].forEach(function (code) {
+          var item = createTextElement("div", "", "llb-breakdown-item");
+          item.appendChild(createTextElement("strong", code + " — " + classifications[code].label));
+          item.appendChild(createTextElement("span", totals.areas[code].count + " actuacions · " + euro.format(totals.areas[code].total), "text-small text-muted"));
+          breakdown.appendChild(item);
+        });
+
+        projectTableBody.replaceChildren();
+        project.actions.forEach(function (action) {
+          var errors = actionErrors(action, project.actions);
+          var tr = document.createElement("tr");
+          tr.dataset.actionId = action.id;
+          tr.appendChild(createTextElement("td", action.actionCode || "—"));
+          tr.appendChild(createTextElement("td", action.actionTitle || "Sense títol"));
+          tr.appendChild(createTextElement("td", action.actionType || action.actionTypeCode || "—"));
+          tr.appendChild(createTextElement("td", euro.format(Number(action.actionTotal) || 0), "llb-table-money"));
+          var statusCell = document.createElement("td");
+          statusCell.appendChild(createTextElement("span", errors.length ? "Incompleta" : "Completa", "llb-status " + (errors.length ? "is-incomplete" : "is-complete")));
+          if (errors.length) statusCell.appendChild(createTextElement("div", errors[0], "text-small text-muted"));
+          tr.appendChild(statusCell);
+          var actionsCell = document.createElement("td");
+          var controls = createTextElement("div", "", "llb-row-actions");
+          [["edit", "Editar"], ["duplicate", "Duplicar"], ["delete", "Eliminar"]].forEach(function (definition) {
+            var button = createTextElement("button", definition[1], "btn btn-ghost");
+            button.type = "button";
+            button.dataset.projectAction = definition[0];
+            button.dataset.actionId = action.id;
+            controls.appendChild(button);
+          });
+          actionsCell.appendChild(controls);
+          tr.appendChild(actionsCell);
+          projectTableBody.appendChild(tr);
+        });
+        root.querySelector("#llb-project-empty").classList.toggle("llb-hidden", project.actions.length > 0);
+        root.querySelector("#llb-project-table-wrap").classList.toggle("llb-hidden", project.actions.length === 0);
+      }
+
+      function persistProject(message) {
+        project.updatedAt = new Date().toISOString();
+        try {
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(project));
+          saveStatus.textContent = message || "Desat automàticament a les " + new Date().toLocaleTimeString("ca-ES", { hour: "2-digit", minute: "2-digit" });
+        } catch (error) {
+          saveStatus.textContent = "No s’ha pogut desar al navegador";
+        }
+      }
+
+      function scheduleProjectSave() {
+        if (isLoading) return;
+        if (saveTimer) window.clearTimeout(saveTimer);
+        saveStatus.textContent = "Desant canvis…";
+        saveTimer = window.setTimeout(function () {
+          syncProjectCommonFromForm();
+          if (editingId) {
+            var index = project.actions.findIndex(function (item) { return item.id === editingId; });
+            if (index >= 0) {
+              isLoading = true;
+              var updated = snapshot();
+              isLoading = false;
+              updated.id = editingId;
+              updated.createdAt = project.actions[index].createdAt;
+              updated.updatedAt = new Date().toISOString();
+              project.actions[index] = refreshActionFunding(updated);
+            }
+          } else if (actionHasContent()) {
+            isLoading = true;
+            project.draft = refreshActionFunding(snapshot());
+            isLoading = false;
+          } else {
+            project.draft = null;
+          }
+          persistProject();
+          renderProject();
+        }, 350);
+      }
+
+      function setEditorState() {
+        var state = root.querySelector("#llb-editor-state");
+        var banner = root.querySelector("#llb-editor-banner");
+        var saveButton = root.querySelector("#llb-save-action");
+        if (editingId) {
+          var action = project.actions.find(function (item) { return item.id === editingId; });
+          state.textContent = action ? "Editant " + action.actionCode : "Editant fitxa";
+          banner.textContent = "Els canvis d’aquesta fitxa es desen automàticament. El botó «Actualitzar fitxa» força el desament immediat.";
+          saveButton.textContent = "Actualitzar fitxa";
+        } else {
+          state.textContent = "Fitxa nova";
+          banner.textContent = "Estàs preparant una fitxa nova. Quan estigui llesta, prem «Desar fitxa» per afegir-la al projecte.";
+          saveButton.textContent = "Desar fitxa";
+        }
+      }
+
+      function saveCurrentAction(options) {
+        options = options || {};
+        if (!editingId && !actionHasContent() && !options.allowEmpty) {
+          setSubmitStatus("La fitxa actual encara no té títol ni pressupost.", "error");
+          return null;
+        }
+        if (saveTimer) window.clearTimeout(saveTimer);
+        syncProjectCommonFromForm();
+        isLoading = true;
+        var data = snapshot();
+        isLoading = false;
+        var now = new Date().toISOString();
+        if (editingId) {
+          var index = project.actions.findIndex(function (item) { return item.id === editingId; });
+          if (index >= 0) {
+            data.id = editingId;
+            data.createdAt = project.actions[index].createdAt || now;
+            data.updatedAt = now;
+            project.actions[index] = refreshActionFunding(data);
+          }
+        } else {
+          data.id = createId("action");
+          data.createdAt = now;
+          data.updatedAt = now;
+          editingId = data.id;
+          project.actions.push(refreshActionFunding(data));
+        }
+        project.draft = null;
+        project.activeActionId = editingId;
+        persistProject(options.silent ? undefined : "Fitxa desada");
+        renderProject();
+        setEditorState();
+        if (!options.silent) setSubmitStatus("La fitxa s’ha incorporat correctament al projecte.", "success");
+        return data;
+      }
+
+      function nextAvailableActionNumber(areaCode, subareaCode, fieldNumber) {
+        var used = project.actions.filter(function (item) {
+          return item.areaCode === areaCode && item.subareaCode === subareaCode && String(item.actionFieldNumber) === String(fieldNumber);
+        }).map(function (item) { return Number(item.actionNumber) || 0; });
+        var next = 1;
+        while (used.indexOf(next) >= 0) next += 1;
+        return next;
+      }
+
+      function loadActionData(action, id) {
+        if (!action) return;
+        isLoading = true;
+        editingId = id || null;
+        areaSelect.value = classifications[action.areaCode] ? action.areaCode : "A";
+        populateSubareas();
+        if (classifications[areaSelect.value].subareas[action.subareaCode]) subareaSelect.value = action.subareaCode;
+        populateActionFields();
+        if (Array.from(actionFieldSelect.options).some(function (option) { return option.value === String(action.actionFieldNumber); })) {
+          actionFieldSelect.value = String(action.actionFieldNumber);
+        }
+        actionNumberInput.value = String(action.actionNumber || 1);
+        root.querySelector("#llb-title").value = action.actionTitle || "";
+        if (action.actionTypeCode && templates[action.actionTypeCode]) typeSelect.value = action.actionTypeCode;
+        actionTotalInput.value = currencyField.format(Number(action.actionTotal) || 0);
+        rows.forEach(function (row, index) {
+          var year = (action.years || [])[index] || {};
+          row.querySelector(".llb-action").value = year.action || "";
+          row.querySelector(".llb-allocation").value = String(Number(year.allocationPercent) || 0);
+          row.querySelector(".llb-other").value = currencyField.format(Number(year.other) || 0);
+        });
+        updateActionCode();
+        calculate();
+        isLoading = false;
+        project.activeActionId = editingId;
+        setEditorState();
+        persistProject();
+      }
+
+      function loadActionById(id) {
+        var action = project.actions.find(function (item) { return item.id === id; });
+        if (!action) return;
+        loadActionData(action, id);
+        root.querySelector("#llb-place-heading").scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      function newAction(force) {
+        if (!force && !editingId && actionHasContent() && typeof window.confirm === "function" && !window.confirm("La fitxa nova actual encara no s’ha incorporat al projecte. Vols descartar-la?")) return;
+        if (saveTimer) window.clearTimeout(saveTimer);
+        isLoading = true;
+        editingId = null;
+        project.activeActionId = null;
+        project.draft = null;
+        areaSelect.value = "A";
+        populateSubareas();
+        actionFieldSelect.value = "1";
+        actionNumberInput.value = String(nextAvailableActionNumber("A", "UR", 1));
+        root.querySelector("#llb-title").value = "";
+        typeSelect.value = "obra";
+        actionTotalInput.value = currencyField.format(0);
+        rows.forEach(function (row) {
+          row.querySelector(".llb-other").value = currencyField.format(0);
+        });
+        applyTemplate();
+        updateActionCode();
+        calculate();
+        isLoading = false;
+        persistProject();
+        renderProject();
+        setEditorState();
+        setSubmitStatus("Nova fitxa preparada.", "success");
+      }
+
+      function duplicateAction(id) {
+        var source = project.actions.find(function (item) { return item.id === id; });
+        if (!source) return;
+        var copy = cloneData(source);
+        copy.id = createId("action");
+        copy.actionNumber = nextAvailableActionNumber(copy.areaCode, copy.subareaCode, copy.actionFieldNumber);
+        copy.actionCode = copy.areaCode + "." + copy.subareaCode + "." + copy.actionFieldNumber + "." + copy.actionNumber;
+        copy.createdAt = new Date().toISOString();
+        copy.updatedAt = copy.createdAt;
+        project.actions.push(copy);
+        persistProject("Fitxa duplicada");
+        renderProject();
+        loadActionData(copy, copy.id);
+        setSubmitStatus("S’ha creat una còpia amb el codi " + copy.actionCode + ".", "success");
+      }
+
+      function deleteAction(id) {
+        var action = project.actions.find(function (item) { return item.id === id; });
+        if (!action) return;
+        if (typeof window.confirm === "function" && !window.confirm("Vols eliminar la fitxa " + action.actionCode + "?")) return;
+        project.actions = project.actions.filter(function (item) { return item.id !== id; });
+        if (editingId === id) newAction(true);
+        persistProject("Fitxa eliminada");
+        renderProject();
+        setSubmitStatus("La fitxa s’ha eliminat del projecte.", "success");
+      }
+
+      function ensureCurrentCommitted() {
+        if (editingId) return saveCurrentAction({ silent: true });
+        if (actionHasContent()) return saveCurrentAction({ silent: true });
+        syncProjectCommonFromForm();
+        persistProject();
+        return null;
+      }
+
+      function setSubmitStatus(message, type) {
+        submitStatus.textContent = message;
+        submitStatus.classList.remove("llb-hidden", "is-success", "is-error");
+        if (type === "success") submitStatus.classList.add("is-success");
+        if (type === "error") submitStatus.classList.add("is-error");
+      }
+
+      function projectExportData() {
+        ensureCurrentCommitted();
+        return {
+          schema: PROJECT_SCHEMA,
+          version: PROJECT_VERSION,
+          exportedAt: new Date().toISOString(),
+          recipient: SUBMISSION_RECIPIENT,
+          project: cloneData(project),
+          summary: aggregateProject()
+        };
+      }
+
+      function downloadProjectJson() {
+        var data = projectExportData();
+        download("projecte-fitxes-" + fileSlug(project.municipality || project.projectName) + ".json", "application/json;charset=utf-8", JSON.stringify(data, null, 2));
+        setSubmitStatus("S’ha descarregat la còpia completa del projecte.", "success");
+      }
+
+      function normalizeImportedProject(raw) {
+        var source = raw && raw.project ? raw.project : raw;
+        if (source && source.actionCode && !source.actions) {
+          var single = createEmptyProject();
+          single.municipality = source.municipality || "";
+          source.id = createId("action");
+          single.actions = [source];
+          return single;
+        }
+        if (!source || !Array.isArray(source.actions)) throw new Error("El fitxer no conté un projecte de fitxes vàlid.");
+        var base = createEmptyProject();
+        Object.keys(base).forEach(function (key) {
+          if (source[key] !== undefined) base[key] = source[key];
+        });
+        base.schema = PROJECT_SCHEMA;
+        base.version = PROJECT_VERSION;
+        base.actions = source.actions.map(function (action) {
+          var copy = cloneData(action);
+          copy.id = copy.id || createId("action");
+          return copy;
+        });
+        return base;
+      }
+
+      function applyProjectToForm() {
+        isLoading = true;
+        projectNameInput.value = project.projectName || "";
+        contactNameInput.value = project.contactName || "";
+        contactEmailInput.value = project.contactEmail || "";
+        contactPhoneInput.value = project.contactPhone || "";
+        municipalityInput.value = project.municipality || "Vila-seca";
+        resolveMunicipality();
+        exceptionInput.checked = Boolean(project.exceptional90Percent && currentMunicipality && currentMunicipality.p < 5000);
+        calculate();
+        isLoading = false;
+        refreshAllStoredFunding();
+        renderProject();
+        var active = project.actions.find(function (item) { return item.id === project.activeActionId; });
+        if (active) loadActionData(active, active.id);
+        else if (project.draft) loadActionData(project.draft, null);
+        else newAction(true);
+      }
+
+      function importProjectFile(file) {
+        if (!file) return;
+        var reader = new FileReader();
+        reader.addEventListener("load", function () {
+          try {
+            var imported = normalizeImportedProject(JSON.parse(String(reader.result || "")));
+            if (project.actions.length && typeof window.confirm === "function" && !window.confirm("La importació substituirà el projecte desat en aquest navegador. Vols continuar?")) return;
+            project = imported;
+            editingId = null;
+            applyProjectToForm();
+            persistProject("Projecte importat");
+            setSubmitStatus("El projecte s’ha importat correctament.", "success");
+          } catch (error) {
+            setSubmitStatus(error.message || "No s’ha pogut importar el projecte.", "error");
+          }
+        });
+        reader.readAsText(file, "utf-8");
+      }
+
+      function loadStoredProject() {
+        try {
+          var stored = window.localStorage.getItem(STORAGE_KEY);
+          if (stored) project = normalizeImportedProject(JSON.parse(stored));
+        } catch (error) {
+          project = createEmptyProject();
+        }
+      }
+
       function csvCell(value) {
         return '"' + String(value == null ? "" : value).replace(/"/g, '""') + '"';
       }
 
       function download(name, mime, content) {
         var blob = new Blob([content], { type: mime });
+        downloadBlob(name, blob);
+      }
+
+      function downloadBlob(name, blob) {
         var url = URL.createObjectURL(blob);
         var link = document.createElement("a");
         link.href = url;
@@ -1671,6 +2393,318 @@ svg {
         link.click();
         link.remove();
         setTimeout(function () { URL.revokeObjectURL(url); }, 0);
+      }
+
+      function xmlEscape(value) {
+        return String(value == null ? "" : value)
+          .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/\"/g, "&quot;")
+          .replace(/'/g, "&apos;");
+      }
+
+      function columnName(index) {
+        var name = "";
+        var value = index + 1;
+        while (value > 0) {
+          var remainder = (value - 1) % 26;
+          name = String.fromCharCode(65 + remainder) + name;
+          value = Math.floor((value - 1) / 26);
+        }
+        return name;
+      }
+
+      function excelCell(value, rowIndex, columnIndex) {
+        var definition = value && typeof value === "object" && Object.prototype.hasOwnProperty.call(value, "v") ? value : { v: value };
+        if (definition.v === undefined || definition.v === null) return "";
+        var reference = columnName(columnIndex) + (rowIndex + 1);
+        var style = definition.s !== undefined ? ' s="' + definition.s + '"' : "";
+        if (typeof definition.v === "number" && Number.isFinite(definition.v)) {
+          return '<c r="' + reference + '"' + style + '><v>' + definition.v + '</v></c>';
+        }
+        return '<c r="' + reference + '" t="inlineStr"' + style + '><is><t xml:space="preserve">' + xmlEscape(definition.v) + '</t></is></c>';
+      }
+
+      function worksheetXml(rowsData, widths, autoFilterRange) {
+        var maxColumns = rowsData.reduce(function (max, row) { return Math.max(max, row.length); }, 1);
+        var rowsXml = rowsData.map(function (row, rowIndex) {
+          return '<row r="' + (rowIndex + 1) + '">' + row.map(function (value, columnIndex) {
+            return excelCell(value, rowIndex, columnIndex);
+          }).join("") + '</row>';
+        }).join("");
+        var colsXml = (widths || []).length ? '<cols>' + widths.map(function (width, index) {
+          return '<col min="' + (index + 1) + '" max="' + (index + 1) + '" width="' + width + '" customWidth="1"/>';
+        }).join("") + '</cols>' : "";
+        var dimension = 'A1:' + columnName(maxColumns - 1) + Math.max(1, rowsData.length);
+        var filter = autoFilterRange ? '<autoFilter ref="' + autoFilterRange + '"/>' : "";
+        return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+          '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' +
+          '<sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><dimension ref="' + dimension + '"/><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>' +
+          colsXml + '<sheetFormatPr defaultRowHeight="15"/><sheetData>' + rowsXml + '</sheetData>' + filter +
+          '<pageMargins left="0.25" right="0.25" top="0.45" bottom="0.45" header="0.2" footer="0.2"/><pageSetup paperSize="9" orientation="landscape" fitToWidth="1" fitToHeight="0"/>' +
+          '</worksheet>';
+      }
+
+      function uniqueSheetName(requested, used) {
+        var base = String(requested || "Fitxa").replace(/[\\\/?*\[\]:]/g, " ").replace(/\s+/g, " ").trim().slice(0, 31) || "Fitxa";
+        var name = base;
+        var number = 2;
+        while (used[name.toLocaleLowerCase("ca")]) {
+          var suffix = " (" + number + ")";
+          name = base.slice(0, 31 - suffix.length) + suffix;
+          number += 1;
+        }
+        used[name.toLocaleLowerCase("ca")] = true;
+        return name;
+      }
+
+      function buildWorkbookSheets() {
+        var totals = aggregateProject();
+        var used = {};
+        var sheets = [];
+        var summaryRows = [
+          [{ v: "PROJECTE DE FITXES D’ACTUACIÓ · LLEI DE BARRIS", s: 6 }],
+          [],
+          [{ v: "Projecte", s: 2 }, { v: project.projectName, s: 5 }],
+          [{ v: "Municipi", s: 2 }, { v: project.municipality, s: 5 }],
+          [{ v: "Població 2025", s: 2 }, { v: currentMunicipality ? currentMunicipality.p : "", s: 5 }],
+          [{ v: "Finançament aplicat", s: 2 }, { v: currentMunicipality ? appliedRate() / 100 : "", s: 4 }],
+          [{ v: "Persona de contacte", s: 2 }, { v: project.contactName, s: 5 }],
+          [{ v: "Correu", s: 2 }, { v: project.contactEmail, s: 5 }],
+          [{ v: "Telèfon", s: 2 }, { v: project.contactPhone, s: 5 }],
+          [],
+          [{ v: "Actuacions", s: 2 }, { v: totals.count, s: 5 }],
+          [{ v: "Pressupost total", s: 2 }, { v: totals.total, s: 3 }],
+          [{ v: "Fons estimat", s: 2 }, { v: totals.fund, s: 3 }],
+          [{ v: "Aportació local", s: 2 }, { v: totals.local, s: 3 }],
+          [{ v: "Altres fonts", s: 2 }, { v: totals.other, s: 3 }],
+          [],
+          [{ v: "Àmbit", s: 1 }, { v: "Nombre d’actuacions", s: 1 }, { v: "Pressupost", s: 1 }]
+        ];
+        ["A", "B", "C"].forEach(function (code) {
+          summaryRows.push([{ v: code + " — " + classifications[code].label, s: 5 }, { v: totals.areas[code].count, s: 5 }, { v: totals.areas[code].total, s: 3 }]);
+        });
+        sheets.push({ name: uniqueSheetName("Resum projecte", used), rows: summaryRows, widths: [34, 30, 20] });
+
+        var annualRows = [[
+          { v: "Anualitat", s: 1 }, { v: "Cost total", s: 1 }, { v: "Fons", s: 1 }, { v: "Ens local", s: 1 }, { v: "Altres fonts", s: 1 }
+        ]];
+        Object.keys(totals.years).sort().forEach(function (year) {
+          var item = totals.years[year];
+          annualRows.push([{ v: Number(year), s: 5 }, { v: item.total, s: 3 }, { v: item.fund, s: 3 }, { v: item.local, s: 3 }, { v: item.other, s: 3 }]);
+        });
+        annualRows.push([{ v: "TOTAL", s: 2 }, { v: totals.total, s: 3 }, { v: totals.fund, s: 3 }, { v: totals.local, s: 3 }, { v: totals.other, s: 3 }]);
+        sheets.push({ name: uniqueSheetName("Pressupost anual", used), rows: annualRows, widths: [14, 18, 18, 18, 18], autoFilter: "A1:E6" });
+
+        var actionRows = [[
+          { v: "Codi", s: 1 }, { v: "Títol", s: 1 }, { v: "Àmbit", s: 1 }, { v: "Subàmbit", s: 1 }, { v: "Camp d’actuació", s: 1 }, { v: "Tipus", s: 1 }, { v: "Pressupost", s: 1 }, { v: "Fons", s: 1 }, { v: "Ens local", s: 1 }, { v: "Altres fonts", s: 1 }, { v: "Estat", s: 1 }
+        ]];
+        project.actions.forEach(function (action) {
+          actionRows.push([
+            { v: action.actionCode, s: 5 }, { v: action.actionTitle, s: 5 }, { v: action.areaCode + " — " + action.areaName, s: 5 },
+            { v: action.subareaCode + " — " + action.subareaName, s: 5 }, { v: action.actionFieldNumber + ". " + action.actionFieldName, s: 5 },
+            { v: action.actionType, s: 5 }, { v: Number(action.actionTotal) || 0, s: 3 }, { v: Number(action.totals && action.totals.fund) || 0, s: 3 },
+            { v: Number(action.totals && action.totals.local) || 0, s: 3 }, { v: Number(action.totals && action.totals.other) || 0, s: 3 },
+            { v: actionErrors(action, project.actions).length ? "Incompleta" : "Completa", s: 5 }
+          ]);
+        });
+        sheets.push({ name: uniqueSheetName("Actuacions", used), rows: actionRows, widths: [16, 40, 27, 25, 48, 30, 18, 18, 18, 18, 14], autoFilter: "A1:K" + actionRows.length });
+
+        project.actions.forEach(function (action) {
+          var actionSheetRows = [
+            [{ v: action.actionCode + " · " + action.actionTitle, s: 6 }],
+            [],
+            [{ v: "Àmbit", s: 2 }, { v: action.areaCode + " — " + action.areaName, s: 5 }],
+            [{ v: "Subàmbit", s: 2 }, { v: action.subareaCode + " — " + action.subareaName, s: 5 }],
+            [{ v: "Camp d’actuació", s: 2 }, { v: action.actionFieldNumber + ". " + action.actionFieldName, s: 5 }],
+            [{ v: "Tipus", s: 2 }, { v: action.actionType, s: 5 }],
+            [{ v: "Pressupost total", s: 2 }, { v: Number(action.actionTotal) || 0, s: 3 }],
+            [{ v: "Finançament aplicat", s: 2 }, { v: Number(action.appliedRatePercent) / 100 || 0, s: 4 }],
+            [],
+            [{ v: "Anualitat", s: 1 }, { v: "Actuació prevista", s: 1 }, { v: "% pressupost", s: 1 }, { v: "Cost total", s: 1 }, { v: "Fons", s: 1 }, { v: "Ens local", s: 1 }, { v: "Altres fonts", s: 1 }, { v: "% efectiu", s: 1 }]
+          ];
+          (action.years || []).forEach(function (item) {
+            actionSheetRows.push([
+              { v: Number(item.year), s: 5 }, { v: item.action, s: 5 }, { v: Number(item.allocationPercent) / 100, s: 4 }, { v: Number(item.total) || 0, s: 3 },
+              { v: Number(item.fund) || 0, s: 3 }, { v: Number(item.local) || 0, s: 3 }, { v: Number(item.other) || 0, s: 3 }, { v: Number(item.effective) / 100, s: 4 }
+            ]);
+          });
+          actionSheetRows.push([
+            { v: "TOTAL", s: 2 }, { v: "", s: 5 }, { v: Number(action.allocationPercentTotal) / 100, s: 4 }, { v: Number(action.actionTotal) || 0, s: 3 },
+            { v: Number(action.totals && action.totals.fund) || 0, s: 3 }, { v: Number(action.totals && action.totals.local) || 0, s: 3 }, { v: Number(action.totals && action.totals.other) || 0, s: 3 }, { v: "", s: 5 }
+          ]);
+          sheets.push({ name: uniqueSheetName(action.actionCode || "Fitxa", used), rows: actionSheetRows, widths: [14, 58, 16, 18, 18, 18, 18, 16], autoFilter: "A10:H15" });
+        });
+        return sheets;
+      }
+
+      function crc32(bytes) {
+        var table = crc32.table;
+        if (!table) {
+          table = [];
+          for (var n = 0; n < 256; n += 1) {
+            var c = n;
+            for (var k = 0; k < 8; k += 1) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+            table[n] = c >>> 0;
+          }
+          crc32.table = table;
+        }
+        var crc = 0xFFFFFFFF;
+        for (var i = 0; i < bytes.length; i += 1) crc = table[(crc ^ bytes[i]) & 0xFF] ^ (crc >>> 8);
+        return (crc ^ 0xFFFFFFFF) >>> 0;
+      }
+
+      function zipStored(files) {
+        var encoder = new TextEncoder();
+        var localParts = [];
+        var centralParts = [];
+        var offset = 0;
+        var now = new Date();
+        var dosTime = (now.getHours() << 11) | (now.getMinutes() << 5) | Math.floor(now.getSeconds() / 2);
+        var dosDate = ((Math.max(1980, now.getFullYear()) - 1980) << 9) | ((now.getMonth() + 1) << 5) | now.getDate();
+        files.forEach(function (file) {
+          var name = encoder.encode(file.name);
+          var data = file.data instanceof Uint8Array ? file.data : encoder.encode(file.data);
+          var checksum = crc32(data);
+          var local = new Uint8Array(30 + name.length);
+          var localView = new DataView(local.buffer);
+          localView.setUint32(0, 0x04034B50, true);
+          localView.setUint16(4, 20, true);
+          localView.setUint16(6, 0x0800, true);
+          localView.setUint16(8, 0, true);
+          localView.setUint16(10, dosTime, true);
+          localView.setUint16(12, dosDate, true);
+          localView.setUint32(14, checksum, true);
+          localView.setUint32(18, data.length, true);
+          localView.setUint32(22, data.length, true);
+          localView.setUint16(26, name.length, true);
+          localView.setUint16(28, 0, true);
+          local.set(name, 30);
+          localParts.push(local, data);
+
+          var central = new Uint8Array(46 + name.length);
+          var centralView = new DataView(central.buffer);
+          centralView.setUint32(0, 0x02014B50, true);
+          centralView.setUint16(4, 20, true);
+          centralView.setUint16(6, 20, true);
+          centralView.setUint16(8, 0x0800, true);
+          centralView.setUint16(10, 0, true);
+          centralView.setUint16(12, dosTime, true);
+          centralView.setUint16(14, dosDate, true);
+          centralView.setUint32(16, checksum, true);
+          centralView.setUint32(20, data.length, true);
+          centralView.setUint32(24, data.length, true);
+          centralView.setUint16(28, name.length, true);
+          centralView.setUint16(30, 0, true);
+          centralView.setUint16(32, 0, true);
+          centralView.setUint16(34, 0, true);
+          centralView.setUint16(36, 0, true);
+          centralView.setUint32(38, 0, true);
+          centralView.setUint32(42, offset, true);
+          central.set(name, 46);
+          centralParts.push(central);
+          offset += local.length + data.length;
+        });
+        var centralSize = centralParts.reduce(function (sum, part) { return sum + part.length; }, 0);
+        var end = new Uint8Array(22);
+        var endView = new DataView(end.buffer);
+        endView.setUint32(0, 0x06054B50, true);
+        endView.setUint16(4, 0, true);
+        endView.setUint16(6, 0, true);
+        endView.setUint16(8, files.length, true);
+        endView.setUint16(10, files.length, true);
+        endView.setUint32(12, centralSize, true);
+        endView.setUint32(16, offset, true);
+        endView.setUint16(20, 0, true);
+        return new Blob(localParts.concat(centralParts, [end]), { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+      }
+
+      function buildProjectXlsx() {
+        var sheets = buildWorkbookSheets();
+        var sheetOverrides = sheets.map(function (_, index) {
+          return '<Override PartName="/xl/worksheets/sheet' + (index + 1) + '.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>';
+        }).join("");
+        var workbookSheets = sheets.map(function (sheet, index) {
+          return '<sheet name="' + xmlEscape(sheet.name) + '" sheetId="' + (index + 1) + '" r:id="rId' + (index + 1) + '"/>';
+        }).join("");
+        var workbookRels = sheets.map(function (_, index) {
+          return '<Relationship Id="rId' + (index + 1) + '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet' + (index + 1) + '.xml"/>';
+        }).join("") + '<Relationship Id="rId' + (sheets.length + 1) + '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>';
+        var files = [
+          { name: "[Content_Types].xml", data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/><Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/><Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml"/>' + sheetOverrides + '</Types>' },
+          { name: "_rels/.rels", data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/><Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties" Target="docProps/app.xml"/></Relationships>' },
+          { name: "xl/workbook.xml", data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><bookViews><workbookView/></bookViews><sheets>' + workbookSheets + '</sheets><calcPr calcId="191029" fullCalcOnLoad="1"/></workbook>' },
+          { name: "xl/_rels/workbook.xml.rels", data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' + workbookRels + '</Relationships>' },
+          { name: "xl/styles.xml", data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><numFmts count="2"><numFmt numFmtId="164" formatCode="#\,##0.00 [$€-1]"/><numFmt numFmtId="165" formatCode="0.00%"/></numFmts><fonts count="2"><font><sz val="11"/><name val="Aptos"/></font><font><b/><sz val="11"/><name val="Aptos"/></font></fonts><fills count="4"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF8F90B9"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFE7E7F1"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FFD9D9E2"/></left><right style="thin"><color rgb="FFD9D9E2"/></right><top style="thin"><color rgb="FFD9D9E2"/></top><bottom style="thin"><color rgb="FFD9D9E2"/></bottom><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="7"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="1" xfId="0" applyFill="1" applyBorder="1" applyAlignment="1"><alignment wrapText="1" vertical="center"/></xf><xf numFmtId="0" fontId="1" fillId="3" borderId="1" xfId="0" applyFill="1" applyBorder="1"/><xf numFmtId="164" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/><xf numFmtId="165" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/><xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment wrapText="1" vertical="top"/></xf><xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment wrapText="1"/></xf></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>' },
+          { name: "docProps/core.xml", data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:creator>iServeis</dc:creator><cp:lastModifiedBy>Formulari Llei de barris</cp:lastModifiedBy><dcterms:created xsi:type="dcterms:W3CDTF">' + new Date().toISOString() + '</dcterms:created></cp:coreProperties>' },
+          { name: "docProps/app.xml", data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes"><Application>iServeis · Formulari Llei de barris</Application><DocSecurity>0</DocSecurity><ScaleCrop>false</ScaleCrop><HeadingPairs><vt:vector size="2" baseType="variant"><vt:variant><vt:lpstr>Fulls de càlcul</vt:lpstr></vt:variant><vt:variant><vt:i4>' + sheets.length + '</vt:i4></vt:variant></vt:vector></HeadingPairs><TitlesOfParts><vt:vector size="' + sheets.length + '" baseType="lpstr">' + sheets.map(function (sheet) { return '<vt:lpstr>' + xmlEscape(sheet.name) + '</vt:lpstr>'; }).join("") + '</vt:vector></TitlesOfParts></Properties>' }
+        ];
+        sheets.forEach(function (sheet, index) {
+          files.push({ name: "xl/worksheets/sheet" + (index + 1) + ".xml", data: worksheetXml(sheet.rows, sheet.widths, sheet.autoFilter) });
+        });
+        return zipStored(files);
+      }
+
+      function downloadProjectExcel() {
+        ensureCurrentCommitted();
+        if (!project.actions.length) {
+          setSubmitStatus("Afegeix almenys una fitxa abans de generar l’Excel.", "error");
+          return null;
+        }
+        var blob = buildProjectXlsx();
+        var name = "fitxes-llei-barris-" + fileSlug(project.municipality || project.projectName) + ".xlsx";
+        downloadBlob(name, blob);
+        setSubmitStatus("S’ha generat l’Excel complet amb el resum i totes les fitxes.", "success");
+        return blob;
+      }
+
+      function submitProject() {
+        ensureCurrentCommitted();
+        var errors = projectValidationErrors();
+        if (errors.length) {
+          setSubmitStatus("No es pot enviar encara. " + errors.slice(0, 4).join(" ") + (errors.length > 4 ? " Hi ha " + (errors.length - 4) + " incidències més." : ""), "error");
+          renderProject();
+          return;
+        }
+        if (!SUBMISSION_ENDPOINT) {
+          downloadProjectExcel();
+          var subject = "Fitxes d’actuació Llei de barris · " + project.municipality;
+          var body = "Adjunto l’Excel complet del projecte " + project.projectName + ".\n\nMunicipi: " + project.municipality + "\nActuacions: " + project.actions.length;
+          window.location.href = "mailto:" + SUBMISSION_RECIPIENT + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+          setSubmitStatus("L’Excel s’ha descarregat i s’ha obert un correu a " + SUBMISSION_RECIPIENT + ". Adjunta-hi el fitxer. L’enviament directe quedarà actiu quan s’incorpori l’URL del servei.", "success");
+          return;
+        }
+        if (window.navigator && window.navigator.onLine === false) {
+          setSubmitStatus("No hi ha connexió a Internet. Torna-ho a provar quan recuperis la connexió.", "error");
+          return;
+        }
+        var submissionId = createId("llb");
+        var button = root.querySelector("#llb-send-project");
+        button.disabled = true;
+        setSubmitStatus("Enviant el projecte a iServeis…", "");
+        var payload = {
+          token: SUBMISSION_TOKEN,
+          submissionId: submissionId,
+          submittedAt: new Date().toISOString(),
+          project: cloneData(project),
+          summary: aggregateProject()
+        };
+        window.fetch(SUBMISSION_ENDPOINT, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        }).then(function () {
+          project.lastSubmission = { id: submissionId, submittedAt: payload.submittedAt, recipient: SUBMISSION_RECIPIENT };
+          persistProject("Projecte enviat");
+          setSubmitStatus("Projecte tramès amb l’identificador " + submissionId + ". iServeis rebrà l’Excel i el JSON; també s’enviarà un justificant al correu de contacte.", "success");
+        }).catch(function () {
+          setSubmitStatus("No s’ha pogut enviar el projecte. Descarrega l’Excel o torna-ho a provar més tard.", "error");
+        }).finally(function () {
+          button.disabled = false;
+        });
       }
 
       function downloadCsv() {
@@ -1711,13 +2745,14 @@ svg {
       municipalityInput.addEventListener("input", resolveMunicipality);
       municipalityInput.addEventListener("change", resolveMunicipality);
       exceptionInput.addEventListener("change", calculate);
-      areaSelect.addEventListener("change", populateSubareas);
-      subareaSelect.addEventListener("change", populateActionFields);
-      actionFieldSelect.addEventListener("change", updateActionCode);
-      actionNumberInput.addEventListener("input", updateActionCode);
+      areaSelect.addEventListener("change", function () { populateSubareas(); scheduleProjectSave(); });
+      subareaSelect.addEventListener("change", function () { populateActionFields(); scheduleProjectSave(); });
+      actionFieldSelect.addEventListener("change", function () { updateActionCode(); scheduleProjectSave(); });
+      actionNumberInput.addEventListener("input", function () { updateActionCode(); scheduleProjectSave(); });
       actionTotalInput.addEventListener("input", calculate);
       root.querySelector("#llb-apply-template").addEventListener("click", applyTemplate);
-      root.querySelector("#llb-title").addEventListener("input", function () { validate(); });
+      root.querySelector("#llb-title").addEventListener("input", function () { validate(); scheduleProjectSave(); });
+      typeSelect.addEventListener("change", scheduleProjectSave);
       rows.forEach(function (row) {
         row.querySelectorAll("input:not(.llb-annual-amount), textarea").forEach(function (control) {
           control.addEventListener("input", calculate);
@@ -1731,12 +2766,44 @@ svg {
         });
       });
       root.querySelector("#llb-download-csv").addEventListener("click", downloadCsv);
-      root.querySelector("#llb-download-json").addEventListener("click", downloadJson);
       root.querySelector("#llb-print").addEventListener("click", function () { window.print(); });
+      root.querySelector("#llb-save-action").addEventListener("click", function () { saveCurrentAction(); });
+      root.querySelector("#llb-new-action").addEventListener("click", function () { newAction(false); });
+      root.querySelector("#llb-new-action-top").addEventListener("click", function () { newAction(false); root.querySelector("#llb-place-heading").scrollIntoView({ behavior: "smooth", block: "start" }); });
+      root.querySelector("#llb-export-excel").addEventListener("click", downloadProjectExcel);
+      root.querySelector("#llb-export-project").addEventListener("click", downloadProjectJson);
+      root.querySelector("#llb-import-project").addEventListener("change", function (event) {
+        importProjectFile(event.target.files && event.target.files[0]);
+        event.target.value = "";
+      });
+      root.querySelector("#llb-send-project").addEventListener("click", submitProject);
+      projectTableBody.addEventListener("click", function (event) {
+        var button = event.target.closest("button[data-project-action]");
+        if (!button) return;
+        if (button.dataset.projectAction === "edit") loadActionById(button.dataset.actionId);
+        if (button.dataset.projectAction === "duplicate") duplicateAction(button.dataset.actionId);
+        if (button.dataset.projectAction === "delete") deleteAction(button.dataset.actionId);
+      });
+      [projectNameInput, contactNameInput, contactEmailInput, contactPhoneInput].forEach(function (control) {
+        control.addEventListener("input", scheduleProjectSave);
+        control.addEventListener("change", scheduleProjectSave);
+      });
+
+      var municipalitySlot = root.querySelector("#llb-project-municipality-slot");
+      municipalitySlot.appendChild(municipalityInput.closest("label"));
+      municipalitySlot.appendChild(root.querySelector("#llb-municipality-list"));
+      municipalitySlot.appendChild(populationInput.closest("label"));
+      var standardRateGroup = document.createElement("div");
+      standardRateGroup.className = "llb-field";
+      standardRateGroup.appendChild(standardRateInput.closest("label"));
+      standardRateGroup.appendChild(exceptionWrap);
+      standardRateGroup.appendChild(exceptionNote);
+      municipalitySlot.appendChild(standardRateGroup);
+      root.querySelector("#llb-project-funding-slot").appendChild(root.querySelector(".llb-funding-box"));
 
       populateSubareas();
-      applyTemplate();
-      resolveMunicipality();
+      loadStoredProject();
+      applyProjectToForm();
       if (window.lucide) window.lucide.createIcons({ attrs: { width: 16, height: 16 } });
     }());
   </script>
