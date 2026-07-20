@@ -690,13 +690,27 @@ svg {
 </style>
 </head>
 <body>
-<div id="llb-budget-form">
+<div id="llb-budget-form" data-llb-area="" data-llb-build="2026-07-20.2">
   <style>
     #llb-budget-form {
       --llb-brand: rgb(143 144 185);
+      --llb-area-accent: var(--llb-brand);
+      --llb-area-accent-foreground: rgb(255 255 255);
       color: var(--foreground);
       display: grid;
       gap: 16px;
+    }
+
+    #llb-budget-form[data-llb-area="A"] {
+      --llb-area-accent: rgb(29 78 216);
+    }
+
+    #llb-budget-form[data-llb-area="B"] {
+      --llb-area-accent: rgb(21 128 61);
+    }
+
+    #llb-budget-form[data-llb-area="C"] {
+      --llb-area-accent: rgb(194 65 12);
     }
 
     #llb-budget-form * {
@@ -949,6 +963,27 @@ svg {
       white-space: nowrap;
     }
 
+    #llb-budget-form .llb-project-table tr[class*="llb-area-"] td {
+      background: color-mix(in srgb, var(--llb-row-accent) 6%, transparent);
+    }
+
+    #llb-budget-form .llb-project-table tr[class*="llb-area-"] td:first-child {
+      border-left: 4px solid var(--llb-row-accent);
+      font-weight: 600;
+    }
+
+    #llb-budget-form .llb-area-A {
+      --llb-row-accent: rgb(29 78 216);
+    }
+
+    #llb-budget-form .llb-area-B {
+      --llb-row-accent: rgb(21 128 61);
+    }
+
+    #llb-budget-form .llb-area-C {
+      --llb-row-accent: rgb(194 65 12);
+    }
+
     #llb-budget-form .llb-row-actions {
       display: flex;
       flex-wrap: wrap;
@@ -1002,6 +1037,95 @@ svg {
       gap: 2px;
     }
 
+    #llb-budget-form .llb-area-card {
+      background: color-mix(in srgb, var(--llb-row-accent) 7%, transparent);
+      border-left: 4px solid var(--llb-row-accent);
+      border-radius: 7px;
+      padding: 8px 10px;
+    }
+
+    #llb-budget-form .llb-action-editor {
+      border: 2px solid var(--llb-area-accent);
+      gap: 16px;
+      padding-top: 0;
+    }
+
+    #llb-budget-form .llb-action-editor > .llb-section-head {
+      background: color-mix(in srgb, var(--llb-area-accent) 13%, var(--card));
+      border-bottom: 1px solid color-mix(in srgb, var(--llb-area-accent) 45%, var(--border));
+      border-radius: 10px 10px 0 0;
+      margin: 0 -16px;
+      padding: 14px 16px;
+    }
+
+    #llb-budget-form .llb-action-editor > .llb-editor-banner {
+      background: color-mix(in srgb, var(--llb-area-accent) 9%, transparent);
+      border-color: color-mix(in srgb, var(--llb-area-accent) 38%, var(--border));
+    }
+
+    #llb-budget-form .llb-tabs {
+      background: color-mix(in srgb, var(--llb-area-accent) 9%, var(--card));
+      border: 1px solid color-mix(in srgb, var(--llb-area-accent) 32%, var(--border));
+      border-radius: 10px;
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      padding: 8px;
+    }
+
+    #llb-budget-form .llb-tab {
+      appearance: none;
+      background: color-mix(in srgb, var(--llb-area-accent) 7%, var(--card));
+      border: 1px solid color-mix(in srgb, var(--llb-area-accent) 32%, var(--border));
+      border-radius: 8px;
+      color: var(--foreground);
+      cursor: pointer;
+      font: inherit;
+      font-weight: 600;
+      line-height: 1.25;
+      min-height: 48px;
+      padding: 9px 10px;
+      text-align: center;
+    }
+
+    #llb-budget-form .llb-tab:hover {
+      background: color-mix(in srgb, var(--llb-area-accent) 15%, var(--card));
+    }
+
+    #llb-budget-form .llb-tab[aria-selected="true"] {
+      background: var(--llb-area-accent);
+      border-color: var(--llb-area-accent);
+      color: var(--llb-area-accent-foreground);
+    }
+
+    #llb-budget-form .llb-tab:focus-visible {
+      outline: 3px solid color-mix(in srgb, var(--llb-area-accent) 42%, transparent);
+      outline-offset: 2px;
+    }
+
+    #llb-budget-form .llb-tab-panel {
+      background: color-mix(in srgb, var(--llb-area-accent) 3%, var(--card));
+      border: 1px solid color-mix(in srgb, var(--llb-area-accent) 30%, var(--border));
+      border-left: 4px solid var(--llb-area-accent);
+      border-radius: 10px;
+      display: grid;
+      gap: 14px;
+      padding: 14px;
+    }
+
+    #llb-budget-form .llb-tab-panel[hidden] {
+      display: none;
+    }
+
+    #llb-budget-form .llb-action-editor .llb-budget-base {
+      background: color-mix(in srgb, var(--llb-area-accent) 8%, transparent);
+      border-left-color: var(--llb-area-accent);
+    }
+
+    #llb-budget-form .llb-action-editor .llb-meter-fund {
+      background: var(--llb-area-accent);
+    }
+
     #llb-budget-form .llb-submit-status.is-success {
       border-color: var(--viz-series-2);
     }
@@ -1031,6 +1155,10 @@ svg {
         grid-template-columns: 1fr;
       }
 
+      #llb-budget-form .llb-tabs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
       #llb-budget-form .llb-brand-header {
         align-items: flex-start;
         flex-direction: column;
@@ -1058,6 +1186,10 @@ svg {
 
       #llb-budget-form .llb-section {
         break-inside: avoid;
+      }
+
+      #llb-budget-form .llb-tab-panel[hidden] {
+        display: grid;
       }
     }
   </style>
@@ -1119,16 +1251,26 @@ svg {
     <p class="text-small text-muted">Destinatari configurat: <strong>suport2@iserveis.cat</strong>. Abans d’enviar, el sistema comprovarà les dades generals, els codis i els pressupostos de totes les fitxes.</p>
   </section>
 
-  <section class="llb-section" aria-labelledby="llb-place-heading">
+  <section class="llb-section llb-action-editor" aria-labelledby="llb-place-heading">
     <div class="llb-section-head">
-      <h2 id="llb-place-heading">3. Edició de la fitxa d’actuació</h2>
+      <h2 id="llb-place-heading">3. Creació i edició de la fitxa d’actuació</h2>
       <span class="viz-badge" id="llb-editor-state">Fitxa nova</span>
     </div>
     <div class="llb-editor-banner text-small" id="llb-editor-banner">Estàs preparant una fitxa nova. Quan estigui llesta, prem «Desar fitxa» per afegir-la al projecte.</div>
+
+    <div class="llb-tabs llb-no-print" role="tablist" aria-label="Apartats de creació de la fitxa">
+      <button class="llb-tab" id="llb-tab-identification" type="button" role="tab" aria-controls="llb-panel-identification" aria-selected="true" data-tab="identification">1. Identificació</button>
+      <button class="llb-tab" id="llb-tab-structure" type="button" role="tab" aria-controls="llb-panel-structure" aria-selected="false" data-tab="structure" tabindex="-1">2. Estructura</button>
+      <button class="llb-tab" id="llb-tab-budget" type="button" role="tab" aria-controls="llb-panel-budget" aria-selected="false" data-tab="budget" tabindex="-1">3. Calendari i pressupost</button>
+      <button class="llb-tab" id="llb-tab-summary" type="button" role="tab" aria-controls="llb-panel-summary" aria-selected="false" data-tab="summary" tabindex="-1">4. Resum i desament</button>
+    </div>
+
+    <div class="llb-tab-panel" id="llb-panel-identification" role="tabpanel" aria-labelledby="llb-tab-identification" data-panel="identification">
+      <h3>Identificació i classificació</h3>
     <div class="llb-form-grid">
       <label class="form-label llb-field llb-wide" for="llb-municipality">
         Municipi
-        <input class="form-control" id="llb-municipality" list="llb-municipality-list" autocomplete="off" value="Vila-seca" placeholder="Escriu o selecciona un municipi">
+        <input class="form-control" id="llb-municipality" list="llb-municipality-list" autocomplete="off" value="" placeholder="Escriu o selecciona un municipi">
       </label>
       <datalist id="llb-municipality-list"></datalist>
       <label class="form-label llb-field" for="llb-population">
@@ -1145,6 +1287,7 @@ svg {
       <label class="form-label llb-field" for="llb-area">
         Àmbit
         <select class="form-select" id="llb-area">
+          <option value="">Selecciona un àmbit</option>
           <option value="A">A — Transformacions físiques</option>
           <option value="B">B — Transició ecològica</option>
           <option value="C">C — Acció sociocomunitària</option>
@@ -1160,11 +1303,11 @@ svg {
       </label>
       <label class="form-label llb-field" for="llb-action-number">
         Número d’actuació
-        <input class="form-control" id="llb-action-number" type="number" min="1" step="1" value="1">
+        <input class="form-control" id="llb-action-number" type="number" min="1" step="1" value="">
       </label>
       <label class="form-label llb-field" for="llb-generated-code">
         Codi generat automàticament
-        <input class="form-control llb-readonly" id="llb-generated-code" readonly value="A.UR.1.1">
+        <input class="form-control llb-readonly" id="llb-generated-code" readonly value="">
       </label>
       <label class="form-label llb-field llb-wide" for="llb-title">
         Títol de l’actuació
@@ -1184,17 +1327,17 @@ svg {
       <p class="text-small text-muted llb-hidden" id="llb-exception-note">Només s’ha d’activar si la dificultat per finançar el programa queda justificada i la convocatòria o resolució admet l’excepció. La condició rural s’ha de verificar documentalment.</p>
       <p class="text-small text-destructive llb-hidden" id="llb-municipality-error">Selecciona un municipi de la llista.</p>
     </div>
-  </section>
+    </div>
 
-  <section class="llb-section" aria-labelledby="llb-type-heading">
+    <div class="llb-tab-panel" id="llb-panel-structure" role="tabpanel" aria-labelledby="llb-tab-structure" data-panel="structure" hidden>
     <div class="llb-section-head">
-      <h2 id="llb-type-heading">4. Estructura de l’actuació</h2>
-      <button class="btn btn-primary llb-no-print" id="llb-apply-template" type="button"><i data-lucide="wand-sparkles" aria-hidden="true"></i> Aplicar estructura</button>
+      <h3 id="llb-type-heading">Estructura de l’actuació</h3>
     </div>
     <div class="llb-form-grid">
       <label class="form-label llb-field llb-wide" for="llb-type">
         Tipus principal d’actuació
         <select class="form-select" id="llb-type">
+          <option value="">Selecciona un tipus d’actuació</option>
           <option value="obra">Obra, rehabilitació o urbanització</option>
           <option value="subvencio">Subvencions o ajuts</option>
           <option value="programa">Programa, curs o taller</option>
@@ -1203,20 +1346,23 @@ svg {
           <option value="hibrida">Servei o equipament híbrid i dinamització</option>
         </select>
       </label>
+      <div class="llb-actions llb-wide llb-no-print">
+        <button class="btn btn-primary" id="llb-apply-template" type="button"><i data-lucide="wand-sparkles" aria-hidden="true"></i> Aplicar estructura</button>
+      </div>
       <p class="text-small text-muted llb-wide" id="llb-type-help">L’estructura i el repartiment percentual proposats es basen en les seqüències i imports de les fitxes de Vila-seca. Pots editar els textos i percentatges després d’aplicar-los.</p>
     </div>
-  </section>
+    </div>
 
-  <section class="llb-section" aria-labelledby="llb-budget-heading">
+    <div class="llb-tab-panel" id="llb-panel-budget" role="tabpanel" aria-labelledby="llb-tab-budget" data-panel="budget" hidden>
     <div class="llb-section-head">
-      <h2 id="llb-budget-heading">5. Calendari i pressupost 2027–2031</h2>
+      <h3 id="llb-budget-heading">Calendari i pressupost 2027–2031</h3>
       <span class="text-small text-muted">Imports totals elegibles, amb IVA quan no sigui recuperable</span>
     </div>
 
     <div class="llb-budget-base">
       <label class="form-label llb-field" for="llb-action-total">
         Import total de l’actuació (€)
-        <input class="form-control llb-money llb-currency-input" id="llb-action-total" type="text" inputmode="decimal" value="0" placeholder="0,00">
+        <input class="form-control llb-money llb-currency-input" id="llb-action-total" type="text" inputmode="decimal" value="" placeholder="0,00">
       </label>
       <div class="llb-allocation-status text-small" id="llb-allocation-status" aria-live="polite">Distribució: 100%</div>
       <p class="text-small text-muted llb-wide">Pots modificar tant el percentatge com l’import anual. En editar un import anual, el percentatge corresponent es recalcula automàticament.</p>
@@ -1229,9 +1375,9 @@ svg {
           <textarea class="form-control llb-action" id="llb-action-2027" rows="3"></textarea>
         </label>
         <div class="llb-year-fields">
-          <label class="form-label llb-field" for="llb-allocation-2027">Percentatge (%)<input class="form-control llb-allocation llb-money" id="llb-allocation-2027" type="number" min="0" max="100" step="0.1" value="0"></label>
-          <label class="form-label llb-field" for="llb-amount-2027">Import anual (€)<input class="form-control llb-annual-amount llb-money llb-currency-input" id="llb-amount-2027" type="text" inputmode="decimal" value="0,00"></label>
-          <label class="form-label llb-field" for="llb-other-2027">Altres fonts (€)<input class="form-control llb-other llb-money llb-currency-input" id="llb-other-2027" type="text" inputmode="decimal" value="0" placeholder="0,00"></label>
+          <label class="form-label llb-field" for="llb-allocation-2027">Percentatge (%)<input class="form-control llb-allocation llb-money" id="llb-allocation-2027" type="number" min="0" max="100" step="0.1" value=""></label>
+          <label class="form-label llb-field" for="llb-amount-2027">Import anual (€)<input class="form-control llb-annual-amount llb-money llb-currency-input" id="llb-amount-2027" type="text" inputmode="decimal" value=""></label>
+          <label class="form-label llb-field" for="llb-other-2027">Altres fonts (€)<input class="form-control llb-other llb-money llb-currency-input" id="llb-other-2027" type="text" inputmode="decimal" value="" placeholder="0,00"></label>
         </div>
         <div class="llb-year-result" aria-label="Finançament de 2027">
           <div class="llb-year-result-line"><span>Fons</span><strong class="llb-fund llb-money">0,00 €</strong></div>
@@ -1246,9 +1392,9 @@ svg {
           <textarea class="form-control llb-action" id="llb-action-2028" rows="3"></textarea>
         </label>
         <div class="llb-year-fields">
-          <label class="form-label llb-field" for="llb-allocation-2028">Percentatge (%)<input class="form-control llb-allocation llb-money" id="llb-allocation-2028" type="number" min="0" max="100" step="0.1" value="0"></label>
-          <label class="form-label llb-field" for="llb-amount-2028">Import anual (€)<input class="form-control llb-annual-amount llb-money llb-currency-input" id="llb-amount-2028" type="text" inputmode="decimal" value="0,00"></label>
-          <label class="form-label llb-field" for="llb-other-2028">Altres fonts (€)<input class="form-control llb-other llb-money llb-currency-input" id="llb-other-2028" type="text" inputmode="decimal" value="0" placeholder="0,00"></label>
+          <label class="form-label llb-field" for="llb-allocation-2028">Percentatge (%)<input class="form-control llb-allocation llb-money" id="llb-allocation-2028" type="number" min="0" max="100" step="0.1" value=""></label>
+          <label class="form-label llb-field" for="llb-amount-2028">Import anual (€)<input class="form-control llb-annual-amount llb-money llb-currency-input" id="llb-amount-2028" type="text" inputmode="decimal" value=""></label>
+          <label class="form-label llb-field" for="llb-other-2028">Altres fonts (€)<input class="form-control llb-other llb-money llb-currency-input" id="llb-other-2028" type="text" inputmode="decimal" value="" placeholder="0,00"></label>
         </div>
         <div class="llb-year-result" aria-label="Finançament de 2028">
           <div class="llb-year-result-line"><span>Fons</span><strong class="llb-fund llb-money">0,00 €</strong></div>
@@ -1263,9 +1409,9 @@ svg {
           <textarea class="form-control llb-action" id="llb-action-2029" rows="3"></textarea>
         </label>
         <div class="llb-year-fields">
-          <label class="form-label llb-field" for="llb-allocation-2029">Percentatge (%)<input class="form-control llb-allocation llb-money" id="llb-allocation-2029" type="number" min="0" max="100" step="0.1" value="0"></label>
-          <label class="form-label llb-field" for="llb-amount-2029">Import anual (€)<input class="form-control llb-annual-amount llb-money llb-currency-input" id="llb-amount-2029" type="text" inputmode="decimal" value="0,00"></label>
-          <label class="form-label llb-field" for="llb-other-2029">Altres fonts (€)<input class="form-control llb-other llb-money llb-currency-input" id="llb-other-2029" type="text" inputmode="decimal" value="0" placeholder="0,00"></label>
+          <label class="form-label llb-field" for="llb-allocation-2029">Percentatge (%)<input class="form-control llb-allocation llb-money" id="llb-allocation-2029" type="number" min="0" max="100" step="0.1" value=""></label>
+          <label class="form-label llb-field" for="llb-amount-2029">Import anual (€)<input class="form-control llb-annual-amount llb-money llb-currency-input" id="llb-amount-2029" type="text" inputmode="decimal" value=""></label>
+          <label class="form-label llb-field" for="llb-other-2029">Altres fonts (€)<input class="form-control llb-other llb-money llb-currency-input" id="llb-other-2029" type="text" inputmode="decimal" value="" placeholder="0,00"></label>
         </div>
         <div class="llb-year-result" aria-label="Finançament de 2029">
           <div class="llb-year-result-line"><span>Fons</span><strong class="llb-fund llb-money">0,00 €</strong></div>
@@ -1280,9 +1426,9 @@ svg {
           <textarea class="form-control llb-action" id="llb-action-2030" rows="3"></textarea>
         </label>
         <div class="llb-year-fields">
-          <label class="form-label llb-field" for="llb-allocation-2030">Percentatge (%)<input class="form-control llb-allocation llb-money" id="llb-allocation-2030" type="number" min="0" max="100" step="0.1" value="0"></label>
-          <label class="form-label llb-field" for="llb-amount-2030">Import anual (€)<input class="form-control llb-annual-amount llb-money llb-currency-input" id="llb-amount-2030" type="text" inputmode="decimal" value="0,00"></label>
-          <label class="form-label llb-field" for="llb-other-2030">Altres fonts (€)<input class="form-control llb-other llb-money llb-currency-input" id="llb-other-2030" type="text" inputmode="decimal" value="0" placeholder="0,00"></label>
+          <label class="form-label llb-field" for="llb-allocation-2030">Percentatge (%)<input class="form-control llb-allocation llb-money" id="llb-allocation-2030" type="number" min="0" max="100" step="0.1" value=""></label>
+          <label class="form-label llb-field" for="llb-amount-2030">Import anual (€)<input class="form-control llb-annual-amount llb-money llb-currency-input" id="llb-amount-2030" type="text" inputmode="decimal" value=""></label>
+          <label class="form-label llb-field" for="llb-other-2030">Altres fonts (€)<input class="form-control llb-other llb-money llb-currency-input" id="llb-other-2030" type="text" inputmode="decimal" value="" placeholder="0,00"></label>
         </div>
         <div class="llb-year-result" aria-label="Finançament de 2030">
           <div class="llb-year-result-line"><span>Fons</span><strong class="llb-fund llb-money">0,00 €</strong></div>
@@ -1297,9 +1443,9 @@ svg {
           <textarea class="form-control llb-action" id="llb-action-2031" rows="3"></textarea>
         </label>
         <div class="llb-year-fields">
-          <label class="form-label llb-field" for="llb-allocation-2031">Percentatge (%)<input class="form-control llb-allocation llb-money" id="llb-allocation-2031" type="number" min="0" max="100" step="0.1" value="0"></label>
-          <label class="form-label llb-field" for="llb-amount-2031">Import anual (€)<input class="form-control llb-annual-amount llb-money llb-currency-input" id="llb-amount-2031" type="text" inputmode="decimal" value="0,00"></label>
-          <label class="form-label llb-field" for="llb-other-2031">Altres fonts (€)<input class="form-control llb-other llb-money llb-currency-input" id="llb-other-2031" type="text" inputmode="decimal" value="0" placeholder="0,00"></label>
+          <label class="form-label llb-field" for="llb-allocation-2031">Percentatge (%)<input class="form-control llb-allocation llb-money" id="llb-allocation-2031" type="number" min="0" max="100" step="0.1" value=""></label>
+          <label class="form-label llb-field" for="llb-amount-2031">Import anual (€)<input class="form-control llb-annual-amount llb-money llb-currency-input" id="llb-amount-2031" type="text" inputmode="decimal" value=""></label>
+          <label class="form-label llb-field" for="llb-other-2031">Altres fonts (€)<input class="form-control llb-other llb-money llb-currency-input" id="llb-other-2031" type="text" inputmode="decimal" value="" placeholder="0,00"></label>
         </div>
         <div class="llb-year-result" aria-label="Finançament de 2031">
           <div class="llb-year-result-line"><span>Fons</span><strong class="llb-fund llb-money">0,00 €</strong></div>
@@ -1308,11 +1454,11 @@ svg {
         </div>
       </article>
     </div>
-  </section>
+    </div>
 
-  <section class="llb-section" aria-labelledby="llb-summary-heading">
+    <div class="llb-tab-panel" id="llb-panel-summary" role="tabpanel" aria-labelledby="llb-tab-summary" data-panel="summary" hidden>
     <div class="llb-section-head">
-      <h2 id="llb-summary-heading">6. Resum i desament de la fitxa</h2>
+      <h3 id="llb-summary-heading">Resum i desament de la fitxa</h3>
       <span class="viz-badge" id="llb-summary-rate">—</span>
     </div>
     <div class="viz-grid">
@@ -1346,6 +1492,7 @@ svg {
       <button class="btn" id="llb-print" type="button"><i data-lucide="printer" aria-hidden="true"></i> Imprimir o desar en PDF</button>
     </div>
     <p class="text-small text-muted llb-source-note">El repartiment percentual inicial és orientatiu i es basa en les fitxes de Vila-seca; es pot ajustar sempre que sumi el 100%. La mateixa taxa màxima s’aplica a cada anualitat i, si hi ha altres fonts, l’aportació del Fons es limita per evitar el sobrefinançament.</p>
+    </div>
   </section>
 
   <script>
@@ -1557,14 +1704,16 @@ svg {
       var actionTotalInput = root.querySelector("#llb-action-total");
       var allocationStatus = root.querySelector("#llb-allocation-status");
       var rows = Array.from(root.querySelectorAll(".llb-year-row"));
+      var editorTabs = Array.from(root.querySelectorAll(".llb-tab"));
+      var editorPanels = Array.from(root.querySelectorAll(".llb-tab-panel"));
       var currentMunicipality = null;
       var projectNameInput = root.querySelector("#llb-project-name");
       var saveStatus = root.querySelector("#llb-save-status");
       var projectTableBody = root.querySelector("#llb-project-table-body");
       var submitStatus = root.querySelector("#llb-submit-status");
-      var STORAGE_KEY = "iserveis.llb.project.v2";
+      var STORAGE_KEY = "iserveis.llb.project.v3";
       var PROJECT_SCHEMA = "iserveis-llb-project";
-      var PROJECT_VERSION = 2;
+      var PROJECT_VERSION = 3;
       var SUBMISSION_RECIPIENT = "suport2@iserveis.cat";
       var SUBMISSION_ENDPOINT = "https://script.google.com/macros/s/AKfycbyXMDX2TCxm_2ttXvgnVdtCUf3H_VeR-2LOXo2J7MC3qEZ1PkAIAhf5L5IfstkdlqTB/exec";
       var SUBMISSION_TOKEN = "llb-7f28dca4e9c041dfa36e2bb15c9477e2";
@@ -1592,7 +1741,7 @@ svg {
           version: PROJECT_VERSION,
           projectId: createId("project"),
           projectName: "",
-          municipality: "Vila-seca",
+          municipality: "",
           exceptional90Percent: false,
           actions: [],
           draft: null,
@@ -1614,9 +1763,29 @@ svg {
         select.appendChild(option);
       }
 
+      function selectEditorTab(name, focusTab) {
+        editorTabs.forEach(function (tab) {
+          var selected = tab.dataset.tab === name;
+          tab.setAttribute("aria-selected", selected ? "true" : "false");
+          tab.tabIndex = selected ? 0 : -1;
+          if (selected && focusTab) tab.focus();
+        });
+        editorPanels.forEach(function (panel) {
+          panel.hidden = panel.dataset.panel !== name;
+        });
+      }
+
       function populateSubareas() {
-        var area = classifications[areaSelect.value];
+        var areaCode = classifications[areaSelect.value] ? areaSelect.value : "";
+        areaSelect.value = areaCode;
+        root.setAttribute("data-llb-area", areaCode);
         subareaSelect.replaceChildren();
+        addOption(subareaSelect, "", "Selecciona primer un àmbit");
+        var area = classifications[areaCode];
+        if (!area) {
+          populateActionFields();
+          return;
+        }
         Object.keys(area.subareas).forEach(function (code) {
           addOption(subareaSelect, code, code + " — " + area.subareas[code].label);
         });
@@ -1624,8 +1793,14 @@ svg {
       }
 
       function populateActionFields() {
-        var subarea = classifications[areaSelect.value].subareas[subareaSelect.value];
         actionFieldSelect.replaceChildren();
+        addOption(actionFieldSelect, "", "Selecciona primer un subàmbit");
+        var area = classifications[areaSelect.value];
+        var subarea = area && area.subareas[subareaSelect.value];
+        if (!subarea) {
+          updateActionCode();
+          return;
+        }
         subarea.fields.forEach(function (field) {
           addOption(actionFieldSelect, String(field.n), field.n + ". " + field.t);
         });
@@ -1639,7 +1814,8 @@ svg {
 
       function updateActionCode() {
         var number = actionNumber();
-        generatedCodeInput.value = areaSelect.value + "." + subareaSelect.value + "." + actionFieldSelect.value + "." + (number || "—");
+        generatedCodeInput.value = areaSelect.value && subareaSelect.value && actionFieldSelect.value && number ?
+          areaSelect.value + "." + subareaSelect.value + "." + actionFieldSelect.value + "." + number : "";
         validate();
       }
 
@@ -1729,8 +1905,12 @@ svg {
       }
 
       function applyTemplate() {
-        var phases = templates[typeSelect.value] || templates.obra;
-        var allocations = templateAllocations[typeSelect.value] || templateAllocations.obra;
+        if (!templates[typeSelect.value]) {
+          setSubmitStatus("Selecciona primer el tipus principal d’actuació.", "error");
+          return;
+        }
+        var phases = templates[typeSelect.value];
+        var allocations = templateAllocations[typeSelect.value];
         rows.forEach(function (row, index) {
           row.querySelector(".llb-action").value = phases[index] || "";
           row.querySelector(".llb-allocation").value = allocations[index] || 0;
@@ -1758,9 +1938,10 @@ svg {
 
       function calculate() {
         var allocation = allocationData();
+        var hasEnteredTotal = String(actionTotalInput.value || "").trim() !== "";
         var data = rows.map(function (row, index) {
           var item = rowData(row, index, allocation);
-          row.querySelector(".llb-annual-amount").value = currencyField.format(item.total);
+          row.querySelector(".llb-annual-amount").value = hasEnteredTotal ? currencyField.format(item.total) : "";
           row.querySelector(".llb-fund").textContent = euro.format(item.fund);
           row.querySelector(".llb-local").textContent = euro.format(item.local);
           row.querySelector(".llb-effective").textContent = item.effective.toLocaleString("ca-ES", { maximumFractionDigits: 1 }) + "%";
@@ -1813,8 +1994,12 @@ svg {
         data = data || rows.map(function (row, index) { return rowData(row, index, allocation); });
         var errors = [];
         if (!currentMunicipality) errors.push("Selecciona un municipi de la llista.");
+        if (!classifications[areaSelect.value]) errors.push("Selecciona l’àmbit de l’actuació.");
+        if (!classifications[areaSelect.value] || !classifications[areaSelect.value].subareas[subareaSelect.value]) errors.push("Selecciona el subàmbit de l’actuació.");
+        if (!actionFieldSelect.value) errors.push("Selecciona el camp d’actuació.");
         if (!actionNumber()) errors.push("Introdueix un número d’actuació enter i superior a zero.");
         if (!root.querySelector("#llb-title").value.trim()) errors.push("Afegeix el títol de l’actuació.");
+        if (!templates[typeSelect.value]) errors.push("Selecciona el tipus principal d’actuació.");
         if (allocation.total <= 0) errors.push("Introdueix l’import total de l’actuació.");
         if (Math.abs(allocation.percentageTotal - 100) >= 0.001) errors.push("La distribució anual ha de sumar exactament el 100%.");
         if (rows.some(function (row) { var value = Number(row.querySelector(".llb-allocation").value); return !Number.isFinite(value) || value < 0 || value > 100; })) errors.push("Cada percentatge anual ha d’estar entre el 0% i el 100%.");
@@ -1836,8 +2021,8 @@ svg {
       function snapshot() {
         var result = calculate();
         var area = classifications[areaSelect.value];
-        var subarea = area.subareas[subareaSelect.value];
-        var selectedField = subarea.fields.find(function (field) {
+        var subarea = area && area.subareas[subareaSelect.value];
+        var selectedField = subarea && subarea.fields.find(function (field) {
           return String(field.n) === actionFieldSelect.value;
         });
         return {
@@ -1848,15 +2033,15 @@ svg {
           exceptional90Percent: exceptionInput.checked,
           actionCode: generatedCodeInput.value,
           areaCode: areaSelect.value,
-          areaName: area.label,
+          areaName: area ? area.label : "",
           subareaCode: subareaSelect.value,
-          subareaName: subarea.label,
-          actionFieldNumber: selectedField.n,
-          actionFieldName: selectedField.t,
+          subareaName: subarea ? subarea.label : "",
+          actionFieldNumber: selectedField ? selectedField.n : null,
+          actionFieldName: selectedField ? selectedField.t : "",
           actionNumber: actionNumber(),
           actionTitle: root.querySelector("#llb-title").value.trim(),
           actionTypeCode: typeSelect.value,
-          actionType: typeSelect.options[typeSelect.selectedIndex].text,
+          actionType: templates[typeSelect.value] ? typeSelect.options[typeSelect.selectedIndex].text : "",
           actionTotal: result.allocation.total,
           allocationPercentTotal: result.allocation.percentageTotal,
           years: result.rows,
@@ -1943,8 +2128,12 @@ svg {
         var errors = [];
         if (!action) return ["No hi ha dades de l’actuació."];
         if (!action.municipality) errors.push("Falta el municipi.");
+        if (!classifications[action.areaCode]) errors.push("Falta l’àmbit.");
+        if (!action.subareaCode) errors.push("Falta el subàmbit.");
+        if (!action.actionFieldNumber) errors.push("Falta el camp d’actuació.");
         if (!Number.isInteger(Number(action.actionNumber)) || Number(action.actionNumber) <= 0) errors.push("El número d’actuació no és vàlid.");
         if (!String(action.actionTitle || "").trim()) errors.push("Falta el títol.");
+        if (!templates[action.actionTypeCode]) errors.push("Falta el tipus principal d’actuació.");
         if (!(Number(action.actionTotal) > 0)) errors.push("Falta l’import total.");
         if (Math.abs((Number(action.allocationPercentTotal) || 0) - 100) >= 0.001) errors.push("La distribució anual no suma el 100%.");
         (action.years || []).forEach(function (item) {
@@ -2022,7 +2211,7 @@ svg {
         var breakdown = root.querySelector("#llb-project-breakdown");
         breakdown.replaceChildren();
         ["A", "B", "C"].forEach(function (code) {
-          var item = createTextElement("div", "", "llb-breakdown-item");
+          var item = createTextElement("div", "", "llb-breakdown-item llb-area-card llb-area-" + code);
           item.appendChild(createTextElement("strong", code + " — " + classifications[code].label));
           item.appendChild(createTextElement("span", totals.areas[code].count + " actuacions · " + euro.format(totals.areas[code].total), "text-small text-muted"));
           breakdown.appendChild(item);
@@ -2032,6 +2221,7 @@ svg {
         project.actions.forEach(function (action) {
           var errors = actionErrors(action, project.actions);
           var tr = document.createElement("tr");
+          tr.className = "llb-area-" + (classifications[action.areaCode] ? action.areaCode : "A");
           tr.dataset.actionId = action.id;
           tr.appendChild(createTextElement("td", action.actionCode || "—"));
           tr.appendChild(createTextElement("td", action.actionTitle || "Sense títol"));
@@ -2160,24 +2350,25 @@ svg {
 
       function loadActionData(action, id) {
         if (!action) return;
+        selectEditorTab("identification", false);
         isLoading = true;
         editingId = id || null;
-        areaSelect.value = classifications[action.areaCode] ? action.areaCode : "A";
+        areaSelect.value = classifications[action.areaCode] ? action.areaCode : "";
         populateSubareas();
-        if (classifications[areaSelect.value].subareas[action.subareaCode]) subareaSelect.value = action.subareaCode;
+        if (classifications[areaSelect.value] && classifications[areaSelect.value].subareas[action.subareaCode]) subareaSelect.value = action.subareaCode;
         populateActionFields();
         if (Array.from(actionFieldSelect.options).some(function (option) { return option.value === String(action.actionFieldNumber); })) {
           actionFieldSelect.value = String(action.actionFieldNumber);
         }
-        actionNumberInput.value = String(action.actionNumber || 1);
+        actionNumberInput.value = action.actionNumber ? String(action.actionNumber) : "";
         root.querySelector("#llb-title").value = action.actionTitle || "";
-        if (action.actionTypeCode && templates[action.actionTypeCode]) typeSelect.value = action.actionTypeCode;
-        actionTotalInput.value = currencyField.format(Number(action.actionTotal) || 0);
+        typeSelect.value = action.actionTypeCode && templates[action.actionTypeCode] ? action.actionTypeCode : "";
+        actionTotalInput.value = Number(action.actionTotal) > 0 ? currencyField.format(Number(action.actionTotal)) : "";
         rows.forEach(function (row, index) {
           var year = (action.years || [])[index] || {};
           row.querySelector(".llb-action").value = year.action || "";
-          row.querySelector(".llb-allocation").value = String(Number(year.allocationPercent) || 0);
-          row.querySelector(".llb-other").value = currencyField.format(Number(year.other) || 0);
+          row.querySelector(".llb-allocation").value = Number(year.allocationPercent) > 0 ? String(Number(year.allocationPercent)) : "";
+          row.querySelector(".llb-other").value = Number(year.other) > 0 ? currencyField.format(Number(year.other)) : "";
         });
         updateActionCode();
         calculate();
@@ -2197,21 +2388,23 @@ svg {
       function newAction(force) {
         if (!force && !editingId && actionHasContent() && typeof window.confirm === "function" && !window.confirm("La fitxa nova actual encara no s’ha incorporat al projecte. Vols descartar-la?")) return;
         if (saveTimer) window.clearTimeout(saveTimer);
+        selectEditorTab("identification", false);
         isLoading = true;
         editingId = null;
         project.activeActionId = null;
         project.draft = null;
-        areaSelect.value = "A";
+        areaSelect.value = "";
         populateSubareas();
-        actionFieldSelect.value = "1";
-        actionNumberInput.value = String(nextAvailableActionNumber("A", "UR", 1));
+        actionNumberInput.value = "";
         root.querySelector("#llb-title").value = "";
-        typeSelect.value = "obra";
-        actionTotalInput.value = currencyField.format(0);
+        typeSelect.value = "";
+        actionTotalInput.value = "";
         rows.forEach(function (row) {
-          row.querySelector(".llb-other").value = currencyField.format(0);
+          row.querySelector(".llb-action").value = "";
+          row.querySelector(".llb-allocation").value = "";
+          row.querySelector(".llb-annual-amount").value = "";
+          row.querySelector(".llb-other").value = "";
         });
-        applyTemplate();
         updateActionCode();
         calculate();
         isLoading = false;
@@ -2308,7 +2501,7 @@ svg {
       function applyProjectToForm() {
         isLoading = true;
         projectNameInput.value = project.projectName || "";
-        municipalityInput.value = project.municipality || "Vila-seca";
+        municipalityInput.value = project.municipality || "";
         resolveMunicipality();
         exceptionInput.checked = Boolean(project.exceptional90Percent && currentMunicipality && currentMunicipality.p < 5000);
         calculate();
@@ -2366,7 +2559,26 @@ svg {
         document.body.appendChild(link);
         link.click();
         link.remove();
-        setTimeout(function () { URL.revokeObjectURL(url); }, 0);
+        setTimeout(function () { URL.revokeObjectURL(url); }, 30000);
+      }
+
+      function blobToBase64(blob) {
+        return new Promise(function (resolve, reject) {
+          var reader = new FileReader();
+          reader.onload = function () {
+            var result = String(reader.result || "");
+            var comma = result.indexOf(",");
+            if (comma < 0) {
+              reject(new Error("No s’ha pogut preparar l’Excel per a l’enviament."));
+              return;
+            }
+            resolve(result.slice(comma + 1));
+          };
+          reader.onerror = function () {
+            reject(new Error("No s’ha pogut llegir l’Excel generat."));
+          };
+          reader.readAsDataURL(blob);
+        });
       }
 
       function xmlEscape(value) {
@@ -2401,23 +2613,33 @@ svg {
         return '<c r="' + reference + '" t="inlineStr"' + style + '><is><t xml:space="preserve">' + xmlEscape(definition.v) + '</t></is></c>';
       }
 
-      function worksheetXml(rowsData, widths, autoFilterRange) {
+      function worksheetXml(sheet) {
+        var rowsData = sheet.rows || [];
+        var widths = sheet.widths || [];
+        var rowHeights = sheet.rowHeights || {};
         var maxColumns = rowsData.reduce(function (max, row) { return Math.max(max, row.length); }, 1);
         var rowsXml = rowsData.map(function (row, rowIndex) {
-          return '<row r="' + (rowIndex + 1) + '">' + row.map(function (value, columnIndex) {
+          var rowNumber = rowIndex + 1;
+          var height = rowHeights[rowNumber] ? ' ht="' + rowHeights[rowNumber] + '" customHeight="1"' : "";
+          return '<row r="' + rowNumber + '"' + height + '>' + row.map(function (value, columnIndex) {
             return excelCell(value, rowIndex, columnIndex);
           }).join("") + '</row>';
         }).join("");
-        var colsXml = (widths || []).length ? '<cols>' + widths.map(function (width, index) {
+        var colsXml = widths.length ? '<cols>' + widths.map(function (width, index) {
           return '<col min="' + (index + 1) + '" max="' + (index + 1) + '" width="' + width + '" customWidth="1"/>';
         }).join("") + '</cols>' : "";
         var dimension = 'A1:' + columnName(maxColumns - 1) + Math.max(1, rowsData.length);
-        var filter = autoFilterRange ? '<autoFilter ref="' + autoFilterRange + '"/>' : "";
+        var filter = sheet.autoFilter ? '<autoFilter ref="' + sheet.autoFilter + '"/>' : "";
+        var merges = (sheet.merges || []).length ? '<mergeCells count="' + sheet.merges.length + '">' + sheet.merges.map(function (range) {
+          return '<mergeCell ref="' + range + '"/>';
+        }).join("") + '</mergeCells>' : "";
+        var freezeRows = Number(sheet.freezeRows) || 0;
+        var pane = freezeRows ? '<pane ySplit="' + freezeRows + '" topLeftCell="A' + (freezeRows + 1) + '" activePane="bottomLeft" state="frozen"/>' : "";
         return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
           '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' +
-          '<sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><dimension ref="' + dimension + '"/><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>' +
-          colsXml + '<sheetFormatPr defaultRowHeight="15"/><sheetData>' + rowsXml + '</sheetData>' + filter +
-          '<pageMargins left="0.25" right="0.25" top="0.45" bottom="0.45" header="0.2" footer="0.2"/><pageSetup paperSize="9" orientation="landscape" fitToWidth="1" fitToHeight="0"/>' +
+          '<sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><dimension ref="' + dimension + '"/><sheetViews><sheetView workbookViewId="0" showGridLines="0">' + pane + '</sheetView></sheetViews>' +
+          '<sheetFormatPr defaultRowHeight="18"/>' + colsXml + '<sheetData>' + rowsXml + '</sheetData>' + merges + filter +
+          '<pageMargins left="0.25" right="0.25" top="0.45" bottom="0.45" header="0.2" footer="0.2"/><pageSetup paperSize="9" orientation="' + (sheet.orientation || "landscape") + '" fitToWidth="1" fitToHeight="0"/>' +
           '</worksheet>';
       }
 
@@ -2432,6 +2654,12 @@ svg {
         }
         used[name.toLocaleLowerCase("ca")] = true;
         return name;
+      }
+
+      function styledSpan(value, style, count) {
+        var cells = [{ v: value, s: style }];
+        while (cells.length < count) cells.push({ v: "", s: style });
+        return cells;
       }
 
       function buildWorkbookSheets() {
@@ -2484,29 +2712,72 @@ svg {
         sheets.push({ name: uniqueSheetName("Actuacions", used), rows: actionRows, widths: [16, 40, 27, 25, 48, 30, 18, 18, 18, 18, 14], autoFilter: "A1:K" + actionRows.length });
 
         project.actions.forEach(function (action) {
+          var areaStyle = action.areaCode === "B" ? 12 : (action.areaCode === "C" ? 13 : 11);
+          var rate = Number(action.appliedRatePercent) || 0;
+          var years = action.years || [];
           var actionSheetRows = [
-            [{ v: action.actionCode + " · " + action.actionTitle, s: 6 }],
+            styledSpan("SUBVENCIÓ DEL FONS DE RECUPERACIÓ URBANA, AMBIENTAL I SOCIAL DE BARRIS I VILES D’ATENCIÓ ESPECIAL", 6, 12),
+            styledSpan("", 6, 12),
             [],
-            [{ v: "Àmbit", s: 2 }, { v: action.areaCode + " — " + action.areaName, s: 5 }],
-            [{ v: "Subàmbit", s: 2 }, { v: action.subareaCode + " — " + action.subareaName, s: 5 }],
-            [{ v: "Camp d’actuació", s: 2 }, { v: action.actionFieldNumber + ". " + action.actionFieldName, s: 5 }],
-            [{ v: "Tipus", s: 2 }, { v: action.actionType, s: 5 }],
-            [{ v: "Pressupost total", s: 2 }, { v: Number(action.actionTotal) || 0, s: 3 }],
-            [{ v: "Finançament aplicat", s: 2 }, { v: Number(action.appliedRatePercent) / 100 || 0, s: 4 }],
+            styledSpan("FITXA D’ACTUACIÓ", 7, 12),
             [],
-            [{ v: "Anualitat", s: 1 }, { v: "Actuació prevista", s: 1 }, { v: "% pressupost", s: 1 }, { v: "Cost total", s: 1 }, { v: "Fons", s: 1 }, { v: "Ens local", s: 1 }, { v: "Altres fonts", s: 1 }, { v: "% efectiu", s: 1 }]
+            styledSpan("Ens local sol·licitant", 10, 4).concat(styledSpan("Nom del PMII o projecte", 10, 6), styledSpan("Codi actuació", 10, 2)),
+            styledSpan(action.municipality || project.municipality, 8, 4).concat(styledSpan(project.projectName, 8, 6), styledSpan(action.actionCode, 9, 2)),
+            [],
+            styledSpan("Nom de l’actuació", 10, 12),
+            styledSpan(action.actionTitle, 8, 12),
+            [],
+            styledSpan("Àmbit", 2, 2).concat(styledSpan(action.areaCode + " — " + action.areaName, areaStyle, 10)),
+            styledSpan("Subàmbit", 2, 2).concat(styledSpan(action.subareaCode + " — " + action.subareaName, 5, 10)),
+            styledSpan("Camp d’actuació", 2, 2).concat(styledSpan(action.actionFieldNumber + " — " + action.actionFieldName, 5, 10)),
+            styledSpan("N. actuació", 2, 2).concat(styledSpan(action.actionNumber, 5, 10)),
+            [],
+            styledSpan("Estructura de l’actuació", 10, 12),
+            styledSpan("Tipus principal", 2, 2).concat(styledSpan(action.actionType, 5, 10)),
+            [],
+            styledSpan("Calendari, accions previstes, pressupost associat i fons de finançament", 10, 8).concat(styledSpan("% màxim de finançament", 10, 3), [{ v: rate / 100, s: 18 }]),
+            [{ v: "Any", s: 1 }, { v: "Anualitat", s: 1 }].concat(styledSpan("Acció prevista", 1, 4), [
+              { v: "% pressupost", s: 1 }, { v: "% fin.", s: 1 }, { v: "Ens local", s: 1 }, { v: "Fons", s: 1 }, { v: "Altres", s: 1 }, { v: "Total (€)", s: 1 }
+            ])
           ];
-          (action.years || []).forEach(function (item) {
+          [0, 1, 2, 3, 4].forEach(function (index) {
+            var item = years[index] || {};
             actionSheetRows.push([
-              { v: Number(item.year), s: 5 }, { v: item.action, s: 5 }, { v: Number(item.allocationPercent) / 100, s: 4 }, { v: Number(item.total) || 0, s: 3 },
-              { v: Number(item.fund) || 0, s: 3 }, { v: Number(item.local) || 0, s: 3 }, { v: Number(item.other) || 0, s: 3 }, { v: Number(item.effective) / 100, s: 4 }
-            ]);
+              { v: "Any " + (index + 1), s: 16 }, { v: Number(item.year) || 2027 + index, s: 17 }
+            ].concat(styledSpan(item.action || "", 5, 4), [
+              { v: (Number(item.allocationPercent) || 0) / 100, s: 4 }, { v: (Number(item.effective) || rate) / 100, s: 4 },
+              { v: Number(item.local) || 0, s: 3 }, { v: Number(item.fund) || 0, s: 3 }, { v: Number(item.other) || 0, s: 3 }, { v: Number(item.total) || 0, s: 3 }
+            ]));
           });
-          actionSheetRows.push([
-            { v: "TOTAL", s: 2 }, { v: "", s: 5 }, { v: Number(action.allocationPercentTotal) / 100, s: 4 }, { v: Number(action.actionTotal) || 0, s: 3 },
-            { v: Number(action.totals && action.totals.fund) || 0, s: 3 }, { v: Number(action.totals && action.totals.local) || 0, s: 3 }, { v: Number(action.totals && action.totals.other) || 0, s: 3 }, { v: "", s: 5 }
-          ]);
-          sheets.push({ name: uniqueSheetName(action.actionCode || "Fitxa", used), rows: actionSheetRows, widths: [14, 58, 16, 18, 18, 18, 18, 16], autoFilter: "A10:H15" });
+          actionSheetRows.push(styledSpan("TOTAL", 14, 6).concat([
+            { v: Number(action.allocationPercentTotal) / 100, s: 4 }, { v: rate / 100, s: 4 },
+            { v: Number(action.totals && action.totals.local) || 0, s: 15 }, { v: Number(action.totals && action.totals.fund) || 0, s: 15 },
+            { v: Number(action.totals && action.totals.other) || 0, s: 15 }, { v: Number(action.actionTotal) || 0, s: 15 }
+          ]));
+          actionSheetRows.push([]);
+          actionSheetRows.push(styledSpan("Resum de finançament", 10, 12));
+          actionSheetRows.push(styledSpan("Cost total", 2, 3).concat(styledSpan("Fons", 2, 3), styledSpan("Ens local", 2, 3), styledSpan("Altres fonts", 2, 3)));
+          actionSheetRows.push(styledSpan(Number(action.actionTotal) || 0, 15, 3).concat(
+            styledSpan(Number(action.totals && action.totals.fund) || 0, 15, 3),
+            styledSpan(Number(action.totals && action.totals.local) || 0, 15, 3),
+            styledSpan(Number(action.totals && action.totals.other) || 0, 15, 3)
+          ));
+          actionSheetRows.push([]);
+          actionSheetRows.push(styledSpan("El percentatge de finançament indicat és el màxim aplicable. Les altres fonts redueixen l’aportació del Fons quan sigui necessari per evitar el sobrefinançament.", 5, 12));
+
+          var merges = ["A1:L2", "A4:L4", "A6:D6", "E6:J6", "K6:L6", "A7:D7", "E7:J7", "K7:L7", "A9:L9", "A10:L10",
+            "A12:B12", "C12:L12", "A13:B13", "C13:L13", "A14:B14", "C14:L14", "A15:B15", "C15:L15", "A17:L17", "A18:B18", "C18:L18",
+            "A20:H20", "I20:K20", "C21:F21", "A27:F27", "A29:L29", "A30:C30", "D30:F30", "G30:I30", "J30:L30",
+            "A31:C31", "D31:F31", "G31:I31", "J31:L31", "A33:L33"];
+          [22, 23, 24, 25, 26].forEach(function (rowNumber) { merges.push("C" + rowNumber + ":F" + rowNumber); });
+          sheets.push({
+            name: uniqueSheetName(action.actionCode || "Fitxa", used),
+            rows: actionSheetRows,
+            widths: [11, 12, 14, 14, 14, 14, 14, 12, 16, 16, 16, 18],
+            merges: merges,
+            rowHeights: { 1: 24, 2: 24, 4: 24, 7: 24, 10: 38, 12: 24, 13: 24, 14: 30, 15: 24, 17: 22, 18: 26, 20: 24, 21: 30, 22: 42, 23: 42, 24: 42, 25: 42, 26: 42, 27: 24, 29: 22, 30: 24, 31: 26, 33: 36 },
+            orientation: "landscape"
+          });
         });
         return sheets;
       }
@@ -2608,12 +2879,12 @@ svg {
           { name: "_rels/.rels", data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/><Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties" Target="docProps/app.xml"/></Relationships>' },
           { name: "xl/workbook.xml", data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><bookViews><workbookView/></bookViews><sheets>' + workbookSheets + '</sheets><calcPr calcId="191029" fullCalcOnLoad="1"/></workbook>' },
           { name: "xl/_rels/workbook.xml.rels", data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' + workbookRels + '</Relationships>' },
-          { name: "xl/styles.xml", data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><numFmts count="2"><numFmt numFmtId="164" formatCode="#\,##0.00 [$€-1]"/><numFmt numFmtId="165" formatCode="0.00%"/></numFmts><fonts count="2"><font><sz val="11"/><name val="Aptos"/></font><font><b/><sz val="11"/><name val="Aptos"/></font></fonts><fills count="4"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF8F90B9"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFE7E7F1"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FFD9D9E2"/></left><right style="thin"><color rgb="FFD9D9E2"/></right><top style="thin"><color rgb="FFD9D9E2"/></top><bottom style="thin"><color rgb="FFD9D9E2"/></bottom><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="7"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="1" xfId="0" applyFill="1" applyBorder="1" applyAlignment="1"><alignment wrapText="1" vertical="center"/></xf><xf numFmtId="0" fontId="1" fillId="3" borderId="1" xfId="0" applyFill="1" applyBorder="1"/><xf numFmtId="164" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/><xf numFmtId="165" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/><xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment wrapText="1" vertical="top"/></xf><xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment wrapText="1"/></xf></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>' },
+          { name: "xl/styles.xml", data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><numFmts count="2"><numFmt numFmtId="164" formatCode="#\,##0.00 [$€-1]"/><numFmt numFmtId="165" formatCode="0.00%"/></numFmts><fonts count="4"><font><sz val="10"/><name val="Aptos"/></font><font><b/><sz val="10"/><name val="Aptos"/></font><font><b/><color rgb="FFFFFFFF"/><sz val="10"/><name val="Aptos"/></font><font><b/><sz val="14"/><name val="Aptos Display"/></font></fonts><fills count="10"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF8F90B9"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFE7E7F1"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FF000000"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFFFDE9"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFF2F2F2"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FF1D4ED8"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FF15803D"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFC2410C"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="3"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FFD9D9E2"/></left><right style="thin"><color rgb="FFD9D9E2"/></right><top style="thin"><color rgb="FFD9D9E2"/></top><bottom style="thin"><color rgb="FFD9D9E2"/></bottom><diagonal/></border><border><left/><right/><top/><bottom style="medium"><color rgb="FF000000"/></bottom><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="19"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="2" fillId="2" borderId="1" xfId="0" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="1" fillId="3" borderId="1" xfId="0" applyFill="1" applyBorder="1" applyAlignment="1"><alignment vertical="center" wrapText="1"/></xf><xf numFmtId="164" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1" applyAlignment="1"><alignment horizontal="right" vertical="center"/></xf><xf numFmtId="165" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1" applyAlignment="1"><alignment horizontal="right" vertical="center"/></xf><xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf><xf numFmtId="0" fontId="3" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="2" fillId="4" borderId="0" xfId="0" applyFill="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf><xf numFmtId="0" fontId="1" fillId="5" borderId="1" xfId="0" applyFill="1" applyBorder="1" applyAlignment="1"><alignment vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="1" fillId="6" borderId="1" xfId="0" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="1" fillId="0" borderId="2" xfId="0" applyBorder="1" applyAlignment="1"><alignment vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="2" fillId="7" borderId="1" xfId="0" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="2" fillId="8" borderId="1" xfId="0" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="2" fillId="9" borderId="1" xfId="0" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="1" fillId="6" borderId="1" xfId="0" applyFill="1" applyBorder="1" applyAlignment="1"><alignment vertical="center"/></xf><xf numFmtId="164" fontId="1" fillId="6" borderId="1" xfId="0" applyNumberFormat="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="right" vertical="center"/></xf><xf numFmtId="0" fontId="1" fillId="6" borderId="1" xfId="0" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf><xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf><xf numFmtId="165" fontId="1" fillId="5" borderId="1" xfId="0" applyNumberFormat="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>' },
           { name: "docProps/core.xml", data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:creator>iServeis</dc:creator><cp:lastModifiedBy>Formulari Llei de barris</cp:lastModifiedBy><dcterms:created xsi:type="dcterms:W3CDTF">' + new Date().toISOString() + '</dcterms:created></cp:coreProperties>' },
           { name: "docProps/app.xml", data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes"><Application>iServeis · Formulari Llei de barris</Application><DocSecurity>0</DocSecurity><ScaleCrop>false</ScaleCrop><HeadingPairs><vt:vector size="2" baseType="variant"><vt:variant><vt:lpstr>Fulls de càlcul</vt:lpstr></vt:variant><vt:variant><vt:i4>' + sheets.length + '</vt:i4></vt:variant></vt:vector></HeadingPairs><TitlesOfParts><vt:vector size="' + sheets.length + '" baseType="lpstr">' + sheets.map(function (sheet) { return '<vt:lpstr>' + xmlEscape(sheet.name) + '</vt:lpstr>'; }).join("") + '</vt:vector></TitlesOfParts></Properties>' }
         ];
         sheets.forEach(function (sheet, index) {
-          files.push({ name: "xl/worksheets/sheet" + (index + 1) + ".xml", data: worksheetXml(sheet.rows, sheet.widths, sheet.autoFilter) });
+          files.push({ name: "xl/worksheets/sheet" + (index + 1) + ".xml", data: worksheetXml(sheet) });
         });
         return zipStored(files);
       }
@@ -2629,6 +2900,45 @@ svg {
         downloadBlob(name, blob);
         setSubmitStatus("S’ha generat l’Excel complet amb el resum i totes les fitxes.", "success");
         return blob;
+      }
+
+      function requestSubmissionStatus(submissionId) {
+        return new Promise(function (resolve, reject) {
+          var callbackName = "__llbSubmissionStatus" + Date.now().toString(36) + Math.random().toString(36).slice(2);
+          var script = document.createElement("script");
+          var timer = null;
+          function cleanup() {
+            if (timer) clearTimeout(timer);
+            if (script.parentNode) script.parentNode.removeChild(script);
+            try { delete window[callbackName]; } catch (error) { window[callbackName] = undefined; }
+          }
+          window[callbackName] = function (result) {
+            cleanup();
+            resolve(result || {});
+          };
+          script.onerror = function () {
+            cleanup();
+            reject(new Error("El servei no ha permès confirmar el resultat de l’enviament."));
+          };
+          timer = setTimeout(function () {
+            cleanup();
+            reject(new Error("El servei ha trigat massa a confirmar l’enviament."));
+          }, 15000);
+          script.src = SUBMISSION_ENDPOINT + "?status=" + encodeURIComponent(submissionId) + "&token=" + encodeURIComponent(SUBMISSION_TOKEN) + "&callback=" + encodeURIComponent(callbackName) + "&_=" + Date.now();
+          (document.head || document.documentElement).appendChild(script);
+        });
+      }
+
+      function waitForSubmissionStatus(submissionId, attemptsRemaining) {
+        return requestSubmissionStatus(submissionId).then(function (result) {
+          if (result && result.pending && attemptsRemaining > 1) {
+            return new Promise(function (resolve) { setTimeout(resolve, 1200); }).then(function () {
+              return waitForSubmissionStatus(submissionId, attemptsRemaining - 1);
+            });
+          }
+          if (result && result.pending) throw new Error("L’enviament encara no ha finalitzat. Torna-ho a provar d’aquí a uns segons.");
+          return result;
+        });
       }
 
       function submitProject() {
@@ -2653,26 +2963,37 @@ svg {
         }
         var submissionId = createId("llb");
         var button = root.querySelector("#llb-send-project");
+        var xlsxBlob = buildProjectXlsx();
+        var xlsxName = "fitxes-llei-barris-" + fileSlug(project.municipality || project.projectName) + ".xlsx";
         button.disabled = true;
-        setSubmitStatus("Enviant el projecte a iServeis…", "");
+        setSubmitStatus("Preparant l’Excel i enviant el projecte a iServeis…", "");
         var payload = {
           token: SUBMISSION_TOKEN,
           submissionId: submissionId,
           submittedAt: new Date().toISOString(),
           project: cloneData(project),
-          summary: aggregateProject()
+          summary: aggregateProject(),
+          xlsx: { fileName: xlsxName, base64: "" }
         };
-        window.fetch(SUBMISSION_ENDPOINT, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(payload)
+        blobToBase64(xlsxBlob).then(function (base64) {
+          payload.xlsx.base64 = base64;
+          return window.fetch(SUBMISSION_ENDPOINT, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(payload)
+          });
         }).then(function () {
+          setSubmitStatus("Enviament processat. Comprovant que el correu s’ha generat correctament…", "");
+          return waitForSubmissionStatus(submissionId, 5);
+        }).then(function (result) {
+          if (!result || result.ok !== true) throw new Error(result && result.error ? result.error : "El servei no ha confirmat l’enviament.");
           project.lastSubmission = { id: submissionId, submittedAt: payload.submittedAt, recipient: SUBMISSION_RECIPIENT };
           persistProject("Projecte enviat");
-          setSubmitStatus("Projecte tramès amb l’identificador " + submissionId + ". iServeis rebrà l’Excel i la còpia JSON a " + SUBMISSION_RECIPIENT + ".", "success");
-        }).catch(function () {
-          setSubmitStatus("No s’ha pogut enviar el projecte. Descarrega l’Excel o torna-ho a provar més tard.", "error");
+          setSubmitStatus("Enviament confirmat amb l’identificador " + submissionId + ". L’Excel i la còpia JSON s’han enviat a " + SUBMISSION_RECIPIENT + ".", "success");
+        }).catch(function (error) {
+          var detail = error && error.message ? " " + error.message : "";
+          setSubmitStatus("No s’ha pogut completar l’enviament." + detail + " Pots descarregar l’Excel i enviar-lo manualment.", "error");
         }).finally(function () {
           button.disabled = false;
         });
@@ -2711,6 +3032,22 @@ svg {
         var option = document.createElement("option");
         option.value = item.n;
         root.querySelector("#llb-municipality-list").appendChild(option);
+      });
+
+      editorTabs.forEach(function (tab, index) {
+        tab.addEventListener("click", function () {
+          selectEditorTab(tab.dataset.tab, false);
+        });
+        tab.addEventListener("keydown", function (event) {
+          var targetIndex = index;
+          if (event.key === "ArrowRight") targetIndex = (index + 1) % editorTabs.length;
+          if (event.key === "ArrowLeft") targetIndex = (index - 1 + editorTabs.length) % editorTabs.length;
+          if (event.key === "Home") targetIndex = 0;
+          if (event.key === "End") targetIndex = editorTabs.length - 1;
+          if (targetIndex === index && event.key !== "Home" && event.key !== "End") return;
+          event.preventDefault();
+          selectEditorTab(editorTabs[targetIndex].dataset.tab, true);
+        });
       });
 
       municipalityInput.addEventListener("input", resolveMunicipality);
@@ -2772,6 +3109,7 @@ svg {
       municipalitySlot.appendChild(standardRateGroup);
       root.querySelector("#llb-project-funding-slot").appendChild(root.querySelector(".llb-funding-box"));
 
+      selectEditorTab("identification", false);
       populateSubareas();
       loadStoredProject();
       applyProjectToForm();
