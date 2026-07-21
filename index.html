@@ -690,7 +690,7 @@ svg {
 </style>
 </head>
 <body>
-<div id="llb-budget-form" data-llb-area="" data-llb-build="2026-07-20.2">
+<div id="llb-budget-form" data-llb-area="" data-llb-build="2026-07-20.3">
   <style>
     #llb-budget-form {
       --llb-brand: rgb(143 144 185);
@@ -1133,6 +1133,12 @@ svg {
     #llb-budget-form .llb-submit-status.is-error {
       border-color: var(--destructive);
       color: var(--destructive);
+    }
+
+    #llb-budget-form .llb-submit-status.is-warning {
+      background: color-mix(in srgb, #b45309 8%, var(--card));
+      border-color: #b45309;
+      color: #92400e;
     }
 
     #llb-budget-form .llb-import-input {
@@ -1717,6 +1723,8 @@ svg {
       var SUBMISSION_RECIPIENT = "suport2@iserveis.cat";
       var SUBMISSION_ENDPOINT = "https://script.google.com/macros/s/AKfycbyXMDX2TCxm_2ttXvgnVdtCUf3H_VeR-2LOXo2J7MC3qEZ1PkAIAhf5L5IfstkdlqTB/exec";
       var SUBMISSION_TOKEN = "llb-7f28dca4e9c041dfa36e2bb15c9477e2";
+      var FORM_BUILD = root.getAttribute("data-llb-build") || "desconeguda";
+      var WORKBOOK_LAYOUT_VERSION = 2;
       var project = createEmptyProject();
       var editingId = null;
       var isLoading = false;
@@ -2451,9 +2459,10 @@ svg {
 
       function setSubmitStatus(message, type) {
         submitStatus.textContent = message;
-        submitStatus.classList.remove("llb-hidden", "is-success", "is-error");
+        submitStatus.classList.remove("llb-hidden", "is-success", "is-error", "is-warning");
         if (type === "success") submitStatus.classList.add("is-success");
         if (type === "error") submitStatus.classList.add("is-error");
+        if (type === "warning") submitStatus.classList.add("is-warning");
       }
 
       function projectExportData() {
@@ -2463,6 +2472,8 @@ svg {
           version: PROJECT_VERSION,
           exportedAt: new Date().toISOString(),
           recipient: SUBMISSION_RECIPIENT,
+          formBuild: FORM_BUILD,
+          workbookLayoutVersion: WORKBOOK_LAYOUT_VERSION,
           project: cloneData(project),
           summary: aggregateProject()
         };
@@ -2965,12 +2976,15 @@ svg {
         var button = root.querySelector("#llb-send-project");
         var xlsxBlob = buildProjectXlsx();
         var xlsxName = "fitxes-llei-barris-" + fileSlug(project.municipality || project.projectName) + ".xlsx";
+        var requestTransmitted = false;
         button.disabled = true;
         setSubmitStatus("Preparant l’Excel i enviant el projecte a iServeis…", "");
         var payload = {
           token: SUBMISSION_TOKEN,
           submissionId: submissionId,
           submittedAt: new Date().toISOString(),
+          formBuild: FORM_BUILD,
+          workbookLayoutVersion: WORKBOOK_LAYOUT_VERSION,
           project: cloneData(project),
           summary: aggregateProject(),
           xlsx: { fileName: xlsxName, base64: "" }
@@ -2984,16 +2998,27 @@ svg {
             body: JSON.stringify(payload)
           });
         }).then(function () {
+          requestTransmitted = true;
           setSubmitStatus("Enviament processat. Comprovant que el correu s’ha generat correctament…", "");
           return waitForSubmissionStatus(submissionId, 5);
         }).then(function (result) {
-          if (!result || result.ok !== true) throw new Error(result && result.error ? result.error : "El servei no ha confirmat l’enviament.");
+          if (!result || result.ok !== true) {
+            var confirmedError = new Error(result && result.error ? result.error : "El servei no ha confirmat l’enviament.");
+            confirmedError.serverConfirmed = Boolean(result && result.pending === false);
+            throw confirmedError;
+          }
           project.lastSubmission = { id: submissionId, submittedAt: payload.submittedAt, recipient: SUBMISSION_RECIPIENT };
           persistProject("Projecte enviat");
           setSubmitStatus("Enviament confirmat amb l’identificador " + submissionId + ". L’Excel i la còpia JSON s’han enviat a " + SUBMISSION_RECIPIENT + ".", "success");
         }).catch(function (error) {
           var detail = error && error.message ? " " + error.message : "";
-          setSubmitStatus("No s’ha pogut completar l’enviament." + detail + " Pots descarregar l’Excel i enviar-lo manualment.", "error");
+          if (error && error.serverConfirmed) {
+            setSubmitStatus("El servei ha rebutjat l’enviament." + detail + " Actualitza la pàgina abans de tornar-ho a provar.", "error");
+          } else if (requestTransmitted) {
+            setSubmitStatus("La sol·licitud s’ha transmès al servei, però la web no n’ha pogut confirmar el resultat." + detail + " Si el correu ha arribat, no tornis a enviar-la. Si no ha arribat, descarrega l’Excel i envia’l manualment.", "warning");
+          } else {
+            setSubmitStatus("No s’ha pogut transmetre l’enviament." + detail + " Pots descarregar l’Excel i enviar-lo manualment.", "error");
+          }
         }).finally(function () {
           button.disabled = false;
         });
