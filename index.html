@@ -2292,7 +2292,10 @@ svg {
       var saveStatus = root.querySelector("#llb-save-status");
       var projectGroups = root.querySelector("#llb-project-groups");
       var submitStatus = root.querySelector("#llb-submit-status");
-      var STORAGE_KEY = "iserveis.llb.project.v3";
+      var STUDIO_PARAMS = new URLSearchParams(window.location.search);
+      var STUDIO_PROJECT_ID = STUDIO_PARAMS.get("project") || "";
+      var STUDIO_ORIGIN = STUDIO_PARAMS.get("studioOrigin") || "";
+      var STORAGE_KEY = "iserveis.llb.project.v3" + (STUDIO_PROJECT_ID ? "." + STUDIO_PROJECT_ID : "");
       var PROJECT_SCHEMA = "iserveis-llb-project";
       var PROJECT_VERSION = 3;
       var SUBMISSION_RECIPIENT = "suport2@iserveis.cat";
@@ -3248,9 +3251,36 @@ svg {
         try {
           window.localStorage.setItem(STORAGE_KEY, JSON.stringify(project));
           saveStatus.textContent = message || "Desat automàticament a les " + new Date().toLocaleTimeString("ca-ES", { hour: "2-digit", minute: "2-digit" });
+          syncProjectWithStudio();
         } catch (error) {
           saveStatus.textContent = "No s’ha pogut desar al navegador";
         }
+      }
+
+      function syncProjectWithStudio() {
+        if (!STUDIO_PROJECT_ID || !STUDIO_ORIGIN || !window.opener) return;
+        var totals = aggregateProject();
+        var warnings = projectValidationErrors();
+        window.opener.postMessage({
+          type: "LLB_STUDIO_SYNC",
+          projectId: STUDIO_PROJECT_ID,
+          moduleKey: "actuacions",
+          status: warnings.length ? "avisos" : (project.actions.length ? "complet" : "pendent"),
+          itemCount: project.actions.length,
+          warningCount: warnings.length,
+          summary: project.actions.length + " fitxes · " + euro.format(totals.total) + (warnings.length ? " · " + warnings.length + " avisos" : ""),
+          source: "Formulari de fitxes d’actuació",
+          data: {
+            actions: project.actions.length,
+            budgetEur: totals.total,
+            areas: {
+              A: totals.areas.A.count,
+              B: totals.areas.B.count,
+              C: totals.areas.C.count
+            },
+            project: project
+          }
+        }, STUDIO_ORIGIN);
       }
 
       function scheduleProjectSave() {
