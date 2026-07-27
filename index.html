@@ -1544,6 +1544,15 @@ svg {
       color: var(--llb-color-warning-text);
     }
 
+    #llb-budget-form .llb-studio-destination {
+      background: color-mix(in srgb, var(--viz-series-2) 10%, var(--card));
+      border-left: 4px solid var(--viz-series-2);
+      border-radius: 7px;
+      color: var(--foreground);
+      margin: 10px 0 0;
+      padding: 9px 11px;
+    }
+
     #llb-budget-form .llb-import-input {
       display: none;
     }
@@ -1679,6 +1688,7 @@ svg {
       <button class="btn" id="llb-send-project" type="button"><i data-lucide="send" aria-hidden="true"></i> Enviar a iServeis</button>
     </div>
     <div class="llb-submit-status llb-hidden" id="llb-submit-status" aria-live="polite"></div>
+    <p class="llb-studio-destination llb-hidden" id="llb-studio-destination"></p>
     <p class="text-small text-muted">Destinatari configurat: <strong>suport2@iserveis.cat</strong>. Abans d’enviar, el sistema comprovarà les dades generals, els codis i els pressupostos de totes les fitxes.</p>
   </section>
 
@@ -2294,7 +2304,10 @@ svg {
       var submitStatus = root.querySelector("#llb-submit-status");
       var STUDIO_PARAMS = new URLSearchParams(window.location.search);
       var STUDIO_PROJECT_ID = STUDIO_PARAMS.get("project") || "";
+      var STUDIO_PROJECT_NAME = STUDIO_PARAMS.get("projectName") || "";
       var STUDIO_ORIGIN = STUDIO_PARAMS.get("studioOrigin") || "";
+      var STUDIO_API = STUDIO_PARAMS.get("studioApi") || "";
+      var STUDIO_SESSION = STUDIO_PARAMS.get("studioSession") || "";
       var STORAGE_KEY = "iserveis.llb.project.v3" + (STUDIO_PROJECT_ID ? "." + STUDIO_PROJECT_ID : "");
       var PROJECT_SCHEMA = "iserveis-llb-project";
       var PROJECT_VERSION = 3;
@@ -2333,7 +2346,8 @@ svg {
           activeActionId: null,
           createdAt: now,
           updatedAt: now,
-          lastSubmission: null
+          lastSubmission: null,
+          pendingStudioSubmission: null
         };
       }
 
@@ -3251,17 +3265,17 @@ svg {
         try {
           window.localStorage.setItem(STORAGE_KEY, JSON.stringify(project));
           saveStatus.textContent = message || "Desat automàticament a les " + new Date().toLocaleTimeString("ca-ES", { hour: "2-digit", minute: "2-digit" });
-          syncProjectWithStudio();
         } catch (error) {
           saveStatus.textContent = "No s’ha pogut desar al navegador";
         }
       }
 
-      function syncProjectWithStudio() {
-        if (!STUDIO_PROJECT_ID || !STUDIO_ORIGIN || !window.opener) return;
+      function syncProjectWithStudio(submissionId) {
+        if (!STUDIO_PROJECT_ID) return Promise.resolve(null);
         var totals = aggregateProject();
         var warnings = projectValidationErrors();
-        window.opener.postMessage({
+        var studioPayload = {
+          action: "syncModule",
           type: "LLB_STUDIO_SYNC",
           projectId: STUDIO_PROJECT_ID,
           moduleKey: "actuacions",
@@ -3270,6 +3284,9 @@ svg {
           warningCount: warnings.length,
           summary: project.actions.length + " fitxes · " + euro.format(totals.total) + (warnings.length ? " · " + warnings.length + " avisos" : ""),
           source: "Formulari de fitxes d’actuació",
+          externalSubmissionId: submissionId,
+          versionLabel: "Enviament fitxes Ens",
+          submissionType: "fitxes_ens",
           data: {
             actions: project.actions.length,
             budgetEur: totals.total,
@@ -3280,7 +3297,27 @@ svg {
             },
             project: project
           }
-        }, STUDIO_ORIGIN);
+        };
+        if (STUDIO_API && STUDIO_SESSION) {
+          return window.fetch(STUDIO_API, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Studio-Session": STUDIO_SESSION,
+              "X-Studio-Actor": "Formulari de fitxes de l’ens"
+            },
+            body: JSON.stringify(studioPayload)
+          }).then(function (response) {
+            return response.json().then(function (body) {
+              if (!response.ok) throw new Error(body.error || "L’Studio ha rebutjat l’enviament.");
+              return body.syncedVersion || null;
+            });
+          });
+        }
+        if (STUDIO_ORIGIN && window.opener) {
+          window.opener.postMessage(studioPayload, STUDIO_ORIGIN);
+        }
+        return Promise.resolve(null);
       }
 
       function scheduleProjectSave() {
@@ -3603,6 +3640,17 @@ svg {
           if (stored) project = normalizeImportedProject(JSON.parse(stored));
         } catch (error) {
           project = createEmptyProject();
+        }
+        if (STUDIO_PROJECT_NAME && !project.municipality) {
+          project.municipality = STUDIO_PROJECT_NAME;
+        }
+        if (STUDIO_PROJECT_ID) {
+          var destination = root.querySelector("#llb-studio-destination");
+          destination.textContent =
+            "Vinculat automàticament al projecte «" +
+            (STUDIO_PROJECT_NAME || STUDIO_PROJECT_ID) +
+            "» de l’Studio. Les dades només s’hi desaran quan premis «Enviar a iServeis».";
+          destination.classList.remove("llb-hidden");
         }
       }
 
@@ -4186,7 +4234,36 @@ svg {
           }
           project.lastSubmission = { id: submissionId, submittedAt: payload.submittedAt, recipient: SUBMISSION_RECIPIENT };
           persistProject("Projecte enviat");
-          setSubmitStatus("Enviament confirmat amb l’identificador " + submissionId + ". L’Excel i la còpia JSON s’han enviat a " + SUBMISSION_RECIPIENT + ".", "success");
+          if (!STUDIO_PROJECT_ID) {
+            setSubmitStatus("Enviament confirmat amb l’identificador " + submissionId + ". L’Excel i la còpia JSON s’han enviat a " + SUBMISSION_RECIPIENT + ".", "success");
+            return null;
+          }
+          setSubmitStatus("Correu confirmat. Desant «Enviament fitxes Ens» a l’Studio…", "");
+          return syncProjectWithStudio(submissionId).then(function (studioVersion) {
+            project.pendingStudioSubmission = null;
+            persistProject("Projecte enviat i desat a l’Studio");
+            setSubmitStatus(
+              "Enviament confirmat amb l’identificador " + submissionId +
+              ". Les fitxes s’han desat al projecte «" + (STUDIO_PROJECT_NAME || STUDIO_PROJECT_ID) +
+              "» com a «Enviament fitxes Ens»" +
+              (studioVersion && studioVersion.versionNumber ? ", versió " + studioVersion.versionNumber : "") +
+              ".", "success"
+            );
+            return studioVersion;
+          }).catch(function (studioError) {
+            project.pendingStudioSubmission = {
+              id: submissionId,
+              submittedAt: payload.submittedAt,
+              message: studioError && studioError.message ? studioError.message : "Error de connexió"
+            };
+            persistProject("Correu enviat; sincronització amb l’Studio pendent");
+            setSubmitStatus(
+              "El correu i l’Excel s’han enviat correctament, però l’Studio no ha pogut desar-ne la versió. " +
+              (studioError && studioError.message ? studioError.message : "Torna a obrir el Formulari des de l’Studio.") +
+              " No cal repetir l’enviament per correu.", "warning"
+            );
+            return null;
+          });
         }).catch(function (error) {
           var detail = error && error.message ? " " + error.message : "";
           if (error && error.serverConfirmed) {
