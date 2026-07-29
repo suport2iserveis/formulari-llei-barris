@@ -1,5 +1,5 @@
 window.BARRYS_FIELDS=Object.freeze({
-  version:"2.0",
+  version:"4.0",
   defaultSources:["Decret 163/2025, article 13.1.b","Guia pràctica de sol·licitud, apartat 6. Fitxes d’actuacions"],
   byId:{
     "llb-municipality":{
@@ -63,6 +63,8 @@ window.BARRYS_FIELDS=Object.freeze({
     "llb-title":{
       title:"Títol de l’actuació",
       aliases:["títol","nom de l’actuació","descripció breu"],
+      lengthGuidance:"No hi ha un nombre normatiu de paraules configurat. Com a criteri orientatiu, fes servir una frase breu que habitualment càpiga en una o dues línies.",
+      example:"Rehabilitació energètica i ampliació del centre cívic del barri de [nom del barri].",
       include:["Un nom breu, específic i inequívoc que identifiqui què es farà.","Si ajuda a diferenciar-la, incorpora l’espai, equipament o col·lectiu principal.","Mantén-lo prou curt per cabre en un màxim orientatiu de dues línies."],
       avoid:["Títols genèrics com «Millora del barri», codis sense descripció o una explicació extensa de l’actuació."],
       structure:"Acció principal + objecte o espai d’intervenció + ubicació o col·lectiu, si és necessari.",
@@ -74,6 +76,7 @@ window.BARRYS_FIELDS=Object.freeze({
     "llb-diagnosis":{
       title:"Diagnosi",
       aliases:["diagnosi","problemàtica","necessitat"],
+      lengthGuidance:"No hi ha un límit normatiu de paraules configurat ni un màxim tècnic al formulari. Prioritza una diagnosi concreta i completa, sense repetir la descripció de l’actuació.",
       include:["La problemàtica o situació actual concreta que motiva aquesta actuació.","L’àmbit territorial i les persones o col·lectius afectats.","Dades o evidències verificables, amb any i font quan sigui possible.","Les causes i conseqüències principals del problema.","La relació directa entre la necessitat detectada i l’actuació proposada."],
       avoid:["Descriure les obres o activitats que es faran; això correspon a la descripció de l’actuació.","Afirmacions genèriques sense dades, font ni referència territorial.","Copiar la diagnosi general del PMII sense concretar-la per a aquesta actuació."],
       structure:"1. Situació actual.\n2. Problema o dèficit concret.\n3. Dada, any i font.\n4. Territori i col·lectius afectats.\n5. Causes i conseqüències.\n6. Necessitat d’intervenir.",
@@ -89,6 +92,7 @@ window.BARRYS_FIELDS=Object.freeze({
     "llb-action-description":{
       title:"Descripció de l’actuació",
       aliases:["descripció de l’actuació","actuació","intervenció"],
+      lengthGuidance:"No hi ha un límit normatiu de paraules configurat ni un màxim tècnic al formulari. L’extensió ha de permetre entendre què es farà, on, per a qui, com i amb quins resultats.",
       include:["L’objecte i la finalitat concreta de la intervenció.","Les activitats, serveis, obres o mesures que s’executaran i el seu abast.","On es desenvoluparà i a quines persones o col·lectius s’adreça.","La metodologia, els recursos principals i les fases d’execució.","Els resultats esperats i com responen a la diagnosi.","La coordinació amb altres actuacions, si és rellevant."],
       avoid:["Repetir només la diagnosi sense explicar què es farà.","Enumerar objectius sense concretar activitats, abast, procés o resultats.","Introduir dades pressupostàries detallades que ja tenen camps específics."],
       structure:"1. En què consisteix.\n2. Accions i abast.\n3. Ubicació i destinataris.\n4. Metodologia i fases.\n5. Resultats esperats.\n6. Relació amb la diagnosi i altres actuacions.",
@@ -104,12 +108,25 @@ window.BARRYS_FIELDS=Object.freeze({
     "llb-collaborating-entities":{
       title:"Entitats col·laboradores",
       aliases:["entitats col·laboradores","organisme responsable","col·laboradors"],
+      lengthGuidance:"No hi ha un límit de paraules configurat. Dedica una entrada breu a cada entitat i concreta’n la funció; no cal desenvolupar informació aliena a la col·laboració.",
       include:["El nom de cada administració, servei, entitat social o agent que intervé.","El paper i les funcions concretes de cadascun.","En quina fase participa: disseny, execució, derivació, comunicació, seguiment o avaluació.","El compromís o instrument de col·laboració previst, si existeix.","Si no hi ha entitats col·laboradores, indica-ho expressament."],
       avoid:["Llistes de noms sense explicar funcions.","Atribuir compromisos que no estiguin confirmats."],
       structure:"Entitat o agent — funció — fase de participació — compromís o instrument previst.",
       rules:[
         {type:"required",message:"Falta identificar les entitats o indicar expressament que no se’n preveuen."},
         {type:"patternUnlessNone",pattern:"funció|responsab|coordina|execut|particip|col·labor|seguiment|comunic|deriv",message:"S’han esmentat agents, però no queda clara la funció de cadascun."}
+      ]
+    },
+    "llb-location-description":{
+      title:"Emplaçament de l’actuació",
+      aliases:["emplaçament","ubicació","adreça","carrers","lloc de l’actuació"],
+      lengthGuidance:"No hi ha un límit normatiu de paraules configurat. Identifica l’emplaçament amb prou precisió perquè es pugui localitzar i relacionar amb l’AAE.",
+      include:["L’adreça, els carrers, l’equipament, l’espai públic o l’àmbit concret on es desenvolupa l’actuació.","Si afecta diversos punts, enumera’ls o descriu clarament l’abast territorial.","Indica la relació amb l’AAE quan l’emplaçament no sigui evident."],
+      avoid:["Referències genèriques com «al barri» sense carrer, equipament, àmbit o delimitació.","Ubicacions que no coincideixin amb la diagnosi o la descripció de l’actuació."],
+      structure:"Emplaçament principal + adreça o carrers + abast territorial + relació amb l’AAE.",
+      rules:[
+        {type:"required",message:"Falta descriure l’emplaçament de l’actuació."},
+        {type:"minLength",value:12,message:"L’emplaçament és massa genèric; concreta l’adreça, els carrers, l’equipament o l’àmbit afectat."}
       ]
     },
     "llb-action-total":{
@@ -187,6 +204,8 @@ window.BARRYS_FIELDS=Object.freeze({
     },
     "llb-indicator-description":{
       title:"Descripció de l’indicador",
+      lengthGuidance:"No hi ha un límit normatiu de paraules configurat. Formula’l preferentment en una sola frase clara, amb la magnitud i la unitat de mesura.",
+      example:"Nombre de persones participants en les activitats comunitàries durant l’any.",
       include:["Defineix exactament què es mesurarà.","Expressa una magnitud quantificable i, quan sigui possible, la unitat o fórmula.","Vincula’l a una actuació o resultat concret."],
       avoid:["Indicadors binaris de tipus «Sí/No».","Formulacions vagues com «millora del servei» sense magnitud ni unitat."],
       structure:"Magnitud mesurada + unitat o fórmula + població/espai de referència + moment de mesura.",
@@ -214,6 +233,27 @@ window.BARRYS_FIELDS=Object.freeze({
         {type:"required",message:"Falta el valor objectiu."},
         {type:"nonBinary",message:"El valor objectiu és binari; concreta una xifra o una escala definida."},
         {type:"sameUnitAsCurrent",message:"Comprova que el valor actual i l’objectiu utilitzin la mateixa unitat o escala."}
+      ]
+    },
+    "llb-image-caption":{
+      title:"Peu de foto",
+      include:["Descriu breument què mostra la imatge i la seva relació amb l’actuació o l’emplaçament."],
+      avoid:["Peus genèrics com «imatge de la zona» que no permetin interpretar-ne el contingut."],
+      rules:[{type:"required",message:"Falta el peu de foto d’aquesta imatge."}]
+    },
+    "llb-image-source":{
+      title:"Font o autoria de la imatge",
+      include:["Indica l’autoria, l’organisme d’origen o «elaboració pròpia», segons correspongui."],
+      avoid:["Deixar la imatge sense una font identificable."],
+      rules:[{type:"required",message:"Falta indicar la font o autoria d’aquesta imatge."}]
+    },
+    "llb-image-alt":{
+      title:"Text alternatiu de la imatge",
+      include:["Descriu en una frase breu la informació visual essencial perquè la imatge sigui accessible."],
+      avoid:["Repetir només «imatge» o copiar un nom de fitxer sense significat."],
+      rules:[
+        {type:"required",message:"Falta el text alternatiu d’aquesta imatge."},
+        {type:"minLength",value:8,message:"El text alternatiu és massa breu per descriure la imatge."}
       ]
     }
   }

@@ -1,10 +1,12 @@
-.barrys-launcher{position:fixed;right:22px;bottom:18px;z-index:1200;width:108px;height:154px;padding:0;border:0;background:transparent;filter:drop-shadow(0 10px 12px #1414202f);cursor:pointer;overflow:visible;transition:filter .18s;animation:barrys-float 4.8s ease-in-out infinite;transform-origin:50% 82%}
+.barrys-stage{position:fixed;right:22px;bottom:18px;z-index:1200;width:108px;height:154px;pointer-events:none;will-change:transform;transform:translate3d(0,0,0)}
+.barrys-launcher{position:relative;z-index:2;width:108px;height:154px;padding:0;border:0;background:transparent;filter:drop-shadow(0 10px 12px #1414202f);cursor:pointer;overflow:visible;pointer-events:auto;transition:filter .24s ease;animation:barrys-float 4.8s ease-in-out infinite;transform-origin:50% 82%}
 .barrys-launcher:hover{filter:drop-shadow(0 14px 15px #1414203d);animation-play-state:paused;transform:translateY(-4px) rotate(1.5deg)}
 .barrys-launcher:focus-visible{outline:3px solid #7673ad;outline-offset:5px;border-radius:20px}
 .barrys-launcher>.barrys-sprite{position:absolute;inset:0}
 .barrys-launcher:after{content:"?";position:absolute;right:-3px;top:2px;display:grid;place-items:center;width:25px;height:25px;border-radius:50%;color:#fff;background:#24242a;border:2px solid #fff;box-shadow:0 3px 8px #14142035;font:700 13px system-ui}
-.barrys-panel{position:fixed;right:22px;bottom:176px;z-index:1199;width:min(410px,calc(100vw - 28px));max-height:min(680px,calc(100vh - 195px));display:none;flex-direction:column;overflow:hidden;border:1px solid #dedee8;border-radius:18px;background:#fff;box-shadow:0 20px 55px #14142033;color:#24242a;font-family:Inter,Arial,sans-serif}
+.barrys-panel{position:absolute;right:0;bottom:158px;z-index:1;width:min(410px,calc(100vw - 28px));max-height:min(680px,calc(100vh - 195px));display:none;flex-direction:column;overflow:hidden;border:1px solid #dedee8;border-radius:18px;background:#fff;box-shadow:0 20px 55px #14142033;color:#24242a;font-family:Inter,Arial,sans-serif;pointer-events:auto;transform-origin:calc(100% - 42px) 100%}
 .barrys-panel.is-open{display:flex}
+.barrys-stage.is-left .barrys-panel{right:auto;left:0;transform-origin:42px 100%}
 .barrys-panel header{display:flex;align-items:center;gap:12px;padding:15px 16px;border-bottom:1px solid #e8e8ef}
 .barrys-avatar{width:48px;height:74px;position:relative;flex:none}
 .barrys-panel header>span:nth-child(2){min-width:0;flex:1}
@@ -18,6 +20,7 @@
 .barrys-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .barrys-actions button{min-height:42px;padding:9px 10px;border:1px solid #d8d7e5;border-radius:10px;background:#fff;color:#34343c;text-align:left;cursor:pointer;font:600 12px/1.25 inherit}
 .barrys-actions button:hover{border-color:#7673ad;background:#f8f7fc}
+.barrys-actions button:last-child{grid-column:1/-1;text-align:center;background:#f7f6fb}
 .barrys-answer{margin-top:14px;padding:13px;border-radius:12px;background:#f4f3f9;font-size:13px;white-space:pre-line}
 .barrys-note{display:block;margin-top:12px;color:#777783;font-size:11px}
 .barrys-question{margin-top:14px}
@@ -34,19 +37,24 @@
 .barrys-sources strong{display:block;margin-bottom:4px;color:#3c3c44}
 .barrys-sources ul{margin:0;padding-left:17px}
 .barrys-note span{font-weight:700}
-.barrys-sprite{display:block;width:100%;height:100%;object-fit:contain;image-rendering:auto;transform-origin:50% 72%;backface-visibility:hidden;will-change:transform,opacity}
-.barrys-sprite.is-face-changing{animation:barrys-face-pop .28s ease-out!important}
+.barrys-sprite-host{position:relative;isolation:isolate}
+.barrys-sprite{display:block;width:100%;height:100%;object-fit:contain;image-rendering:auto;transform-origin:50% 72%;backface-visibility:hidden;will-change:transform,opacity;transition:opacity .34s cubic-bezier(.22,.75,.26,1),filter .34s ease}
+.barrys-sprite-transition{position:absolute!important;inset:0;z-index:2;animation:barrys-face-arrive .36s cubic-bezier(.2,.8,.25,1)!important}
 .barrys-sprite[data-barrys-face="attentive"]{animation:barrys-breathe 2.8s ease-in-out infinite}
 .barrys-sprite[data-barrys-face="thinking"]{animation:barrys-thinking 1.05s ease-in-out infinite alternate}
 .barrys-sprite[data-barrys-face="explaining"]{animation:barrys-talk .5s ease-in-out 4}
 .barrys-sprite[data-barrys-face="happy"]{animation:barrys-happy .44s ease-in-out 3}
 .barrys-sprite[data-barrys-face="warning"]{animation:barrys-warning .34s ease-in-out 3}
 @keyframes barrys-float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-7px) rotate(-1deg)}}
-@keyframes barrys-face-pop{0%{opacity:.3;transform:scale(.94)}100%{opacity:1;transform:scale(1)}}
+@keyframes barrys-face-arrive{0%{opacity:0;transform:translateY(3px) scale(.965) rotate(-1deg)}100%{opacity:1;transform:translateY(0) scale(1) rotate(0)}}
 @keyframes barrys-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.018) translateY(-1px)}}
 @keyframes barrys-happy{50%{transform:translateY(-5px) scale(1.03)}}
 @keyframes barrys-warning{25%{transform:translateX(-2px)}75%{transform:translateX(2px)}}
 @keyframes barrys-talk{50%{transform:translateY(-2px) scale(1.025)}}
 @keyframes barrys-thinking{to{transform:rotate(4deg) translateY(-2px)}}
-@media(prefers-reduced-motion:reduce){.barrys-launcher,.barrys-sprite,.barrys-avatar{animation:none!important;transition:none}}
-@media(max-width:620px){.barrys-launcher{right:12px;bottom:10px;width:92px;height:132px}.barrys-panel{right:14px;bottom:150px;max-height:calc(100vh - 168px)}.barrys-actions{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.barrys-stage,.barrys-launcher,.barrys-sprite,.barrys-avatar{animation:none!important;transition:none!important}}
+@media(max-width:620px){.barrys-stage{right:12px;bottom:10px;width:92px;height:132px}.barrys-launcher{width:92px;height:132px}.barrys-panel{right:0;bottom:136px;max-height:calc(100vh - 154px)}.barrys-actions{grid-template-columns:1fr}.barrys-actions button:last-child{grid-column:auto}}
+.barrys-field-invalid{border-color:#b42318!important;box-shadow:0 0 0 3px rgba(180,35,24,.13)!important;background:#fff8f7!important}
+.barrys-field-error{display:grid;gap:3px;margin-top:7px;padding:9px 11px;border-left:3px solid #b42318;border-radius:7px;background:#fff1f0;color:#7a271a;font-size:12px;line-height:1.4}
+.barrys-field-error strong{font-size:12px}
+.barrys-field-error span{display:block}
