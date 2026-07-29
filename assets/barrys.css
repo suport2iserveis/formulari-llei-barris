@@ -1,10 +1,13 @@
-.barrys-stage{position:fixed;right:22px;bottom:18px;z-index:1200;width:108px;height:154px;pointer-events:none;will-change:transform;transform:translate3d(0,0,0)}
-.barrys-launcher{position:relative;z-index:2;width:108px;height:154px;padding:0;border:0;background:transparent;filter:drop-shadow(0 10px 12px #1414202f);cursor:pointer;overflow:visible;pointer-events:auto;transition:filter .24s ease;animation:barrys-float 4.8s ease-in-out infinite;transform-origin:50% 82%}
-.barrys-launcher:hover{filter:drop-shadow(0 14px 15px #1414203d);animation-play-state:paused;transform:translateY(-4px) rotate(1.5deg)}
+.barrys-stage{position:fixed;right:22px;bottom:18px;z-index:1200;width:82px;height:118px;pointer-events:none;will-change:transform,width,height;transform:translate3d(0,0,0);transition:width .28s cubic-bezier(.2,.8,.25,1),height .28s cubic-bezier(.2,.8,.25,1)}
+.barrys-stage.is-expanded{width:108px;height:154px}
+.barrys-launcher{position:relative;z-index:2;width:82px;height:118px;padding:0;border:0;background:transparent;filter:drop-shadow(0 8px 10px #14142028);cursor:pointer;overflow:visible;pointer-events:auto;transition:width .28s cubic-bezier(.2,.8,.25,1),height .28s cubic-bezier(.2,.8,.25,1),filter .24s ease;animation:barrys-float 4.8s ease-in-out infinite;transform-origin:50% 82%}
+.barrys-stage.is-expanded .barrys-launcher{width:108px;height:154px;filter:drop-shadow(0 10px 12px #1414202f)}
+.barrys-launcher:hover{filter:drop-shadow(0 12px 13px #14142038);animation-play-state:paused;transform:translateY(-3px) rotate(1.5deg)}
 .barrys-launcher:focus-visible{outline:3px solid #7673ad;outline-offset:5px;border-radius:20px}
 .barrys-launcher>.barrys-sprite{position:absolute;inset:0}
 .barrys-launcher:after{content:"?";position:absolute;right:-3px;top:2px;display:grid;place-items:center;width:25px;height:25px;border-radius:50%;color:#fff;background:#24242a;border:2px solid #fff;box-shadow:0 3px 8px #14142035;font:700 13px system-ui}
-.barrys-panel{position:absolute;right:0;bottom:158px;z-index:1;width:min(410px,calc(100vw - 28px));max-height:min(680px,calc(100vh - 195px));display:none;flex-direction:column;overflow:hidden;border:1px solid #dedee8;border-radius:18px;background:#fff;box-shadow:0 20px 55px #14142033;color:#24242a;font-family:Inter,Arial,sans-serif;pointer-events:auto;transform-origin:calc(100% - 42px) 100%}
+.barrys-panel{position:absolute;right:0;bottom:122px;z-index:1;width:min(410px,calc(100vw - 28px));max-height:min(680px,calc(100vh - 195px));display:none;flex-direction:column;overflow:hidden;border:1px solid #dedee8;border-radius:18px;background:#fff;box-shadow:0 20px 55px #14142033;color:#24242a;font-family:Inter,Arial,sans-serif;pointer-events:auto;transform-origin:calc(100% - 42px) 100%}
+.barrys-stage.is-expanded .barrys-panel{bottom:158px}
 .barrys-panel.is-open{display:flex}
 .barrys-stage.is-left .barrys-panel{right:auto;left:0;transform-origin:42px 100%}
 .barrys-panel header{display:flex;align-items:center;gap:12px;padding:15px 16px;border-bottom:1px solid #e8e8ef}
@@ -53,7 +56,7 @@
 @keyframes barrys-talk{50%{transform:translateY(-2px) scale(1.025)}}
 @keyframes barrys-thinking{to{transform:rotate(4deg) translateY(-2px)}}
 @media(prefers-reduced-motion:reduce){.barrys-stage,.barrys-launcher,.barrys-sprite,.barrys-avatar{animation:none!important;transition:none!important}}
-@media(max-width:620px){.barrys-stage{right:12px;bottom:10px;width:92px;height:132px}.barrys-launcher{width:92px;height:132px}.barrys-panel{right:0;bottom:136px;max-height:calc(100vh - 154px)}.barrys-actions{grid-template-columns:1fr}.barrys-actions button:last-child{grid-column:auto}}
+@media(max-width:620px){.barrys-stage{right:12px;bottom:10px;width:72px;height:104px}.barrys-stage.is-expanded{width:92px;height:132px}.barrys-launcher{width:72px;height:104px}.barrys-stage.is-expanded .barrys-launcher{width:92px;height:132px}.barrys-panel{right:0;bottom:108px;max-height:calc(100vh - 154px)}.barrys-stage.is-expanded .barrys-panel{bottom:136px}.barrys-actions{grid-template-columns:1fr}.barrys-actions button:last-child{grid-column:auto}}
 .barrys-field-invalid{border-color:#b42318!important;box-shadow:0 0 0 3px rgba(180,35,24,.13)!important;background:#fff8f7!important}
 .barrys-field-error{display:grid;gap:3px;margin-top:7px;padding:9px 11px;border-left:3px solid #b42318;border-radius:7px;background:#fff1f0;color:#7a271a;font-size:12px;line-height:1.4}
 .barrys-field-error strong{font-size:12px}

@@ -16,11 +16,11 @@
   const KB=window.BARRYS_KNOWLEDGE||{topics:[],fallback:"No disposo d’una resposta validada per a aquesta consulta."};
   const FIELDS=window.BARRYS_FIELDS||{byId:{},byClass:{},defaultSources:[]};
   const FACE_URLS={
-    attentive:"assets/barrys/attentive.png?v=5.1.0",
-    thinking:"assets/barrys/thinking.png?v=5.1.0",
-    explaining:"assets/barrys/explaining.png?v=5.1.0",
-    happy:"assets/barrys/happy.png?v=5.1.0",
-    warning:"assets/barrys/warning.png?v=5.1.0"
+    attentive:"assets/barrys/attentive.png?v=5.1.1",
+    thinking:"assets/barrys/thinking.png?v=5.1.1",
+    explaining:"assets/barrys/explaining.png?v=5.1.1",
+    happy:"assets/barrys/happy.png?v=5.1.1",
+    warning:"assets/barrys/warning.png?v=5.1.1"
   };
 
   let active=null;
@@ -106,15 +106,16 @@
     if(!motion.frame)motion.frame=requestAnimationFrame(runStageMotion);
   };
   const restingPosition=()=>moveStage(0,0,"right");
-  const glideNearField=field=>{
-    if(!stage||panel.classList.contains("is-open")||reducedMotion())return;
+  const glideNearField=(field,{guided=false}={})=>{
+    if(!stage||!guided||reducedMotion())return;
     const rect=field?.getBoundingClientRect?.();
     if(!rect)return;
-    const stageHeight=154;
+    const stageHeight=stage.classList.contains("is-expanded")?154:118;
     const naturalTop=window.innerHeight-18-stageHeight;
     const desiredTop=Math.max(12,Math.min(window.innerHeight-stageHeight-12,rect.top+rect.height/2-stageHeight/2));
     const moveToLeft=rect.left+rect.width/2>window.innerWidth*.62;
-    const leftOffset=-(Math.max(0,window.innerWidth-108-44));
+    const stageWidth=stage.classList.contains("is-expanded")?108:82;
+    const leftOffset=-(Math.max(0,window.innerWidth-stageWidth-44));
     moveStage(moveToLeft?leftOffset:0,desiredTop-naturalTop,moveToLeft?"left":"right");
   };
   const setFace=(requested="attentive")=>{
@@ -153,6 +154,7 @@
   };
   const open=value=>{
     panel.classList.toggle("is-open",value);
+    stage?.classList.toggle("is-expanded",value);
     panel.setAttribute("aria-hidden",String(!value));
     launcher.setAttribute("aria-expanded",String(value));
     if(value){
@@ -224,11 +226,13 @@
       const tab=document.querySelector(`.llb-tab[data-tab="${CSS.escape(panelElement.dataset.panel||"")}"]`);
       tab?.click();
     }
-    updateActiveField(field);
     open(true);
+    updateActiveField(field);
+    glideNearField(field,{guided:true});
     setFace("warning");
     window.setTimeout(()=>{
       field.scrollIntoView({behavior:window.matchMedia?.("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"center"});
+      window.setTimeout(()=>glideNearField(field,{guided:true}),260);
       if(!field.readOnly&&!field.disabled)field.focus({preventScroll:true});
     },80);
   };
@@ -554,7 +558,6 @@
     const profile=profileForField(field);
     context.textContent=profile?`Camp actiu: ${profileTitle(profile,field)}`:`Camp actiu: ${label(field)}`;
     setFace("attentive");
-    glideNearField(field);
   };
   const scheduleIdleExpression=()=>{
     clearInterval(window.__barrysIdleInterval);
@@ -564,23 +567,6 @@
       clearTimeout(idleReturnTimer);
       idleReturnTimer=setTimeout(()=>setFace("attentive"),1100);
     },8500);
-  };
-  const scheduleRoving=()=>{
-    clearInterval(window.__barrysRovingInterval);
-    window.__barrysRovingInterval=setInterval(()=>{
-      if(panel.classList.contains("is-open")||document.hidden||reducedMotion())return;
-      const left=Math.random()>.72;
-      const x=left?-(Math.max(0,window.innerWidth-108-44)):0;
-      const travel=Math.max(0,window.innerHeight-210);
-      const y=-Math.round(travel*(.18+Math.random()*.64));
-      moveStage(x,y,left?"left":"right");
-      setFace(Math.random()>.55?"thinking":"attentive");
-      clearTimeout(idleReturnTimer);
-      idleReturnTimer=setTimeout(()=>{
-        setFace("attentive");
-        if(!active)restingPosition();
-      },2200);
-    },10500);
   };
 
   launcher.addEventListener("click",()=>{
@@ -633,6 +619,7 @@
   window.BARRYS_VALIDATOR=Object.freeze({validateCurrent,clearFieldError});
   setFace("attentive");
   scheduleIdleExpression();
-  scheduleRoving();
-  window.addEventListener("resize",()=>panel.classList.contains("is-open")?restingPosition():glideNearField(active));
+  window.addEventListener("resize",()=>{
+    if(!panel.classList.contains("is-open"))restingPosition();
+  });
 })();
