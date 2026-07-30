@@ -2786,10 +2786,9 @@ svg {
 
       function saveGlobalVersion() {
         ensureCurrentCommitted();
-        var blocking = submissionBlockingErrors();
-        if (blocking.length) {
-          setSubmitStatus("No es pot desar la versió. " + blocking.join(" "), "error");
-          return;
+        var warnings = submissionBlockingErrors();
+        if (warnings.length) {
+          setSubmitStatus("Avís de Barrys: " + warnings.join(" ") + " La versió es desarà igualment.", "warning");
         }
         var versionLabel = newVersionLabelInput.value.trim() ||
           "Versió de treball " + new Date().toLocaleString("ca-ES");
@@ -4511,10 +4510,9 @@ svg {
             setSubmitStatus(
               "Barrys ha detectat " + detailedValidation.problems.length +
               (detailedValidation.problems.length === 1 ? " camp pendent." : " camps pendents.") +
-              " Completa els camps ressaltats abans de desar.",
-              "error"
+              " Pots desar igualment; els camps ressaltats són només avisos de revisió.",
+              "warning"
             );
-            return null;
           }
         }
         if (saveTimer) window.clearTimeout(saveTimer);
@@ -5634,11 +5632,11 @@ svg {
           var detailedValidation = window.BARRYS_VALIDATOR.validateCurrent({ focus: true });
           if (!detailedValidation.valid) {
             setSubmitStatus(
-              "No es pot generar l’Excel: Barrys ha detectat " + detailedValidation.problems.length +
-              (detailedValidation.problems.length === 1 ? " camp pendent." : " camps pendents."),
-              "error"
+              "Barrys ha detectat " + detailedValidation.problems.length +
+              (detailedValidation.problems.length === 1 ? " camp pendent." : " camps pendents.") +
+              " L’Excel es generarà igualment; són avisos de revisió.",
+              "warning"
             );
-            return null;
           }
         }
         if (!project.actions.length) {
@@ -5699,11 +5697,11 @@ svg {
           var detailedValidation = window.BARRYS_VALIDATOR.validateCurrent({ focus: true });
           if (!detailedValidation.valid) {
             setSubmitStatus(
-              "No es pot enviar encara: Barrys ha detectat " + detailedValidation.problems.length +
-              (detailedValidation.problems.length === 1 ? " camp pendent." : " camps pendents."),
-              "error"
+              "Barrys ha detectat " + detailedValidation.problems.length +
+              (detailedValidation.problems.length === 1 ? " camp pendent." : " camps pendents.") +
+              " L’enviament continuarà: són avisos de revisió.",
+              "warning"
             );
-            return;
           }
         }
         var blockingErrors = COLLABORATOR_TOKEN ? [] : submissionBlockingErrors();
@@ -6118,9 +6116,9 @@ svg {
   </script>
 </main>
 
-<link rel="stylesheet" href="assets/barrys.css?v=5.1.1">
-<script src="assets/barrys.knowledge.js?v=5.1.1"></script>
-<script src="assets/barrys.fields.js?v=5.1.1"></script>
+<link rel="stylesheet" href="assets/barrys.css?v=5.1.2">
+<script src="assets/barrys.knowledge.js?v=5.1.2"></script>
+<script src="assets/barrys.fields.js?v=5.1.2"></script>
 <div class="barrys-stage" id="barrys-stage">
   <button class="barrys-launcher" id="barrys-launcher" type="button" aria-label="Obre l’assistent Barrys" aria-expanded="false">
     <img class="barrys-sprite" data-barrys-face="attentive" src="assets/barrys/attentive.png?v=5.1.1" alt="" aria-hidden="true">
@@ -6147,7 +6145,7 @@ svg {
     </div>
   </aside>
 </div>
-<script src="assets/barrys.js?v=5.1.1"></script>
+<script src="assets/barrys.js?v=5.1.2"></script>
 
 <script id="codex-visualization-floating-ui-core" src="https://unpkg.com/@floating-ui/core@1.7.3/dist/floating-ui.core.umd.min.js"></script>
 <script id="codex-visualization-floating-ui-dom" src="https://unpkg.com/@floating-ui/dom@1.7.4/dist/floating-ui.dom.umd.min.js"></script>

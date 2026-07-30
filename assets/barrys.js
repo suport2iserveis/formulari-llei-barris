@@ -272,7 +272,7 @@
       `${limited?"He revisat només els apartats que tens habilitats en aquesta fitxa d’edició limitada.":"He revisat els camps editables de la fitxa."}\n\n`+
       `Hi ha ${problems.length} ${problems.length===1?"camp pendent":"camps pendents"}:\n${pending}${omitted}\n\n`+
       `Primer camp a corregir: «${first.title}».\n${bulletList(first.issues)}\n\n`+
-      `${focus?"L’he ressaltat i t’hi he portat. ":""}Quan el corregeixis, Barrys et conduirà al següent camp pendent.`,
+      `${focus?"L’he ressaltat i t’hi he portat. ":""}Són avisos de revisió: pots continuar desant o enviant la fitxa quan et convingui.`,
       "warning"
     );
     setFace("warning");
