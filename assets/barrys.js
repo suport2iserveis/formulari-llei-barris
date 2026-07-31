@@ -8,24 +8,27 @@
   const context=$("barrys-context");
   const answer=$("barrys-answer");
   const sources=$("barrys-sources");
-  const form=$("barrys-question");
-  const input=$("barrys-input");
   const status=$("barrys-status");
   const stage=$("barrys-stage");
   const llbRoot=$("llb-budget-form");
   const KB=window.BARRYS_KNOWLEDGE||{topics:[],fallback:"No disposo d’una resposta validada per a aquesta consulta."};
   const FIELDS=window.BARRYS_FIELDS||{byId:{},byClass:{},defaultSources:[]};
   const FACE_URLS={
-    attentive:"assets/barrys/attentive.png?v=5.1.1",
-    thinking:"assets/barrys/thinking.png?v=5.1.1",
-    explaining:"assets/barrys/explaining.png?v=5.1.1",
-    happy:"assets/barrys/happy.png?v=5.1.1",
-    warning:"assets/barrys/warning.png?v=5.1.1"
+    attentive:"assets/barrys/attentive.png?v=5.2.0",
+    thinking:"assets/barrys/thinking.png?v=5.2.0",
+    explaining:"assets/barrys/explaining.png?v=5.2.0",
+    happy:"assets/barrys/happy.png?v=5.2.0",
+    warning:"assets/barrys/warning.png?v=5.2.0",
+    curious:"assets/barrys/curious.png?v=5.2.0",
+    encouraging:"assets/barrys/encouraging.png?v=5.2.0",
+    guiding:"assets/barrys/guiding.png?v=5.2.0"
   };
 
   let active=null;
   let idleReturnTimer=0;
   let faceTransitionId=0;
+  let pendingConfirmation=null;
+  let collaboratorScopeAnnounced=false;
   const motion={x:0,y:0,targetX:0,targetY:0,vx:0,vy:0,frame:0};
 
   Object.values(FACE_URLS).forEach(src=>{const image=new Image();image.src=src});
@@ -97,6 +100,7 @@
     }
     stage.style.transform=`translate3d(${motion.x.toFixed(2)}px,${motion.y.toFixed(2)}px,0)`;
     const moving=Math.abs(motion.targetX-motion.x)>.15||Math.abs(motion.targetY-motion.y)>.15||Math.abs(motion.vx)>.08||Math.abs(motion.vy)>.08;
+    stage.classList.toggle("is-gliding",moving);
     motion.frame=moving?requestAnimationFrame(runStageMotion):0;
   };
   const moveStage=(x,y,side)=>{
@@ -159,7 +163,6 @@
     launcher.setAttribute("aria-expanded",String(value));
     if(value){
       restingPosition();
-      setTimeout(()=>input?.focus(),80);
     }
   };
   const show=(text,kind="local")=>{
@@ -202,7 +205,7 @@
     message.id=errorId;
     message.className="barrys-field-error";
     message.setAttribute("role","alert");
-    message.innerHTML=`<strong>Revisa aquest camp</strong><span>${messages.map(item=>String(item).replace(/[<>&]/g,char=>({"<":"&lt;",">":"&gt;","&":"&amp;"}[char]))).join("<br>")}</span>`;
+    message.innerHTML=`<strong>Barry et demana que revisis aquest camp</strong><span>${messages.map(item=>String(item).replace(/[<>&]/g,char=>({"<":"&lt;",">":"&gt;","&":"&amp;"}[char]))).join("<br>")}</span>`;
     container.append(message);
     field.classList.add("barrys-field-invalid");
     field.setAttribute("aria-invalid","true");
@@ -229,22 +232,20 @@
     open(true);
     updateActiveField(field);
     glideNearField(field,{guided:true});
-    setFace("warning");
+    setFace("guiding");
     window.setTimeout(()=>{
       field.scrollIntoView({behavior:window.matchMedia?.("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"center"});
       window.setTimeout(()=>glideNearField(field,{guided:true}),260);
       if(!field.readOnly&&!field.disabled)field.focus({preventScroll:true});
     },80);
   };
-  const validateCurrent=({focus=true}={})=>{
-    validationFields().forEach(clearFieldError);
+  const inspectCurrent=()=>{
     const problems=[];
     validationFields().forEach(field=>{
       if(!isEditableForValidation(field))return;
       const profile=profileForField(field);
       const issues=ruleIssues(profile,field);
       if(issues.length){
-        markFieldError(field,issues);
         problems.push({field,profile,title:profileTitle(profile,field),issues});
       }
     });
@@ -254,10 +255,17 @@
       const profile={title:"Indicadors de l’actuació",sources:FIELDS.defaultSources||[]};
       const issues=["Falta afegir almenys un indicador complet per mesurar l’execució o els resultats de l’actuació."];
       if(field){
-        markFieldError(field,issues);
         problems.push({field,profile,title:profile.title,issues});
       }
     }
+    return{valid:problems.length===0,problems};
+  };
+  const validateCurrent=({focus=true,announce=true,mark=true}={})=>{
+    validationFields().forEach(clearFieldError);
+    const inspection=inspectCurrent();
+    const problems=inspection.problems;
+    if(mark)problems.forEach(problem=>markFieldError(problem.field,problem.issues));
+    if(!announce)return inspection;
     if(!problems.length){
       show("La fitxa no presenta mancances ni incoherències segons les comprovacions configurades. Això no substitueix la revisió de la veracitat de les dades.","local");
       cite(FIELDS.defaultSources||[]);
@@ -272,13 +280,86 @@
       `${limited?"He revisat només els apartats que tens habilitats en aquesta fitxa d’edició limitada.":"He revisat els camps editables de la fitxa."}\n\n`+
       `Hi ha ${problems.length} ${problems.length===1?"camp pendent":"camps pendents"}:\n${pending}${omitted}\n\n`+
       `Primer camp a corregir: «${first.title}».\n${bulletList(first.issues)}\n\n`+
-      `${focus?"L’he ressaltat i t’hi he portat. ":""}Són avisos de revisió: pots continuar desant o enviant la fitxa quan et convingui.`,
+      `${focus?"L’he ressaltat en groc i t’hi he portat. ":""}Revisa l’avís abans de decidir si vols continuar.`,
       "warning"
     );
     setFace("warning");
     cite(first.profile?.sources||FIELDS.defaultSources||[]);
     if(focus)activateField(first.field);
     return{valid:false,problems};
+  };
+  const clearConfirmation=resolution=>{
+    const current=pendingConfirmation;
+    pendingConfirmation=null;
+    panel.querySelector(".barrys-confirmation")?.remove();
+    if(current&&typeof resolution==="boolean")current.resolve(resolution);
+  };
+  const askConfirmation=(kind,result,extraProblems=[])=>{
+    clearConfirmation(false);
+    const isSend=kind==="send";
+    const box=document.createElement("div");
+    box.className="barrys-confirmation";
+    box.setAttribute("role","group");
+    box.setAttribute("aria-label",isSend?"Confirmació de l’enviament":"Confirmació del desament");
+    const question=document.createElement("p");
+    question.textContent=isSend?"Segur que vols enviar les fitxes?":"Segur que vols desar la fitxa?";
+    const actions=document.createElement("div");
+    actions.className="barrys-confirmation-actions";
+    const confirm=document.createElement("button");
+    confirm.type="button";
+    confirm.className="barrys-confirm-primary";
+    confirm.textContent=isSend?"Sí, envia":"Sí, desa";
+    const modify=document.createElement("button");
+    modify.type="button";
+    modify.className="barrys-confirm-secondary";
+    modify.textContent="No, modifica";
+    actions.append(confirm,modify);
+    box.append(question,actions);
+    answer.insertAdjacentElement("afterend",box);
+    if(extraProblems.length){
+      const summary=extraProblems.slice(0,8).join("\n• ");
+      show(`${answer.textContent}\n\nAltres avisos de les fitxes:\n• ${summary}${extraProblems.length>8?`\n• …i ${extraProblems.length-8} avisos més.`:""}`,"warning");
+    }
+    open(true);
+    setFace("warning");
+    return new Promise(resolve=>{
+      pendingConfirmation={resolve,kind};
+      confirm.addEventListener("click",()=>{
+        pendingConfirmation=null;
+        box.remove();
+        setFace("happy");
+        resolve(true);
+      });
+      modify.addEventListener("click",()=>{
+        pendingConfirmation=null;
+        box.remove();
+        setFace("encouraging");
+        const first=result.problems[0];
+        if(first)activateField(first.field);
+        resolve(false);
+      });
+      modify.focus({preventScroll:true});
+    });
+  };
+  const guardCurrent=({kind="save",extraProblems=[],externalField=null,externalMessage=""}={})=>{
+    const result=validateCurrent({focus:true,announce:true,mark:true});
+    if(result.valid&&!extraProblems.length)return Promise.resolve(true);
+    if(result.valid&&extraProblems.length){
+      show(`Barry ha detectat ${extraProblems.length} ${extraProblems.length===1?"avís":"avisos"} en el conjunt de fitxes. Revisa’ls abans de continuar.`,"warning");
+      setFace("warning");
+      if(externalField){
+        const issues=[externalMessage||extraProblems[0]||"Revisa aquest camp abans de continuar."];
+        markFieldError(externalField,issues);
+        result.problems.push({
+          field:externalField,
+          profile:profileForField(externalField),
+          title:profileTitle(profileForField(externalField),externalField),
+          issues
+        });
+        activateField(externalField);
+      }
+    }
+    return askConfirmation(kind,result,extraProblems);
   };
   const topicScore=(topic,text)=>{
     const q=words(text);
@@ -398,7 +479,7 @@
     if(minimum){
       parts.push(
         "",
-        `La comprovació local avisa si ${minimum.type==="minLengthIfValue"?"l’emplenes amb menys de":"té menys de"} ${minimum.value} caràcters. És un llindar de control de qualitat de Barrys, no un límit normatiu ni una extensió obligatòria.`
+        `La comprovació local avisa si ${minimum.type==="minLengthIfValue"?"l’emplenes amb menys de":"té menys de"} ${minimum.value} caràcters. És un llindar de control de qualitat de Barry, no un límit normatiu ni una extensió obligatòria.`
       );
     }
     if(!profile.lengthGuidance){
@@ -408,7 +489,7 @@
   };
   const requiredField=({profile,field,title})=>{
     const rules=requiredRules(profile);
-    if(!rules.length)return `Obligatorietat de «${title}»:\n\nBarrys no té configurada una obligació general per a aquest camp. Pot ser opcional o dependre del context de l’actuació.`;
+    if(!rules.length)return `Obligatorietat de «${title}»:\n\nBarry no té configurada una obligació general per a aquest camp. Pot ser opcional o dependre del context de l’actuació.`;
     const conditional=rules.some(rule=>["requiredIfAllocated","amountIfAllocated"].includes(rule.type));
     if(conditional){
       const allocation=parseNumber(relatedAllocation(field)?.value||"0");
@@ -559,13 +640,116 @@
     context.textContent=profile?`Camp actiu: ${profileTitle(profile,field)}`:`Camp actiu: ${label(field)}`;
     setFace("attentive");
   };
+  const guideToControl=(control)=>{
+    if(!control)return;
+    open(true);
+    glideNearField(control,{guided:true});
+    setFace("guiding");
+    window.setTimeout(()=>{
+      control.scrollIntoView({behavior:reducedMotion()?"auto":"smooth",block:"center"});
+      window.setTimeout(()=>glideNearField(control,{guided:true}),260);
+      if(!control.disabled)control.focus({preventScroll:true});
+    },80);
+  };
+  const collaboratorCatalog={
+    tecnica:{
+      title:"Contingut tècnic",
+      fields:"diagnosi, objectius, descripció, col·lectius destinataris, agents implicats, organisme responsable, entitats col·laboradores i observacions"
+    },
+    imatges:{
+      title:"Emplaçament i imatges",
+      fields:"descripció de l’emplaçament, imatges, peus de foto, autoria i text alternatiu"
+    },
+    pressupost:{
+      title:"Calendari i pressupost",
+      fields:"tipus d’actuació, anualitats, fases, percentatges, imports i fonts de finançament"
+    },
+    indicadors:{
+      title:"Indicadors",
+      fields:"tipus, fase, descripció, valor actual i valor objectiu de cada indicador"
+    }
+  };
+  const readCollaboratorScope=()=>{
+    try{return JSON.parse(llbRoot?.dataset?.barryCollaboratorScope||"null")}catch{return null}
+  };
+  const showCollaboratorScope=({autoOpen=false}={})=>{
+    const scope=readCollaboratorScope();
+    const button=panel.querySelector('[data-barrys-action="collaborator-fields"]');
+    if(button)button.hidden=!scope;
+    if(!scope)return;
+    const code=scope.actionCode?` de la fitxa ${scope.actionCode}`:" d’aquesta fitxa";
+    if(scope.status==="pendent_revisio"){
+      show(`La versió${code} ja s’ha enviat a revisió. Ara els camps estan bloquejats fins que iServeis la revisi.`,"local");
+      setFace("happy");
+    }else if(!scope.editableBlocks?.length){
+      show(`Aquesta és una vista de consulta${code}. iServeis no t’ha assignat cap camp editable.`,"local");
+      setFace("attentive");
+    }else{
+      const rows=scope.editableBlocks.map(block=>{
+        const item=collaboratorCatalog[block];
+        return item?`• ${item.title}: ${item.fields}.`:`• ${block}.`;
+      }).join("\n");
+      show(
+        `En l’edició limitada${code}, iServeis et demana que completis només:\n\n${rows}\n\n`+
+        "La resta de camps són només de consulta i Barry no els inclourà en la revisió.",
+        "local"
+      );
+      setFace("guiding");
+    }
+    cite([]);
+    status.textContent="Permisos i camps a completar indicats per iServeis.";
+    if(autoOpen)open(true);
+  };
+  const showNextStep=()=>{
+    clearConfirmation(false);
+    setFace("curious");
+    const result=validateCurrent({focus:false,announce:false,mark:false});
+    if(!result.valid){
+      validationFields().forEach(clearFieldError);
+      const first=result.problems[0];
+      markFieldError(first.field,first.issues);
+      show(
+        `El següent pas és completar «${first.title}».\n\n${bulletList(first.issues)}\n\n`+
+        "T’hi porto ara i el deixo remarcat en groc.",
+        "warning"
+      );
+      cite(first.profile?.sources||FIELDS.defaultSources||[]);
+      status.textContent="Següent pas: completar el primer camp pendent.";
+      activateField(first.field);
+      return;
+    }
+    const scope=readCollaboratorScope();
+    if(scope?.status==="pendent_revisio"){
+      show("Ja has enviat aquesta versió a iServeis. El següent pas és esperar-ne la revisió a l’Studio.","local");
+      setFace("happy");
+      status.textContent="Versió pendent de revisió.";
+      return;
+    }
+    const saveButton=document.getElementById("llb-save-action");
+    const sendButton=document.getElementById("llb-send-project");
+    const saveText=norm(document.getElementById("llb-save-status")?.textContent||"");
+    const saved=/canvis desats|fitxa desada|projecte desat/.test(saveText);
+    const actionCount=Number(document.getElementById("llb-project-count")?.textContent||0);
+    if(!saved||actionCount<1){
+      const labelText=saveButton?.textContent?.trim()||"Desar fitxa";
+      show(`Aquesta fitxa ja supera les comprovacions configurades. El següent pas és prémer «${labelText}».`,"local");
+      status.textContent="Següent pas: desar o actualitzar la fitxa.";
+      guideToControl(saveButton);
+      return;
+    }
+    show("La fitxa està desada. Si ja has completat totes les fitxes que et corresponen, el següent pas és prémer «Enviar a iServeis».","local");
+    status.textContent="Següent pas: enviar les fitxes a iServeis.";
+    guideToControl(sendButton);
+  };
   const scheduleIdleExpression=()=>{
     clearInterval(window.__barrysIdleInterval);
+    let idleIndex=0;
+    const idleFaces=["curious","thinking","encouraging"];
     window.__barrysIdleInterval=setInterval(()=>{
       if(panel.classList.contains("is-open")||document.hidden||window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
-      setFace("thinking");
+      setFace(idleFaces[idleIndex++%idleFaces.length]);
       clearTimeout(idleReturnTimer);
-      idleReturnTimer=setTimeout(()=>setFace("attentive"),1100);
+      idleReturnTimer=setTimeout(()=>setFace("attentive"),1250);
     },8500);
   };
 
@@ -595,15 +779,16 @@
   panel.addEventListener("click",event=>{
     const button=event.target.closest("[data-barrys-action]");
     if(!button)return;
+    if(button.dataset.barrysAction==="next-step"){
+      showNextStep();
+      return;
+    }
+    if(button.dataset.barrysAction==="collaborator-fields"){
+      showCollaboratorScope();
+      return;
+    }
     const prompts={explain:"què he de posar en aquest camp",missing:"què falta en aquest camp",structure:"estructura del camp",review:"revisió del camp","all-missing":"quins camps em queden buits o incomplets"};
     respond(prompts[button.dataset.barrysAction]||"ajuda",button.dataset.barrysAction);
-  });
-  form.addEventListener("submit",event=>{
-    event.preventDefault();
-    const question=input.value.trim();
-    if(!question)return;
-    input.value="";
-    respond(question,"question");
   });
   document.addEventListener("keydown",event=>{
     if(event.key==="Escape"){
@@ -614,11 +799,20 @@
   document.addEventListener("visibilitychange",()=>{
     if(!document.hidden)setFace(panel.classList.contains("is-open")?"attentive":"attentive");
   });
+  document.addEventListener("barry:collaborator-permissions",()=>{
+    const autoOpen=!collaboratorScopeAnnounced;
+    collaboratorScopeAnnounced=true;
+    showCollaboratorScope({autoOpen});
+  });
 
-  status.textContent=`Base documental ${KB.version} · ajuda contextual ${FIELDS.version||""} · sense API.`;
-  window.BARRYS_VALIDATOR=Object.freeze({validateCurrent,clearFieldError});
+  status.textContent=`Base documental ${KB.version} · ajuda contextual ${FIELDS.version||""} · sense preguntes lliures ni API.`;
+  window.BARRYS_VALIDATOR=Object.freeze({validateCurrent,inspectCurrent,guardCurrent,clearFieldError,showNextStep,showCollaboratorScope});
   setFace("attentive");
   scheduleIdleExpression();
+  if(llbRoot?.classList.contains("llb-collaborator-mode")&&readCollaboratorScope()){
+    collaboratorScopeAnnounced=true;
+    showCollaboratorScope({autoOpen:true});
+  }
   window.addEventListener("resize",()=>{
     if(!panel.classList.contains("is-open"))restingPosition();
   });

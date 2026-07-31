@@ -1,6 +1,6 @@
 window.BARRYS_KNOWLEDGE=Object.freeze({
   version:"1.0 · documents 2025-2026",
-  fallback:"No disposo d’una resposta prou fonamentada per a aquesta consulta. Reformula-la indicant l’apartat del formulari o consulta directament la documentació oficial. Barrys no completarà buits amb informació inventada.",
+  fallback:"No disposo d’una resposta prou fonamentada per a aquesta consulta. Utilitza una de les opcions d’ajuda guiada o consulta directament la documentació oficial. Barry no completarà buits amb informació inventada.",
   topics:[
     {
       id:"aae requisits delimitacio",

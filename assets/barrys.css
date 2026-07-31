@@ -23,16 +23,12 @@
 .barrys-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .barrys-actions button{min-height:42px;padding:9px 10px;border:1px solid #d8d7e5;border-radius:10px;background:#fff;color:#34343c;text-align:left;cursor:pointer;font:600 12px/1.25 inherit}
 .barrys-actions button:hover{border-color:#7673ad;background:#f8f7fc}
-.barrys-actions button:last-child{grid-column:1/-1;text-align:center;background:#f7f6fb}
+.barrys-actions .barrys-next-action,.barrys-actions button[data-barrys-action="all-missing"]{grid-column:1/-1;text-align:center}
+.barrys-actions .barrys-next-action{border-color:#321299;background:#321299;color:#fff}
+.barrys-actions .barrys-next-action:hover{border-color:#4826ad;background:#4826ad}
+.barrys-actions .barrys-collaborator-action{grid-column:1/-1;border-color:#d8c9ff;background:#f4efff;color:#321299;text-align:center}
 .barrys-answer{margin-top:14px;padding:13px;border-radius:12px;background:#f4f3f9;font-size:13px;white-space:pre-line}
 .barrys-note{display:block;margin-top:12px;color:#777783;font-size:11px}
-.barrys-question{margin-top:14px}
-.barrys-question>label{display:block;margin-bottom:6px;color:#575763;font-size:11px;font-weight:700}
-.barrys-question>div{display:flex;align-items:stretch;gap:7px}
-.barrys-question textarea{box-sizing:border-box;min-width:0;flex:1;resize:vertical;padding:9px 10px;border:1px solid #d8d7e5;border-radius:10px;background:#fff;color:#24242a;font:12px/1.4 inherit}
-.barrys-question textarea:focus{outline:2px solid #7673ad55;border-color:#7673ad}
-.barrys-question button{align-self:stretch;padding:0 12px;border:0;border-radius:10px;background:#24242a;color:#fff;cursor:pointer;font:700 12px inherit}
-.barrys-question button:disabled{opacity:.55;cursor:wait}
 .barrys-answer.is-warning{border-left:3px solid #a47a18;background:#fff9e9}
 .barrys-answer.is-error{border-left:3px solid #b33b3b;background:#fff1f1}
 .barrys-answer.is-local{border-left:3px solid #7673ad}
@@ -48,6 +44,10 @@
 .barrys-sprite[data-barrys-face="explaining"]{animation:barrys-talk .5s ease-in-out 4}
 .barrys-sprite[data-barrys-face="happy"]{animation:barrys-happy .44s ease-in-out 3}
 .barrys-sprite[data-barrys-face="warning"]{animation:barrys-warning .34s ease-in-out 3}
+.barrys-sprite[data-barrys-face="curious"]{animation:barrys-curious .9s cubic-bezier(.22,.75,.26,1) 2 alternate}
+.barrys-sprite[data-barrys-face="encouraging"]{animation:barrys-encouraging .7s ease-in-out 2}
+.barrys-sprite[data-barrys-face="guiding"]{animation:barrys-guiding .8s ease-in-out infinite alternate}
+.barrys-stage.is-gliding .barrys-launcher{animation:none}
 @keyframes barrys-float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-7px) rotate(-1deg)}}
 @keyframes barrys-face-arrive{0%{opacity:0;transform:translateY(3px) scale(.965) rotate(-1deg)}100%{opacity:1;transform:translateY(0) scale(1) rotate(0)}}
 @keyframes barrys-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.018) translateY(-1px)}}
@@ -55,9 +55,20 @@
 @keyframes barrys-warning{25%{transform:translateX(-2px)}75%{transform:translateX(2px)}}
 @keyframes barrys-talk{50%{transform:translateY(-2px) scale(1.025)}}
 @keyframes barrys-thinking{to{transform:rotate(4deg) translateY(-2px)}}
+@keyframes barrys-curious{to{transform:rotate(2.2deg) translateY(-2px) scale(1.012)}}
+@keyframes barrys-encouraging{35%{transform:translateY(-4px) rotate(-1deg)}70%{transform:translateY(0) rotate(1deg)}}
+@keyframes barrys-guiding{to{transform:translateX(-2px) rotate(-1.2deg)}}
 @media(prefers-reduced-motion:reduce){.barrys-stage,.barrys-launcher,.barrys-sprite,.barrys-avatar{animation:none!important;transition:none!important}}
-@media(max-width:620px){.barrys-stage{right:12px;bottom:10px;width:72px;height:104px}.barrys-stage.is-expanded{width:92px;height:132px}.barrys-launcher{width:72px;height:104px}.barrys-stage.is-expanded .barrys-launcher{width:92px;height:132px}.barrys-panel{right:0;bottom:108px;max-height:calc(100vh - 154px)}.barrys-stage.is-expanded .barrys-panel{bottom:136px}.barrys-actions{grid-template-columns:1fr}.barrys-actions button:last-child{grid-column:auto}}
-.barrys-field-invalid{border-color:#b42318!important;box-shadow:0 0 0 3px rgba(180,35,24,.13)!important;background:#fff8f7!important}
-.barrys-field-error{display:grid;gap:3px;margin-top:7px;padding:9px 11px;border-left:3px solid #b42318;border-radius:7px;background:#fff1f0;color:#7a271a;font-size:12px;line-height:1.4}
+.barrys-confirmation{margin-top:8px;padding:13px;border:1px solid #e1bd48;border-radius:12px;background:#fff7c2;color:#51400a}
+.barrys-confirmation p{margin:0 0 10px;font-weight:800}
+.barrys-confirmation-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.barrys-confirmation-actions button{min-height:40px;padding:8px 10px;border-radius:9px;cursor:pointer;font:700 12px/1.2 inherit}
+.barrys-confirm-primary{border:1px solid #321299;background:#321299;color:#fff}
+.barrys-confirm-primary:hover{background:#4826ad}
+.barrys-confirm-secondary{border:1px solid #b79b30;background:#fff;color:#4f4214}
+.barrys-confirm-secondary:hover{background:#fff3a5}
+@media(max-width:620px){.barrys-stage{right:12px;bottom:10px;width:72px;height:104px}.barrys-stage.is-expanded{width:92px;height:132px}.barrys-launcher{width:72px;height:104px}.barrys-stage.is-expanded .barrys-launcher{width:92px;height:132px}.barrys-panel{right:0;bottom:108px;max-height:calc(100vh - 154px)}.barrys-stage.is-expanded .barrys-panel{bottom:136px}.barrys-actions{grid-template-columns:1fr}.barrys-actions .barrys-next-action,.barrys-actions button[data-barrys-action="all-missing"],.barrys-actions .barrys-collaborator-action{grid-column:auto}.barrys-confirmation-actions{grid-template-columns:1fr}}
+.barrys-field-invalid{border-color:#d4a72c!important;box-shadow:0 0 0 4px rgba(244,197,66,.28)!important;background:#fff7c2!important}
+.barrys-field-error{display:grid;gap:3px;margin-top:7px;padding:9px 11px;border-left:3px solid #d4a72c;border-radius:7px;background:#fff7c2;color:#5f4a08;font-size:12px;line-height:1.4}
 .barrys-field-error strong{font-size:12px}
 .barrys-field-error span{display:block}
