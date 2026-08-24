@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1232 1277" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="barry-title barry-desc" data-barry-state="attentive">
+  <title id="barry-title">Barry, assistent de l’Studio Llei de Barris</title>
+  <desc id="barry-desc">Versió definitiva de Barry conservada fidelment i articulada per capes: cos, antena, braç, campana, rostre i tauleta.</desc>
+  <defs>
+    <path id="barry-left-arm-shape" d="M251 784C232 798 215 815 199 839C180 867 160 882 133 901C105 920 92 942 101 956C106 964 117 965 129 959C119 976 125 990 139 993C149 995 158 989 162 979C164 995 176 1004 190 998C204 992 207 974 199 952C216 951 224 940 218 927C213 916 204 906 194 900C219 878 238 852 257 824C266 810 264 793 251 784Z"/>
+    <clipPath id="barry-left-arm-clip"><use href="#barry-left-arm-shape" xlink:href="#barry-left-arm-shape"/></clipPath>
+    <clipPath id="barry-orb-clip"><circle cx="292" cy="213" r="78"/></clipPath>
+    <clipPath id="barry-bell-clip"><path d="M823 135H884V226H823Z"/></clipPath>
+    <clipPath id="barry-tablet-clip"><path d="M808 621L1106 627L1107 1046L809 1050Z"/></clipPath>
+    <clipPath id="barry-right-hand-clip"><path d="M983 850C1080 836 1138 867 1111 999C1095 1060 1012 1044 986 1001Z"/></clipPath>
+    <mask id="barry-base-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="1232" height="1277">
+      <rect width="1232" height="1277" fill="#fff"/>
+      <circle cx="292" cy="213" r="78" fill="#000"/>
+      <use href="#barry-left-arm-shape" xlink:href="#barry-left-arm-shape" fill="#000"/>
+      <path d="M823 135H884V226H823Z" fill="#000"/>
+    </mask>
+  </defs>
+
+  <style>
+    *{transform-box:fill-box}
+    .barry-character,.barry-art-layer,.barry-orb,.barry-left-arm,.barry-bell,.barry-tablet-layer,.barry-right-hand-layer,.barry-eyelid{will-change:transform,opacity}
+    .barry-character{transform-origin:50% 82%}
+    .barry-orb{transform-origin:50% 50%}
+    .barry-left-arm{transform-origin:96% 10%}
+    .barry-bell{transform-origin:50% 6%}
+    .barry-tablet-layer{transform-origin:56% 82%;opacity:0}
+    .barry-right-hand-layer{transform-origin:48% 34%;opacity:0}
+    .barry-eyelid{transform-origin:center;transform:scaleY(0);opacity:0}
+
+    svg[data-barry-state="attentive"] .barry-character{animation:barry-arrive .52s cubic-bezier(.2,.82,.26,1) 1}
+    svg[data-barry-state="attentive"] .barry-eyelid{animation:barry-blink 2.8s cubic-bezier(.45,0,.2,1) 1 .9s}
+    svg[data-barry-state="thinking"] .barry-character{animation:barry-think 1.15s cubic-bezier(.45,0,.2,1) 2 alternate}
+    svg[data-barry-state="thinking"] .barry-orb{animation:barry-orb-think 1.15s cubic-bezier(.45,0,.2,1) 2 alternate}
+    svg[data-barry-state="thinking"] .barry-bell{animation:barry-bell-think 1.15s ease-in-out 2 alternate}
+    svg[data-barry-state="explaining"] .barry-character{animation:barry-explain .72s cubic-bezier(.45,0,.2,1) 3}
+    svg[data-barry-state="explaining"] .barry-left-arm{animation:barry-wave .72s cubic-bezier(.45,0,.2,1) 3}
+    svg[data-barry-state="explaining"] .barry-bell{animation:barry-bell-ring .36s ease-in-out 6 alternate}
+    svg[data-barry-state="explaining"] .barry-eyelid{animation:barry-blink 2.16s ease-in-out 1}
+    svg[data-barry-state="happy"] .barry-character{animation:barry-happy .82s cubic-bezier(.2,.82,.26,1) 1}
+    svg[data-barry-state="happy"] .barry-orb{animation:barry-orb-happy .82s cubic-bezier(.2,.82,.26,1) 1}
+    svg[data-barry-state="happy"] .barry-left-arm{animation:barry-happy-arm .82s cubic-bezier(.2,.82,.26,1) 1}
+    svg[data-barry-state="warning"] .barry-character{animation:barry-warning .42s ease-in-out 2}
+    svg[data-barry-state="warning"] .barry-orb{animation:barry-orb-warning .21s ease-in-out 4 alternate}
+    svg[data-barry-state="warning"] .barry-bell{animation:barry-bell-ring .21s ease-in-out 4 alternate}
+    svg[data-barry-state="curious"] .barry-character{animation:barry-curious .92s cubic-bezier(.45,0,.2,1) 2 alternate}
+    svg[data-barry-state="curious"] .barry-orb{animation:barry-orb-curious .92s cubic-bezier(.2,.82,.26,1) 2 alternate}
+    svg[data-barry-state="encouraging"] .barry-character{animation:barry-encourage .76s cubic-bezier(.2,.82,.26,1) 2}
+    svg[data-barry-state="encouraging"] .barry-left-arm{animation:barry-encourage-arm .76s cubic-bezier(.2,.82,.26,1) 2}
+    svg[data-barry-state="guiding"] .barry-character{animation:barry-guide .78s cubic-bezier(.45,0,.2,1) 2 alternate}
+    svg[data-barry-state="guiding"] .barry-left-arm{animation:barry-guide-arm .78s cubic-bezier(.45,0,.2,1) 2 alternate}
+    svg[data-barry-state="guiding"] .barry-orb{animation:barry-orb-guide .78s cubic-bezier(.45,0,.2,1) 2 alternate}
+
+    @keyframes barry-arrive{0%{transform:translateY(14px) scale(.985);opacity:.76}100%{transform:none;opacity:1}}
+    @keyframes barry-blink{0%,44%,56%,100%{transform:scaleY(0);opacity:0}48%,52%{transform:scaleY(1);opacity:1}}
+    @keyframes barry-think{to{transform:rotate(-1.15deg) translateY(-3px)}}
+    @keyframes barry-orb-think{to{transform:translate(4px,-11px) scale(1.025)}}
+    @keyframes barry-bell-think{to{transform:rotate(2.5deg)}}
+    @keyframes barry-explain{0%,100%{transform:none}50%{transform:translateY(-4px) rotate(-.35deg)}}
+    @keyframes barry-wave{0%,100%{transform:none}50%{transform:rotate(-5.5deg) translate(-2px,-2px)}}
+    @keyframes barry-bell-ring{to{transform:rotate(5deg)}}
+    @keyframes barry-happy{0%,100%{transform:none}43%{transform:translateY(-17px) scale(1.012)}68%{transform:translateY(2px) scale(.997)}}
+    @keyframes barry-orb-happy{43%{transform:translateY(-17px) scale(1.035)}70%{transform:translateY(3px)}}
+    @keyframes barry-happy-arm{43%{transform:rotate(-7deg) translate(-3px,-4px)}}
+    @keyframes barry-warning{25%{transform:translateX(-4px) rotate(-.45deg)}75%{transform:translateX(4px) rotate(.45deg)}}
+    @keyframes barry-orb-warning{to{transform:translateX(6px)}}
+    @keyframes barry-curious{to{transform:rotate(1.35deg) translateY(-3px)}}
+    @keyframes barry-orb-curious{to{transform:translate(8px,-9px) scale(1.025)}}
+    @keyframes barry-encourage{0%,100%{transform:none}45%{transform:translateY(-8px) scale(1.006)}}
+    @keyframes barry-encourage-arm{45%{transform:rotate(-4deg) translateY(-3px)}}
+    @keyframes barry-guide{to{transform:rotate(-.8deg) translate(-2px,-2px)}}
+    @keyframes barry-guide-arm{to{transform:rotate(-6.5deg) translate(-4px,-2px)}}
+    @keyframes barry-orb-guide{to{transform:translate(-8px,-4px)}}
+    @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.barry-eyelid{opacity:0!important;transform:scaleY(0)!important}}
+  </style>
+
+  <g class="barry-character">
+    <ellipse cx="239" cy="812" rx="27" ry="34" fill="#746887"/>
+    <path d="M825 163c0-45 57-45 57 0v60h-57Z" fill="#17141c"/>
+    <image class="barry-art-layer barry-base" href="barry-definitiu.png" xlink:href="barry-definitiu.png" x="0" y="0" width="1232" height="1277" mask="url(#barry-base-mask)"/>
+    <g class="barry-art-layer barry-orb" clip-path="url(#barry-orb-clip)"><image href="barry-definitiu.png" xlink:href="barry-definitiu.png" x="0" y="0" width="1232" height="1277"/></g>
+    <g class="barry-art-layer barry-left-arm" clip-path="url(#barry-left-arm-clip)"><image href="barry-definitiu.png" xlink:href="barry-definitiu.png" x="0" y="0" width="1232" height="1277"/></g>
+    <g class="barry-art-layer barry-bell" clip-path="url(#barry-bell-clip)"><image href="barry-definitiu.png" xlink:href="barry-definitiu.png" x="0" y="0" width="1232" height="1277"/></g>
+    <g class="barry-art-layer barry-tablet-layer" clip-path="url(#barry-tablet-clip)" aria-hidden="true"><image href="barry-definitiu.png" xlink:href="barry-definitiu.png" x="0" y="0" width="1232" height="1277"/></g>
+    <g class="barry-art-layer barry-right-hand-layer" clip-path="url(#barry-right-hand-clip)" aria-hidden="true"><image href="barry-definitiu.png" xlink:href="barry-definitiu.png" x="0" y="0" width="1232" height="1277"/></g>
+    <path class="barry-eyelid barry-eyelid-left" d="M431 704c4-66 110-72 119 0-30-20-84-20-119 0Z" fill="#29292b"/>
+    <path class="barry-eyelid barry-eyelid-right" d="M668 704c5-67 111-72 119 0-31-20-84-20-119 0Z" fill="#29292b"/>
+  </g>
+</svg>

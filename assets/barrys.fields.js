@@ -1,5 +1,5 @@
 window.BARRYS_FIELDS=Object.freeze({
-  version:"4.0",
+  version:"5.0",
   defaultSources:["Decret 163/2025, article 13.1.b","Guia pràctica de sol·licitud, apartat 6. Fitxes d’actuacions"],
   byId:{
     "llb-municipality":{

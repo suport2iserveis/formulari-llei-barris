@@ -13,25 +13,14 @@
   const llbRoot=$("llb-budget-form");
   const KB=window.BARRYS_KNOWLEDGE||{topics:[],fallback:"No disposo d’una resposta validada per a aquesta consulta."};
   const FIELDS=window.BARRYS_FIELDS||{byId:{},byClass:{},defaultSources:[]};
-  const FACE_URLS={
-    attentive:"assets/barrys/attentive.png?v=5.2.0",
-    thinking:"assets/barrys/thinking.png?v=5.2.0",
-    explaining:"assets/barrys/explaining.png?v=5.2.0",
-    happy:"assets/barrys/happy.png?v=5.2.0",
-    warning:"assets/barrys/warning.png?v=5.2.0",
-    curious:"assets/barrys/curious.png?v=5.2.0",
-    encouraging:"assets/barrys/encouraging.png?v=5.2.0",
-    guiding:"assets/barrys/guiding.png?v=5.2.0"
-  };
+  const FACE_STATES=new Set(["attentive","thinking","explaining","happy","warning","curious","encouraging","guiding"]);
 
   let active=null;
-  let idleReturnTimer=0;
-  let faceTransitionId=0;
   let pendingConfirmation=null;
   let collaboratorScopeAnnounced=false;
+  let lastProblem=null;
+  const deferredIssues=new Map();
   const motion={x:0,y:0,targetX:0,targetY:0,vx:0,vy:0,frame:0};
-
-  Object.values(FACE_URLS).forEach(src=>{const image=new Image();image.src=src});
 
   const norm=s=>String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
   const words=s=>new Set(norm(s).replace(/[^a-z0-9·]+/g," ").split(/\s+/).filter(w=>w.length>2));
@@ -41,6 +30,34 @@
     if(!field)return"";
     if(field.type==="checkbox")return field.checked?"1":"";
     return String(field.value||"").trim();
+  };
+  const fieldKey=field=>{
+    const actionCode=String(document.getElementById("llb-generated-code")?.value||"nova-fitxa").trim()||"nova-fitxa";
+    if(field?.id)return `${actionCode}:${field.id}`;
+    const className=field?.classList?.[0];
+    if(className)return `${actionCode}:${className}:${[...document.querySelectorAll(`.${CSS.escape(className)}`)].indexOf(field)}`;
+    return `${actionCode}:${field?.name||field?.tagName||"field"}:${validationFields().indexOf(field)}`;
+  };
+  const issueLabels={empty:"Buit",insufficient:"Insuficient",incoherent:"Incoherent"};
+  const problemKind=(profile,field,issues=[])=>{
+    if(!issues.length)return"insufficient";
+    if(!fieldValue(field))return"empty";
+    const incoherentRules=new Set(["pattern","patternUnlessNone","range","allocationSum","otherNotAboveAnnual","sameUnitAsCurrent","nonBinary"]);
+    const failedRules=(profile?.rules||[]).filter(rule=>issues.includes(rule.message));
+    return failedRules.some(rule=>incoherentRules.has(rule.type))?"incoherent":"insufficient";
+  };
+  const decorateProblem=(field,profile,title,issues,forcedKind)=>({
+    field,profile,title,issues,
+    kind:forcedKind||problemKind(profile,field,issues),
+    key:fieldKey(field)
+  });
+  const problemCounts=problems=>(problems||[]).reduce((counts,problem)=>{
+    counts[problem.kind]=(counts[problem.kind]||0)+1;
+    return counts;
+  },{empty:0,insufficient:0,incoherent:0});
+  const countsText=problems=>{
+    const counts=problemCounts(problems);
+    return `${counts.empty} ${counts.empty===1?"buit":"buits"} · ${counts.insufficient} ${counts.insufficient===1?"insuficient":"insuficients"} · ${counts.incoherent} ${counts.incoherent===1?"incoherent":"incoherents"}`;
   };
   const parseNumber=value=>{
     const clean=String(value||"").replace(/\s/g,"").replace(/\.(?=\d{3}(?:\D|$))/g,"").replace(",",".").replace(/[^\d.-]/g,"");
@@ -114,46 +131,29 @@
     if(!stage||!guided||reducedMotion())return;
     const rect=field?.getBoundingClientRect?.();
     if(!rect)return;
-    const stageHeight=stage.classList.contains("is-expanded")?154:118;
+    const compact=window.matchMedia?.("(max-width: 620px)").matches;
+    const stageHeight=stage.classList.contains("is-expanded")?(compact?110:127):(compact?87:100);
     const naturalTop=window.innerHeight-18-stageHeight;
     const desiredTop=Math.max(12,Math.min(window.innerHeight-stageHeight-12,rect.top+rect.height/2-stageHeight/2));
     const moveToLeft=rect.left+rect.width/2>window.innerWidth*.62;
-    const stageWidth=stage.classList.contains("is-expanded")?108:82;
+    const stageWidth=stage.classList.contains("is-expanded")?(compact?106:122):(compact?84:96);
     const leftOffset=-(Math.max(0,window.innerWidth-stageWidth-44));
     moveStage(moveToLeft?leftOffset:0,desiredTop-naturalTop,moveToLeft?"left":"right");
   };
+  const applyRigState=object=>{
+    const rig=object?.contentDocument?.documentElement;
+    if(!rig)return;
+    const face=FACE_STATES.has(object.dataset.barrysFace)?object.dataset.barrysFace:"attentive";
+    rig.removeAttribute("data-barry-state");
+    if(!reducedMotion())void rig.getBoundingClientRect();
+    rig.dataset.barryState=reducedMotion()?"attentive":face;
+  };
   const setFace=(requested="attentive")=>{
-    const face=FACE_URLS[requested]?requested:"attentive";
+    const face=FACE_STATES.has(requested)?requested:"attentive";
     panel.dataset.barrysState=face;
-    const transitionId=++faceTransitionId;
-    document.querySelectorAll(".barrys-sprite:not(.barrys-sprite-transition)").forEach(element=>{
-      if(element.dataset.barrysFace===face)return;
-      const host=element.parentElement;
-      if(!host)return;
-      host.classList.add("barrys-sprite-host");
-      if(reducedMotion()){
-        element.src=FACE_URLS[face];
-        element.dataset.barrysFace=face;
-        return;
-      }
-      host.querySelectorAll(".barrys-sprite-transition").forEach(node=>node.remove());
-      const incoming=element.cloneNode(false);
-      incoming.src=FACE_URLS[face];
-      incoming.dataset.barrysFace=face;
-      incoming.classList.add("barrys-sprite-transition");
-      incoming.style.opacity="0";
-      host.appendChild(incoming);
-      requestAnimationFrame(()=>requestAnimationFrame(()=>{
-        incoming.style.opacity="1";
-        element.style.opacity="0";
-      }));
-      window.setTimeout(()=>{
-        if(transitionId!==faceTransitionId&&!incoming.isConnected)return;
-        element.src=FACE_URLS[face];
-        element.dataset.barrysFace=face;
-        element.style.opacity="1";
-        incoming.remove();
-      },360);
+    document.querySelectorAll(".barrys-rig-object").forEach(object=>{
+      object.dataset.barrysFace=face;
+      applyRigState(object);
     });
   };
   const open=value=>{
@@ -196,7 +196,7 @@
       ?.querySelectorAll(":scope > .barrys-field-error")
       .forEach(node=>node.remove());
   };
-  const markFieldError=(field,messages)=>{
+  const markFieldError=(field,messages,kind="insufficient")=>{
     clearFieldError(field);
     const container=field.closest(".llb-field, label, .form-label, .llb-indicator-row, .llb-year-row")||field.parentElement;
     if(!container)return;
@@ -204,8 +204,9 @@
     const errorId=`barrys-error-${field.id||Math.random().toString(36).slice(2)}`;
     message.id=errorId;
     message.className="barrys-field-error";
+    message.dataset.barrysKind=kind;
     message.setAttribute("role","alert");
-    message.innerHTML=`<strong>Barry et demana que revisis aquest camp</strong><span>${messages.map(item=>String(item).replace(/[<>&]/g,char=>({"<":"&lt;",">":"&gt;","&":"&amp;"}[char]))).join("<br>")}</span>`;
+    message.innerHTML=`<strong>${issueLabels[kind]||"Revisió"} · Barry et demana que revisis aquest camp</strong><span>${messages.map(item=>String(item).replace(/[<>&]/g,char=>({"<":"&lt;",">":"&gt;","&":"&amp;"}[char]))).join("<br>")}</span>`;
     container.append(message);
     field.classList.add("barrys-field-invalid");
     field.setAttribute("aria-invalid","true");
@@ -246,7 +247,7 @@
       const profile=profileForField(field);
       const issues=ruleIssues(profile,field);
       if(issues.length){
-        problems.push({field,profile,title:profileTitle(profile,field),issues});
+        problems.push(decorateProblem(field,profile,profileTitle(profile,field),issues));
       }
     });
     const addIndicator=document.getElementById("llb-add-indicator");
@@ -255,7 +256,7 @@
       const profile={title:"Indicadors de l’actuació",sources:FIELDS.defaultSources||[]};
       const issues=["Falta afegir almenys un indicador complet per mesurar l’execució o els resultats de l’actuació."];
       if(field){
-        problems.push({field,profile,title:profile.title,issues});
+        problems.push(decorateProblem(field,profile,profile.title,issues,"empty"));
       }
     }
     return{valid:problems.length===0,problems};
@@ -264,7 +265,7 @@
     validationFields().forEach(clearFieldError);
     const inspection=inspectCurrent();
     const problems=inspection.problems;
-    if(mark)problems.forEach(problem=>markFieldError(problem.field,problem.issues));
+    if(mark)problems.forEach(problem=>markFieldError(problem.field,problem.issues,problem.kind));
     if(!announce)return inspection;
     if(!problems.length){
       show("La fitxa no presenta mancances ni incoherències segons les comprovacions configurades. Això no substitueix la revisió de la veracitat de les dades.","local");
@@ -273,12 +274,13 @@
       return{valid:true,problems:[]};
     }
     const first=problems[0];
+    lastProblem=first;
     const limited=llbRoot?.classList.contains("llb-collaborator-mode");
-    const pending=problems.slice(0,30).map(problem=>`• ${problem.title}: ${problem.issues.join(" ")}`).join("\n");
+    const pending=problems.slice(0,30).map(problem=>`• ${issueLabels[problem.kind]} · ${problem.title}: ${problem.issues.join(" ")}`).join("\n");
     const omitted=problems.length>30?`\n• …i ${problems.length-30} camps més.`:"";
     show(
       `${limited?"He revisat només els apartats que tens habilitats en aquesta fitxa d’edició limitada.":"He revisat els camps editables de la fitxa."}\n\n`+
-      `Hi ha ${problems.length} ${problems.length===1?"camp pendent":"camps pendents"}:\n${pending}${omitted}\n\n`+
+      `Hi ha ${problems.length} ${problems.length===1?"camp pendent":"camps pendents"} (${countsText(problems)}):\n${pending}${omitted}\n\n`+
       `Primer camp a corregir: «${first.title}».\n${bulletList(first.issues)}\n\n`+
       `${focus?"L’he ressaltat en groc i t’hi he portat. ":""}Revisa l’avís abans de decidir si vols continuar.`,
       "warning"
@@ -297,6 +299,15 @@
   const askConfirmation=(kind,result,extraProblems=[])=>{
     clearConfirmation(false);
     const isSend=kind==="send";
+    const problemLines=result.problems.slice(0,8).map(problem=>`• ${issueLabels[problem.kind]} · ${problem.title}`).join("\n");
+    const omitted=result.problems.length>8?`\n• …i ${result.problems.length-8} camps més.`:"";
+    const globalLine=extraProblems.length?`\n\nAvisos d’altres fitxes o del projecte: ${extraProblems.length}.`:"";
+    show(
+      `${isSend?"Resum abans d’enviar":"Resum abans de desar"}: ${result.problems.length?countsText(result.problems):"cap camp pendent"}.`+
+      `${problemLines?`\n\n${problemLines}${omitted}`:"\n\nLa fitxa supera les comprovacions locals configurades."}${globalLine}\n\n`+
+      "Barry no ha modificat cap dada. Tu decideixes si continues o tornes al formulari.",
+      result.problems.length||extraProblems.length?"warning":"local"
+    );
     const box=document.createElement("div");
     box.className="barrys-confirmation";
     box.setAttribute("role","group");
@@ -316,10 +327,6 @@
     actions.append(confirm,modify);
     box.append(question,actions);
     answer.insertAdjacentElement("afterend",box);
-    if(extraProblems.length){
-      const summary=extraProblems.slice(0,8).join("\n• ");
-      show(`${answer.textContent}\n\nAltres avisos de les fitxes:\n• ${summary}${extraProblems.length>8?`\n• …i ${extraProblems.length-8} avisos més.`:""}`,"warning");
-    }
     open(true);
     setFace("warning");
     return new Promise(resolve=>{
@@ -335,6 +342,7 @@
         box.remove();
         setFace("encouraging");
         const first=result.problems[0];
+        lastProblem=first||lastProblem;
         if(first)activateField(first.field);
         resolve(false);
       });
@@ -343,19 +351,19 @@
   };
   const guardCurrent=({kind="save",extraProblems=[],externalField=null,externalMessage=""}={})=>{
     const result=validateCurrent({focus:true,announce:true,mark:true});
-    if(result.valid&&!extraProblems.length)return Promise.resolve(true);
     if(result.valid&&extraProblems.length){
       show(`Barry ha detectat ${extraProblems.length} ${extraProblems.length===1?"avís":"avisos"} en el conjunt de fitxes. Revisa’ls abans de continuar.`,"warning");
       setFace("warning");
       if(externalField){
         const issues=[externalMessage||extraProblems[0]||"Revisa aquest camp abans de continuar."];
         markFieldError(externalField,issues);
-        result.problems.push({
-          field:externalField,
-          profile:profileForField(externalField),
-          title:profileTitle(profileForField(externalField),externalField),
-          issues
-        });
+        result.problems.push(decorateProblem(
+          externalField,
+          profileForField(externalField),
+          profileTitle(profileForField(externalField),externalField),
+          issues,
+          "incoherent"
+        ));
         activateField(externalField);
       }
     }
@@ -502,8 +510,39 @@
     if(profile.include?.length===1)return `Format de «${title}»:\n\n${profile.include[0]}`;
     return `Format recomanat per a «${title}»:\n\n${(profile.include||[]).map((item,index)=>`${index+1}. ${item}`).join("\n")}`;
   };
+  const selectedText=id=>{
+    const control=document.getElementById(id);
+    return String(control?.selectedOptions?.[0]?.textContent||control?.value||"").trim();
+  };
+  const actionContext=()=>unique([selectedText("llb-area"),selectedText("llb-subarea"),selectedText("llb-type")].filter(value=>value&&!/^selecciona/i.test(value))).join(" · ");
+  const contextualTemplate=title=>{
+    const area=norm(selectedText("llb-area"));
+    const isDiagnosis=/diagnosi/.test(norm(title));
+    const isObjective=/objectiu/.test(norm(title));
+    const isDescription=/descripcio|titol/.test(norm(title));
+    if(!isDiagnosis&&!isObjective&&!isDescription)return"";
+    if(/fisic|urban|habitatge/.test(area)){
+      if(isDiagnosis)return"A [àmbit concret], [font i any] identifica [problema mesurable], que afecta [població o espai] i justifica intervenir sobre [element físic].";
+      if(isObjective)return"Millorar [condició urbana o residencial mesurable] de [àmbit] abans de [data], passant de [valor inicial] a [valor objectiu].";
+      return"Intervenció sobre [espai o edifici] que inclou [actuacions principals], beneficia [destinataris] i assoleix [resultat verificable].";
+    }
+    if(/ecologic|ambient|energet|clim/.test(area)){
+      if(isDiagnosis)return"Les dades de [font i any] mostren [consum, emissió o risc climàtic] de [valor] a [àmbit], amb impacte sobre [col·lectiu o sistema].";
+      if(isObjective)return"Reduir [consum, emissions o vulnerabilitat] de [valor inicial] a [valor objectiu] abans de [data].";
+      return"Actuació de [renaturalització, eficiència o adaptació] a [àmbit], amb [accions] i mesura mitjançant [indicador].";
+    }
+    if(/social|comunit|socio/.test(area)){
+      if(isDiagnosis)return"A [àmbit], [font i any] registra [necessitat social mesurable] en [col·lectiu], amb una cobertura actual de [valor].";
+      if(isObjective)return"Augmentar [participació, cobertura o resultat social] de [valor inicial] a [valor objectiu] en [col·lectiu] abans de [data].";
+      return"Programa adreçat a [col·lectiu] que desplega [activitats], amb [agents] i un resultat esperat de [valor mesurable].";
+    }
+    return"";
+  };
   const exampleField=({profile,title})=>{
-    if(profile.example)return `Exemple orientatiu per a «${title}»:\n\n${profile.example}\n\nAdapta’l sempre a les dades reals de l’actuació; no el copiïs si no és aplicable.`;
+    const contextNow=actionContext();
+    const template=contextualTemplate(title);
+    const example=profile.example||template;
+    if(example)return `Exemple orientatiu per a «${title}»${contextNow?`\nContext actual: ${contextNow}`:""}:\n\n${example}\n\nEls claudàtors indiquen dades que has de substituir. Adapta’l sempre a l’actuació real; Barry no inserirà ni modificarà el text.`;
     return `No tinc configurat un exemple validat específic per a «${title}». Puc explicar-te el contingut o l’estructura, però no inventaré dades ni una redacció que pugui semblar real.`;
   };
   const sourceField=({profile,title})=>{
@@ -640,6 +679,54 @@
     context.textContent=profile?`Camp actiu: ${profileTitle(profile,field)}`:`Camp actiu: ${label(field)}`;
     setFace("attentive");
   };
+  const currentProblem=()=>{
+    const result=inspectCurrent();
+    if(lastProblem){
+      const refreshed=result.problems.find(problem=>problem.key===lastProblem.key);
+      if(refreshed)return refreshed;
+    }
+    if(active){
+      const matching=result.problems.find(problem=>problem.field===active);
+      if(matching)return matching;
+    }
+    return result.problems.find(problem=>!deferredIssues.has(problem.key))||result.problems[0]||null;
+  };
+  const goToCurrentProblem=()=>{
+    const problem=currentProblem();
+    if(problem){
+      lastProblem=problem;
+      markFieldError(problem.field,problem.issues,problem.kind);
+      show(`Et porto a «${problem.title}».\n\n${issueLabels[problem.kind]}: ${problem.issues.join(" ")}`,"warning");
+      status.textContent="Navegació directa al camp que cal revisar.";
+      activateField(problem.field);
+      return;
+    }
+    if(active){
+      show(`Et torno al camp actiu «${profileTitle(profileForField(active),active)}».`,"local");
+      activateField(active);
+      return;
+    }
+    showNextStep();
+  };
+  const deferCurrentProblem=()=>{
+    const problem=currentProblem();
+    if(!problem){
+      show("No hi ha cap incidència pendent per ajornar.","local");
+      setFace("happy");
+      return;
+    }
+    deferredIssues.set(problem.key,{value:fieldValue(problem.field),title:problem.title});
+    clearFieldError(problem.field);
+    lastProblem=null;
+    const remaining=inspectCurrent().problems.filter(item=>!deferredIssues.has(item.key));
+    show(
+      `He apartat temporalment «${problem.title}» de la cua guiada. Tornarà a aparèixer si modifiques el camp i sempre es revisarà abans de desar o enviar.`+
+      `\n\nQueden ${remaining.length} ${remaining.length===1?"incidència activa":"incidències actives"}.`,
+      "local"
+    );
+    status.textContent="Incidència ajornada només en la navegació guiada.";
+    setFace("encouraging");
+  };
   const guideToControl=(control)=>{
     if(!control)return;
     open(true);
@@ -704,18 +791,30 @@
     clearConfirmation(false);
     setFace("curious");
     const result=validateCurrent({focus:false,announce:false,mark:false});
-    if(!result.valid){
+    const outstanding=result.problems.filter(problem=>!deferredIssues.has(problem.key));
+    if(outstanding.length){
       validationFields().forEach(clearFieldError);
-      const first=result.problems[0];
-      markFieldError(first.field,first.issues);
+      const first=outstanding[0];
+      lastProblem=first;
+      markFieldError(first.field,first.issues,first.kind);
       show(
-        `El següent pas és completar «${first.title}».\n\n${bulletList(first.issues)}\n\n`+
+        `El següent pas és completar «${first.title}».\n\nTipus: ${issueLabels[first.kind]}.\n${bulletList(first.issues)}\n\n`+
         "T’hi porto ara i el deixo remarcat en groc.",
         "warning"
       );
       cite(first.profile?.sources||FIELDS.defaultSources||[]);
       status.textContent="Següent pas: completar el primer camp pendent.";
       activateField(first.field);
+      return;
+    }
+    if(!result.valid){
+      show(
+        `Has ajornat temporalment les ${result.problems.length} ${result.problems.length===1?"incidència pendent":"incidències pendents"}. `+
+        "Pots continuar treballant, però Barry les tornarà a mostrar abans de desar o enviar.",
+        "local"
+      );
+      status.textContent="No queden incidències actives a la cua guiada.";
+      setFace("encouraging");
       return;
     }
     const scope=readCollaboratorScope();
@@ -741,18 +840,6 @@
     status.textContent="Següent pas: enviar les fitxes a iServeis.";
     guideToControl(sendButton);
   };
-  const scheduleIdleExpression=()=>{
-    clearInterval(window.__barrysIdleInterval);
-    let idleIndex=0;
-    const idleFaces=["curious","thinking","encouraging"];
-    window.__barrysIdleInterval=setInterval(()=>{
-      if(panel.classList.contains("is-open")||document.hidden||window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
-      setFace(idleFaces[idleIndex++%idleFaces.length]);
-      clearTimeout(idleReturnTimer);
-      idleReturnTimer=setTimeout(()=>setFace("attentive"),1250);
-    },8500);
-  };
-
   launcher.addEventListener("click",()=>{
     const willOpen=!panel.classList.contains("is-open");
     open(willOpen);
@@ -770,11 +857,17 @@
   });
   document.addEventListener("input",event=>{
     const field=event.target.closest?.("textarea,input,select");
-    if(field?.classList.contains("barrys-field-invalid"))clearFieldError(field);
+    if(field){
+      deferredIssues.delete(fieldKey(field));
+      if(field.classList.contains("barrys-field-invalid"))clearFieldError(field);
+    }
   });
   document.addEventListener("change",event=>{
     const field=event.target.closest?.("textarea,input,select");
-    if(field?.classList.contains("barrys-field-invalid"))clearFieldError(field);
+    if(field){
+      deferredIssues.delete(fieldKey(field));
+      if(field.classList.contains("barrys-field-invalid"))clearFieldError(field);
+    }
   });
   panel.addEventListener("click",event=>{
     const button=event.target.closest("[data-barrys-action]");
@@ -787,7 +880,15 @@
       showCollaboratorScope();
       return;
     }
-    const prompts={explain:"què he de posar en aquest camp",missing:"què falta en aquest camp",structure:"estructura del camp",review:"revisió del camp","all-missing":"quins camps em queden buits o incomplets"};
+    if(button.dataset.barrysAction==="goto"){
+      goToCurrentProblem();
+      return;
+    }
+    if(button.dataset.barrysAction==="defer"){
+      deferCurrentProblem();
+      return;
+    }
+    const prompts={explain:"què he de posar en aquest camp",example:"mostra’m un exemple orientatiu","all-missing":"quins camps em queden buits, insuficients o incoherents"};
     respond(prompts[button.dataset.barrysAction]||"ajuda",button.dataset.barrysAction);
   });
   document.addEventListener("keydown",event=>{
@@ -805,10 +906,13 @@
     showCollaboratorScope({autoOpen});
   });
 
-  status.textContent=`Base documental ${KB.version} · ajuda contextual ${FIELDS.version||""} · sense preguntes lliures ni API.`;
-  window.BARRYS_VALIDATOR=Object.freeze({validateCurrent,inspectCurrent,guardCurrent,clearFieldError,showNextStep,showCollaboratorScope});
+  document.querySelectorAll(".barrys-rig-object").forEach(object=>{
+    object.addEventListener("load",()=>applyRigState(object));
+    applyRigState(object);
+  });
+  status.textContent=`Base documental ${KB.version} · ajuda contextual ${FIELDS.version||""} · Barry definitiu articulat 6.0.1 · revisió local sense API.`;
+  window.BARRYS_VALIDATOR=Object.freeze({validateCurrent,inspectCurrent,guardCurrent,clearFieldError,showNextStep,showCollaboratorScope,goToCurrentProblem,deferCurrentProblem});
   setFace("attentive");
-  scheduleIdleExpression();
   if(llbRoot?.classList.contains("llb-collaborator-mode")&&readCollaboratorScope()){
     collaboratorScopeAnnounced=true;
     showCollaboratorScope({autoOpen:true});
