@@ -20,7 +20,7 @@
   let collaboratorScopeAnnounced=false;
   let lastProblem=null;
   const deferredIssues=new Map();
-  const motion={x:0,y:0,targetX:0,targetY:0,vx:0,vy:0,frame:0};
+  const motion={x:0,y:0,targetX:0,targetY:0,vx:0,vy:0,frame:0,field:null};
 
   const norm=s=>String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
   const words=s=>new Set(norm(s).replace(/[^a-z0-9·]+/g," ").split(/\s+/).filter(w=>w.length>2));
@@ -126,15 +126,23 @@
     if(side)stage?.classList.toggle("is-left",side==="left");
     if(!motion.frame)motion.frame=requestAnimationFrame(runStageMotion);
   };
-  const restingPosition=()=>moveStage(0,0,"right");
+  const restingPosition=()=>{
+    motion.field=null;
+    moveStage(0,0,"right");
+  };
   const glideNearField=(field,{guided=false}={})=>{
     if(!stage||!guided||reducedMotion())return;
     const rect=field?.getBoundingClientRect?.();
     if(!rect)return;
+    motion.field=field;
     const compact=window.matchMedia?.("(max-width: 620px)").matches;
     const stageHeight=stage.classList.contains("is-expanded")?(compact?110:127):(compact?87:100);
-    const naturalTop=window.innerHeight-18-stageHeight;
-    const desiredTop=Math.max(12,Math.min(window.innerHeight-stageHeight-12,rect.top+rect.height/2-stageHeight/2));
+    const naturalTop=window.innerHeight-(compact?10:18)-stageHeight;
+    const maximumTop=window.innerHeight-stageHeight-12;
+    const panelHeight=panel?.classList.contains("is-open")?Math.ceil(panel.getBoundingClientRect().height):0;
+    const panelGap=stage.classList.contains("is-expanded")?(compact?4:4):4;
+    const minimumTop=panelHeight?Math.min(maximumTop,panelHeight+panelGap+12):12;
+    const desiredTop=Math.max(minimumTop,Math.min(maximumTop,rect.top+rect.height/2-stageHeight/2));
     const moveToLeft=rect.left+rect.width/2>window.innerWidth*.62;
     const stageWidth=stage.classList.contains("is-expanded")?(compact?106:122):(compact?84:96);
     const leftOffset=-(Math.max(0,window.innerWidth-stageWidth-44));
@@ -161,14 +169,15 @@
     stage?.classList.toggle("is-expanded",value);
     panel.setAttribute("aria-hidden",String(!value));
     launcher.setAttribute("aria-expanded",String(value));
-    if(value){
-      restingPosition();
-    }
+    restingPosition();
   };
   const show=(text,kind="local")=>{
     answer.hidden=false;
     answer.className=`barrys-answer is-${kind}`;
     answer.textContent=text;
+    window.requestAnimationFrame(()=>{
+      if(motion.field&&panel.classList.contains("is-open"))glideNearField(motion.field,{guided:true});
+    });
   };
   const cite=list=>{
     sources.replaceChildren();
@@ -910,7 +919,7 @@
     object.addEventListener("load",()=>applyRigState(object));
     applyRigState(object);
   });
-  status.textContent=`Base documental ${KB.version} · ajuda contextual ${FIELDS.version||""} · Barry definitiu articulat 6.0.1 · revisió local sense API.`;
+  status.textContent=`Base documental ${KB.version} · ajuda contextual ${FIELDS.version||""} · Barry expressiu articulat 6.1.0 · revisió local sense API.`;
   window.BARRYS_VALIDATOR=Object.freeze({validateCurrent,inspectCurrent,guardCurrent,clearFieldError,showNextStep,showCollaboratorScope,goToCurrentProblem,deferCurrentProblem});
   setFace("attentive");
   if(llbRoot?.classList.contains("llb-collaborator-mode")&&readCollaboratorScope()){

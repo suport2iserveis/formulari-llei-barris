@@ -1,88 +1,180 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1232 1277" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="barry-title barry-desc" data-barry-state="attentive">
   <title id="barry-title">Barry, assistent de l’Studio Llei de Barris</title>
-  <desc id="barry-desc">Versió definitiva de Barry conservada fidelment i articulada per capes: cos, antena, braç, campana, rostre i tauleta.</desc>
+  <desc id="barry-desc">Barry definitiu articulat per capes, amb mirada, celles, boca, parpelles, braços, campana, antena i tauleta animables.</desc>
   <defs>
-    <path id="barry-left-arm-shape" d="M251 784C232 798 215 815 199 839C180 867 160 882 133 901C105 920 92 942 101 956C106 964 117 965 129 959C119 976 125 990 139 993C149 995 158 989 162 979C164 995 176 1004 190 998C204 992 207 974 199 952C216 951 224 940 218 927C213 916 204 906 194 900C219 878 238 852 257 824C266 810 264 793 251 784Z"/>
+    <linearGradient id="barry-expression-purple" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#a99bc5"/><stop offset=".5" stop-color="#75658e"/><stop offset="1" stop-color="#4d425f"/>
+    </linearGradient>
+    <path id="barry-left-arm-shape" d="M225 786C239 788 253 798 252 812C250 828 237 848 222 867C212 881 208 892 215 906C228 928 237 949 232 967C228 981 215 987 202 978C204 994 196 1006 183 1007C168 1007 159 998 158 982C153 992 143 995 133 990C119 983 114 967 122 952C110 957 99 952 96 942C91 927 96 910 108 899C124 884 143 869 158 850C177 826 190 803 211 791C215 789 220 787 225 786Z"/>
+    <path id="barry-right-hand-shape" d="M988 855C1010 848 1028 858 1033 873C1056 862 1081 872 1084 890C1105 884 1121 900 1117 918C1135 925 1134 951 1122 972C1115 1004 1096 1031 1067 1038C1037 1044 1005 1026 993 1002C982 979 979 944 983 913C978 891 976 868 988 855Z"/>
+    <path id="barry-left-brow-shape" d="M431 609C454 584 483 578 513 591" fill="none" stroke-width="28" stroke-linecap="round"/>
+    <path id="barry-right-brow-shape" d="M702 589C735 577 770 586 804 612" fill="none" stroke-width="28" stroke-linecap="round"/>
+    <path id="barry-smile-shape" d="M557 815C585 840 628 842 661 815" fill="none" stroke-width="30" stroke-linecap="round"/>
     <clipPath id="barry-left-arm-clip"><use href="#barry-left-arm-shape" xlink:href="#barry-left-arm-shape"/></clipPath>
+    <clipPath id="barry-right-hand-clip"><use href="#barry-right-hand-shape" xlink:href="#barry-right-hand-shape"/></clipPath>
     <clipPath id="barry-orb-clip"><circle cx="292" cy="213" r="78"/></clipPath>
     <clipPath id="barry-bell-clip"><path d="M823 135H884V226H823Z"/></clipPath>
-    <clipPath id="barry-tablet-clip"><path d="M808 621L1106 627L1107 1046L809 1050Z"/></clipPath>
-    <clipPath id="barry-right-hand-clip"><path d="M983 850C1080 836 1138 867 1111 999C1095 1060 1012 1044 986 1001Z"/></clipPath>
+    <clipPath id="barry-left-brow-clip"><use href="#barry-left-brow-shape" xlink:href="#barry-left-brow-shape" stroke="#000"/></clipPath>
+    <clipPath id="barry-right-brow-clip"><use href="#barry-right-brow-shape" xlink:href="#barry-right-brow-shape" stroke="#000"/></clipPath>
+    <clipPath id="barry-left-pupil-clip"><circle cx="495" cy="704" r="36"/></clipPath>
+    <clipPath id="barry-right-pupil-clip"><circle cx="730" cy="704" r="36"/></clipPath>
+    <clipPath id="barry-mouth-clip"><use href="#barry-smile-shape" xlink:href="#barry-smile-shape" stroke="#000"/></clipPath>
     <mask id="barry-base-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="1232" height="1277">
       <rect width="1232" height="1277" fill="#fff"/>
       <circle cx="292" cy="213" r="78" fill="#000"/>
       <use href="#barry-left-arm-shape" xlink:href="#barry-left-arm-shape" fill="#000"/>
+      <use href="#barry-right-hand-shape" xlink:href="#barry-right-hand-shape" fill="#000"/>
       <path d="M823 135H884V226H823Z" fill="#000"/>
+      <use href="#barry-left-brow-shape" xlink:href="#barry-left-brow-shape" stroke="#000"/>
+      <use href="#barry-right-brow-shape" xlink:href="#barry-right-brow-shape" stroke="#000"/>
+      <circle cx="495" cy="704" r="36" fill="#000"/>
+      <circle cx="730" cy="704" r="36" fill="#000"/>
+      <use href="#barry-smile-shape" xlink:href="#barry-smile-shape" stroke="#000"/>
     </mask>
   </defs>
 
   <style>
-    *{transform-box:fill-box}
-    .barry-character,.barry-art-layer,.barry-orb,.barry-left-arm,.barry-bell,.barry-tablet-layer,.barry-right-hand-layer,.barry-eyelid{will-change:transform,opacity}
-    .barry-character{transform-origin:50% 82%}
-    .barry-orb{transform-origin:50% 50%}
-    .barry-left-arm{transform-origin:96% 10%}
-    .barry-bell{transform-origin:50% 6%}
-    .barry-tablet-layer{transform-origin:56% 82%;opacity:0}
-    .barry-right-hand-layer{transform-origin:48% 34%;opacity:0}
-    .barry-eyelid{transform-origin:center;transform:scaleY(0);opacity:0}
+    *{transform-box:view-box}
+    .barry-character,.barry-art-layer,.barry-orb,.barry-left-arm,.barry-right-hand,.barry-bell,.barry-brow,.barry-pupil,.barry-mouth,.barry-eyelid{will-change:transform,opacity}
+    .barry-character{transform-origin:616px 1048px}
+    .barry-orb{transform-origin:292px 213px}
+    .barry-left-arm{transform-origin:225px 790px}
+    .barry-right-hand{transform-origin:990px 860px}
+    .barry-bell{transform-origin:853px 141px}
+    .barry-brow-left{transform-origin:510px 596px}.barry-brow-right{transform-origin:706px 596px}
+    .barry-pupil-left{transform-origin:495px 704px}.barry-pupil-right{transform-origin:730px 704px}
+    .barry-mouth{transform-origin:609px 827px}
+    .barry-mouth-open,.barry-mouth-frown,.barry-mouth-small{opacity:0}
+    .barry-static{opacity:0;transition:opacity .08s linear}
+    .barry-eyelid-left{transform-origin:490px 704px}.barry-eyelid-right{transform-origin:728px 704px}
+    .barry-eyelid{transform:scaleY(0);opacity:0}
 
-    svg[data-barry-state="attentive"] .barry-character{animation:barry-arrive .52s cubic-bezier(.2,.82,.26,1) 1}
-    svg[data-barry-state="attentive"] .barry-eyelid{animation:barry-blink 2.8s cubic-bezier(.45,0,.2,1) 1 .9s}
-    svg[data-barry-state="thinking"] .barry-character{animation:barry-think 1.15s cubic-bezier(.45,0,.2,1) 2 alternate}
-    svg[data-barry-state="thinking"] .barry-orb{animation:barry-orb-think 1.15s cubic-bezier(.45,0,.2,1) 2 alternate}
-    svg[data-barry-state="thinking"] .barry-bell{animation:barry-bell-think 1.15s ease-in-out 2 alternate}
-    svg[data-barry-state="explaining"] .barry-character{animation:barry-explain .72s cubic-bezier(.45,0,.2,1) 3}
-    svg[data-barry-state="explaining"] .barry-left-arm{animation:barry-wave .72s cubic-bezier(.45,0,.2,1) 3}
-    svg[data-barry-state="explaining"] .barry-bell{animation:barry-bell-ring .36s ease-in-out 6 alternate}
+    svg[data-barry-state="attentive"] .barry-character{animation:barry-arrive .55s cubic-bezier(.2,.82,.26,1) 1}
+    svg[data-barry-state="attentive"] .barry-static{opacity:1}
+    svg[data-barry-state="attentive"] .barry-eyelid{animation:barry-blink 3s cubic-bezier(.45,0,.2,1) 1 .75s}
+
+    svg[data-barry-state="thinking"] .barry-character{animation:barry-think-body 1.2s cubic-bezier(.45,0,.2,1) 2 alternate}
+    svg[data-barry-state="thinking"] .barry-orb{animation:barry-orb-think 1.2s cubic-bezier(.45,0,.2,1) 2 alternate}
+    svg[data-barry-state="thinking"] .barry-pupil{animation:barry-read-tablet 2.4s cubic-bezier(.45,0,.2,1) 1}
+    svg[data-barry-state="thinking"] .barry-brow-left{animation:barry-think-brow-left 1.2s ease-in-out 2 alternate}
+    svg[data-barry-state="thinking"] .barry-brow-right{animation:barry-think-brow-right 1.2s ease-in-out 2 alternate}
+    svg[data-barry-state="thinking"] .barry-right-hand{animation:barry-tablet-grip 1.2s ease-in-out 2 alternate}
+    svg[data-barry-state="thinking"] .barry-mouth-smile{opacity:0}
+    svg[data-barry-state="thinking"] .barry-mouth-small{opacity:1}
+
+    svg[data-barry-state="explaining"] .barry-character{animation:barry-explain-body .72s cubic-bezier(.45,0,.2,1) 3}
+    svg[data-barry-state="explaining"] .barry-left-arm{animation:barry-wave-arm .72s cubic-bezier(.2,.82,.26,1) 3}
+    svg[data-barry-state="explaining"] .barry-right-hand{animation:barry-tablet-grip .72s ease-in-out 3 alternate}
+    svg[data-barry-state="explaining"] .barry-bell{animation:barry-bell-ring .24s ease-in-out 8 alternate}
+    svg[data-barry-state="explaining"] .barry-pupil{animation:barry-explain-look 2.16s cubic-bezier(.45,0,.2,1) 1}
+    svg[data-barry-state="explaining"] .barry-brow{animation:barry-talk-brows .36s ease-in-out 6 alternate}
+    svg[data-barry-state="explaining"] .barry-mouth-smile{opacity:0}
+    svg[data-barry-state="explaining"] .barry-mouth-open{opacity:1;animation:barry-talk-mouth .24s ease-in-out 9 alternate}
     svg[data-barry-state="explaining"] .barry-eyelid{animation:barry-blink 2.16s ease-in-out 1}
-    svg[data-barry-state="happy"] .barry-character{animation:barry-happy .82s cubic-bezier(.2,.82,.26,1) 1}
-    svg[data-barry-state="happy"] .barry-orb{animation:barry-orb-happy .82s cubic-bezier(.2,.82,.26,1) 1}
-    svg[data-barry-state="happy"] .barry-left-arm{animation:barry-happy-arm .82s cubic-bezier(.2,.82,.26,1) 1}
-    svg[data-barry-state="warning"] .barry-character{animation:barry-warning .42s ease-in-out 2}
-    svg[data-barry-state="warning"] .barry-orb{animation:barry-orb-warning .21s ease-in-out 4 alternate}
-    svg[data-barry-state="warning"] .barry-bell{animation:barry-bell-ring .21s ease-in-out 4 alternate}
-    svg[data-barry-state="curious"] .barry-character{animation:barry-curious .92s cubic-bezier(.45,0,.2,1) 2 alternate}
-    svg[data-barry-state="curious"] .barry-orb{animation:barry-orb-curious .92s cubic-bezier(.2,.82,.26,1) 2 alternate}
-    svg[data-barry-state="encouraging"] .barry-character{animation:barry-encourage .76s cubic-bezier(.2,.82,.26,1) 2}
-    svg[data-barry-state="encouraging"] .barry-left-arm{animation:barry-encourage-arm .76s cubic-bezier(.2,.82,.26,1) 2}
-    svg[data-barry-state="guiding"] .barry-character{animation:barry-guide .78s cubic-bezier(.45,0,.2,1) 2 alternate}
-    svg[data-barry-state="guiding"] .barry-left-arm{animation:barry-guide-arm .78s cubic-bezier(.45,0,.2,1) 2 alternate}
-    svg[data-barry-state="guiding"] .barry-orb{animation:barry-orb-guide .78s cubic-bezier(.45,0,.2,1) 2 alternate}
 
-    @keyframes barry-arrive{0%{transform:translateY(14px) scale(.985);opacity:.76}100%{transform:none;opacity:1}}
+    svg[data-barry-state="happy"] .barry-character{animation:barry-happy-body .84s cubic-bezier(.2,.82,.26,1) 1}
+    svg[data-barry-state="happy"] .barry-orb{animation:barry-orb-happy .84s cubic-bezier(.2,.82,.26,1) 1}
+    svg[data-barry-state="happy"] .barry-left-arm{animation:barry-happy-arm .84s cubic-bezier(.2,.82,.26,1) 1}
+    svg[data-barry-state="happy"] .barry-right-hand{animation:barry-happy-hand .84s cubic-bezier(.2,.82,.26,1) 1}
+    svg[data-barry-state="happy"] .barry-brow{animation:barry-happy-brows .84s cubic-bezier(.2,.82,.26,1) 1}
+    svg[data-barry-state="happy"] .barry-mouth-smile{animation:barry-big-smile .84s cubic-bezier(.2,.82,.26,1) 1}
+
+    svg[data-barry-state="warning"] .barry-character{animation:barry-warning-body .42s ease-in-out 2}
+    svg[data-barry-state="warning"] .barry-orb{animation:barry-orb-warning .21s ease-in-out 4 alternate}
+    svg[data-barry-state="warning"] .barry-bell{animation:barry-bell-ring .21s ease-in-out 5 alternate}
+    svg[data-barry-state="warning"] .barry-brow-left{transform:rotate(13deg) translateY(5px)}
+    svg[data-barry-state="warning"] .barry-brow-right{transform:rotate(-13deg) translateY(5px)}
+    svg[data-barry-state="warning"] .barry-pupil{animation:barry-warning-eyes .42s ease-in-out 2}
+    svg[data-barry-state="warning"] .barry-mouth-smile{opacity:0}
+    svg[data-barry-state="warning"] .barry-mouth-frown{opacity:1}
+
+    svg[data-barry-state="curious"] .barry-character{animation:barry-curious-body .92s cubic-bezier(.45,0,.2,1) 2 alternate}
+    svg[data-barry-state="curious"] .barry-orb{animation:barry-orb-curious .92s cubic-bezier(.2,.82,.26,1) 2 alternate}
+    svg[data-barry-state="curious"] .barry-pupil{animation:barry-curious-eyes .92s cubic-bezier(.45,0,.2,1) 2 alternate}
+    svg[data-barry-state="curious"] .barry-brow-left{transform:translateY(-12px) rotate(-5deg)}
+    svg[data-barry-state="curious"] .barry-brow-right{transform:translateY(3px) rotate(3deg)}
+    svg[data-barry-state="curious"] .barry-mouth-smile{opacity:0}
+    svg[data-barry-state="curious"] .barry-mouth-small{opacity:1}
+
+    svg[data-barry-state="encouraging"] .barry-character{animation:barry-encourage-body .76s cubic-bezier(.2,.82,.26,1) 2}
+    svg[data-barry-state="encouraging"] .barry-left-arm{animation:barry-encourage-arm .76s cubic-bezier(.2,.82,.26,1) 2}
+    svg[data-barry-state="encouraging"] .barry-right-hand{animation:barry-tablet-grip .76s ease-in-out 2 alternate}
+    svg[data-barry-state="encouraging"] .barry-brow{animation:barry-happy-brows .76s cubic-bezier(.2,.82,.26,1) 2}
+    svg[data-barry-state="encouraging"] .barry-mouth-smile{animation:barry-big-smile .76s cubic-bezier(.2,.82,.26,1) 2}
+
+    svg[data-barry-state="guiding"] .barry-character{animation:barry-guide-body .78s cubic-bezier(.45,0,.2,1) 2 alternate}
+    svg[data-barry-state="guiding"] .barry-left-arm{animation:barry-guide-arm .78s cubic-bezier(.2,.82,.26,1) 2 alternate}
+    svg[data-barry-state="guiding"] .barry-right-hand{animation:barry-tablet-grip .78s ease-in-out 2 alternate}
+    svg[data-barry-state="guiding"] .barry-orb{animation:barry-orb-guide .78s cubic-bezier(.45,0,.2,1) 2 alternate}
+    svg[data-barry-state="guiding"] .barry-pupil{animation:barry-guide-eyes .78s cubic-bezier(.45,0,.2,1) 2 alternate}
+    svg[data-barry-state="guiding"] .barry-brow-left{animation:barry-guide-brow .78s ease-in-out 2 alternate}
+
+    @keyframes barry-arrive{0%{transform:translateY(16px) scale(.982);opacity:.7}100%{transform:none;opacity:1}}
     @keyframes barry-blink{0%,44%,56%,100%{transform:scaleY(0);opacity:0}48%,52%{transform:scaleY(1);opacity:1}}
-    @keyframes barry-think{to{transform:rotate(-1.15deg) translateY(-3px)}}
-    @keyframes barry-orb-think{to{transform:translate(4px,-11px) scale(1.025)}}
-    @keyframes barry-bell-think{to{transform:rotate(2.5deg)}}
-    @keyframes barry-explain{0%,100%{transform:none}50%{transform:translateY(-4px) rotate(-.35deg)}}
-    @keyframes barry-wave{0%,100%{transform:none}50%{transform:rotate(-5.5deg) translate(-2px,-2px)}}
-    @keyframes barry-bell-ring{to{transform:rotate(5deg)}}
-    @keyframes barry-happy{0%,100%{transform:none}43%{transform:translateY(-17px) scale(1.012)}68%{transform:translateY(2px) scale(.997)}}
-    @keyframes barry-orb-happy{43%{transform:translateY(-17px) scale(1.035)}70%{transform:translateY(3px)}}
-    @keyframes barry-happy-arm{43%{transform:rotate(-7deg) translate(-3px,-4px)}}
-    @keyframes barry-warning{25%{transform:translateX(-4px) rotate(-.45deg)}75%{transform:translateX(4px) rotate(.45deg)}}
-    @keyframes barry-orb-warning{to{transform:translateX(6px)}}
-    @keyframes barry-curious{to{transform:rotate(1.35deg) translateY(-3px)}}
-    @keyframes barry-orb-curious{to{transform:translate(8px,-9px) scale(1.025)}}
-    @keyframes barry-encourage{0%,100%{transform:none}45%{transform:translateY(-8px) scale(1.006)}}
-    @keyframes barry-encourage-arm{45%{transform:rotate(-4deg) translateY(-3px)}}
-    @keyframes barry-guide{to{transform:rotate(-.8deg) translate(-2px,-2px)}}
-    @keyframes barry-guide-arm{to{transform:rotate(-6.5deg) translate(-4px,-2px)}}
-    @keyframes barry-orb-guide{to{transform:translate(-8px,-4px)}}
-    @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.barry-eyelid{opacity:0!important;transform:scaleY(0)!important}}
+    @keyframes barry-think-body{to{transform:rotate(-1.25deg) translateY(-4px)}}
+    @keyframes barry-orb-think{to{transform:translate(5px,-13px) scale(1.03)}}
+    @keyframes barry-read-tablet{0%,18%,100%{transform:none}34%,82%{transform:translate(24px,14px)}}
+    @keyframes barry-think-brow-left{to{transform:translateY(-19px) rotate(-7deg)}}
+    @keyframes barry-think-brow-right{to{transform:translateY(7px) rotate(4deg)}}
+    @keyframes barry-tablet-grip{to{transform:translate(-12px,-7px) scale(.93,1.035)}}
+    @keyframes barry-explain-body{0%,100%{transform:none}50%{transform:translateY(-5px) rotate(-.45deg)}}
+    @keyframes barry-wave-arm{0%,100%{transform:none}42%{transform:rotate(20deg) translate(-7px,-9px)}68%{transform:rotate(11deg) translate(-3px,-5px)}}
+    @keyframes barry-explain-look{0%,28%,100%{transform:none}42%,72%{transform:translate(22px,12px)}}
+    @keyframes barry-talk-brows{to{transform:translateY(-11px)}}
+    @keyframes barry-talk-mouth{to{transform:scale(.92,.68)}}
+    @keyframes barry-bell-ring{to{transform:rotate(7deg)}}
+    @keyframes barry-happy-body{0%,100%{transform:none}43%{transform:translateY(-18px) scale(1.014)}68%{transform:translateY(3px) scale(.996)}}
+    @keyframes barry-orb-happy{43%{transform:translateY(-20px) scale(1.04)}70%{transform:translateY(4px)}}
+    @keyframes barry-happy-arm{43%{transform:rotate(18deg) translate(-7px,-8px)}}
+    @keyframes barry-happy-hand{43%{transform:translate(-5px,-7px) scale(1.04)}}
+    @keyframes barry-happy-brows{43%{transform:translateY(-15px) scale(1.05)}}
+    @keyframes barry-big-smile{43%{transform:scale(1.1,1.08)}}
+    @keyframes barry-warning-body{25%{transform:translateX(-5px) rotate(-.55deg)}75%{transform:translateX(5px) rotate(.55deg)}}
+    @keyframes barry-orb-warning{to{transform:translateX(7px)}}
+    @keyframes barry-warning-eyes{50%{transform:translateY(4px) scale(1.05)}}
+    @keyframes barry-curious-body{to{transform:rotate(1.5deg) translateY(-4px)}}
+    @keyframes barry-orb-curious{to{transform:translate(9px,-11px) scale(1.03)}}
+    @keyframes barry-curious-eyes{to{transform:translate(20px,-12px)}}
+    @keyframes barry-encourage-body{0%,100%{transform:none}45%{transform:translateY(-9px) scale(1.008)}}
+    @keyframes barry-encourage-arm{45%{transform:rotate(16deg) translate(-6px,-7px)}}
+    @keyframes barry-guide-body{to{transform:rotate(-.9deg) translate(-3px,-3px)}}
+    @keyframes barry-guide-arm{to{transform:rotate(21deg) translate(-8px,-6px)}}
+    @keyframes barry-orb-guide{to{transform:translate(-10px,-5px)}}
+    @keyframes barry-guide-eyes{to{transform:translate(-21px,3px)}}
+    @keyframes barry-guide-brow{to{transform:translateY(-13px) rotate(-5deg)}}
+    @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.barry-eyelid{opacity:0!important;transform:scaleY(0)!important}.barry-mouth-smile{opacity:1!important}.barry-mouth-open,.barry-mouth-frown,.barry-mouth-small{opacity:0!important}}
   </style>
 
   <g class="barry-character">
-    <ellipse cx="239" cy="812" rx="27" ry="34" fill="#746887"/>
+    <!-- Rebliments de les juntes i del rostre, coberts exactament en repòs. -->
+    <ellipse cx="239" cy="812" rx="29" ry="36" fill="#746887"/>
     <path d="M825 163c0-45 57-45 57 0v60h-57Z" fill="#17141c"/>
+    <use href="#barry-left-brow-shape" xlink:href="#barry-left-brow-shape" stroke="#303030"/>
+    <use href="#barry-right-brow-shape" xlink:href="#barry-right-brow-shape" stroke="#3a3a3a"/>
+    <circle cx="495" cy="704" r="37" fill="#fff"/>
+    <circle cx="730" cy="704" r="37" fill="#fff"/>
+    <use href="#barry-smile-shape" xlink:href="#barry-smile-shape" stroke="#292929"/>
+    <use href="#barry-right-hand-shape" xlink:href="#barry-right-hand-shape" fill="#44424b" opacity=".92"/>
+
     <image class="barry-art-layer barry-base" href="barry-definitiu.png" xlink:href="barry-definitiu.png" x="0" y="0" width="1232" height="1277" mask="url(#barry-base-mask)"/>
+
     <g class="barry-art-layer barry-orb" clip-path="url(#barry-orb-clip)"><image href="barry-definitiu.png" xlink:href="barry-definitiu.png" x="0" y="0" width="1232" height="1277"/></g>
     <g class="barry-art-layer barry-left-arm" clip-path="url(#barry-left-arm-clip)"><image href="barry-definitiu.png" xlink:href="barry-definitiu.png" x="0" y="0" width="1232" height="1277"/></g>
     <g class="barry-art-layer barry-bell" clip-path="url(#barry-bell-clip)"><image href="barry-definitiu.png" xlink:href="barry-definitiu.png" x="0" y="0" width="1232" height="1277"/></g>
-    <g class="barry-art-layer barry-tablet-layer" clip-path="url(#barry-tablet-clip)" aria-hidden="true"><image href="barry-definitiu.png" xlink:href="barry-definitiu.png" x="0" y="0" width="1232" height="1277"/></g>
-    <g class="barry-art-layer barry-right-hand-layer" clip-path="url(#barry-right-hand-clip)" aria-hidden="true"><image href="barry-definitiu.png" xlink:href="barry-definitiu.png" x="0" y="0" width="1232" height="1277"/></g>
+    <g class="barry-art-layer barry-right-hand" clip-path="url(#barry-right-hand-clip)"><image href="barry-definitiu.png" xlink:href="barry-definitiu.png" x="0" y="0" width="1232" height="1277"/></g>
+
+    <g class="barry-art-layer barry-brow barry-brow-left" clip-path="url(#barry-left-brow-clip)"><image href="barry-definitiu.png" xlink:href="barry-definitiu.png" x="0" y="0" width="1232" height="1277"/></g>
+    <g class="barry-art-layer barry-brow barry-brow-right" clip-path="url(#barry-right-brow-clip)"><image href="barry-definitiu.png" xlink:href="barry-definitiu.png" x="0" y="0" width="1232" height="1277"/></g>
+    <g class="barry-art-layer barry-pupil barry-pupil-left" clip-path="url(#barry-left-pupil-clip)"><image href="barry-definitiu.png" xlink:href="barry-definitiu.png" x="0" y="0" width="1232" height="1277"/></g>
+    <g class="barry-art-layer barry-pupil barry-pupil-right" clip-path="url(#barry-right-pupil-clip)"><image href="barry-definitiu.png" xlink:href="barry-definitiu.png" x="0" y="0" width="1232" height="1277"/></g>
+    <g class="barry-art-layer barry-mouth barry-mouth-smile" clip-path="url(#barry-mouth-clip)"><image href="barry-definitiu.png" xlink:href="barry-definitiu.png" x="0" y="0" width="1232" height="1277"/></g>
+    <ellipse class="barry-mouth barry-mouth-open" cx="609" cy="827" rx="39" ry="25" fill="#17151b" stroke="url(#barry-expression-purple)" stroke-width="10"/>
+    <path class="barry-mouth barry-mouth-frown" d="M565 842c25-25 61-25 87 0" fill="none" stroke="#8977a4" stroke-width="12" stroke-linecap="round"/>
+    <path class="barry-mouth barry-mouth-small" d="M585 828h49" fill="none" stroke="#8977a4" stroke-width="13" stroke-linecap="round"/>
+
+    <!-- En repòs es mostra l’original íntegre: cap màscara pot alterar-ne la cara definitiva. -->
+    <image class="barry-static" href="barry-definitiu.png" xlink:href="barry-definitiu.png" x="0" y="0" width="1232" height="1277"/>
     <path class="barry-eyelid barry-eyelid-left" d="M431 704c4-66 110-72 119 0-30-20-84-20-119 0Z" fill="#29292b"/>
     <path class="barry-eyelid barry-eyelid-right" d="M668 704c5-67 111-72 119 0-31-20-84-20-119 0Z" fill="#29292b"/>
   </g>
