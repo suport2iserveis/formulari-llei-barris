@@ -15,13 +15,6 @@ window.BARRYS_FIELDS=Object.freeze({
       avoid:["No intentis introduir manualment una xifra en aquest camp."],
       rules:[{type:"required",message:"No s’ha carregat la població; torna a seleccionar el municipi."}]
     },
-    "llb-municipality-code":{
-      title:"Codi del municipi",
-      readonly:true,
-      include:["És el codi oficial que el formulari recupera automàticament en seleccionar el municipi."],
-      avoid:["No s’ha d’escriure ni corregir manualment."],
-      rules:[{type:"required",message:"No s’ha carregat el codi municipal; torna a seleccionar el municipi."}]
-    },
     "llb-standard-rate":{
       title:"Percentatge ordinari de finançament",
       readonly:true,
