@@ -13,13 +13,26 @@
   const llbRoot=$("llb-budget-form");
   const KB=window.BARRYS_KNOWLEDGE||{topics:[],fallback:"No disposo d’una resposta validada per a aquesta consulta."};
   const FIELDS=window.BARRYS_FIELDS||{byId:{},byClass:{},defaultSources:[]};
-  const FACE_STATES=new Set(["attentive","thinking","explaining","happy","warning","curious","encouraging","guiding"]);
+  const FACE_ASSETS=Object.freeze({
+    attentive:"assets/barry-neutral.png?v=5.0.5",
+    thinking:"assets/barry-thinking.png?v=5.0.5",
+    explaining:"assets/barry-guiding.png?v=5.0.5",
+    happy:"assets/barry-happy.png?v=5.0.5",
+    warning:"assets/barry-warning.png?v=5.0.5",
+    curious:"assets/barry-surprised.png?v=5.0.5",
+    encouraging:"assets/barry-encouraging.png?v=5.0.5",
+    guiding:"assets/barry-guiding.png?v=5.0.5",
+    sad:"assets/barry-sad.png?v=5.0.5",
+    surprised:"assets/barry-surprised.png?v=5.0.5",
+  });
+  const FACE_STATES=new Set(Object.keys(FACE_ASSETS));
+  const faceImages=[...document.querySelectorAll(".barrys-character-image")];
 
   let active=null;
-  let pendingConfirmation=null;
   let collaboratorScopeAnnounced=false;
   let lastProblem=null;
-  const deferredIssues=new Map();
+  let guardInterceptionUsed=false;
+  const warnedSections=new Set();
   const motion={x:0,y:0,targetX:0,targetY:0,vx:0,vy:0,frame:0,field:null};
 
   const norm=s=>String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
@@ -148,21 +161,14 @@
     const leftOffset=-(Math.max(0,window.innerWidth-stageWidth-44));
     moveStage(moveToLeft?leftOffset:0,desiredTop-naturalTop,moveToLeft?"left":"right");
   };
-  const applyRigState=object=>{
-    const rig=object?.contentDocument?.documentElement;
-    if(!rig)return;
-    const face=FACE_STATES.has(object.dataset.barrysFace)?object.dataset.barrysFace:"attentive";
-    rig.removeAttribute("data-barry-state");
-    if(!reducedMotion())void rig.getBoundingClientRect();
-    rig.dataset.barryState=reducedMotion()?"attentive":face;
-  };
   const setFace=(requested="attentive")=>{
     const face=FACE_STATES.has(requested)?requested:"attentive";
     panel.dataset.barrysState=face;
-    document.querySelectorAll(".barrys-rig-object").forEach(object=>{
-      object.dataset.barrysFace=face;
-      applyRigState(object);
-    });
+    for(const image of faceImages){
+      if(image.dataset.barrysState===face)continue;
+      image.src=FACE_ASSETS[face];
+      image.dataset.barrysState=face;
+    }
   };
   const open=value=>{
     panel.classList.toggle("is-open",value);
@@ -172,6 +178,7 @@
     restingPosition();
   };
   const show=(text,kind="local")=>{
+    if(kind==="error")setFace("sad");
     answer.hidden=false;
     answer.className=`barrys-answer is-${kind}`;
     answer.textContent=text;
@@ -270,7 +277,7 @@
     }
     return{valid:problems.length===0,problems};
   };
-  const validateCurrent=({focus=true,announce=true,mark=true}={})=>{
+  const validateCurrent=({announce=true,mark=true}={})=>{
     validationFields().forEach(clearFieldError);
     const inspection=inspectCurrent();
     const problems=inspection.problems;
@@ -291,92 +298,59 @@
       `${limited?"He revisat només els apartats que tens habilitats en aquesta fitxa d’edició limitada.":"He revisat els camps editables de la fitxa."}\n\n`+
       `Hi ha ${problems.length} ${problems.length===1?"camp pendent":"camps pendents"} (${countsText(problems)}):\n${pending}${omitted}\n\n`+
       `Primer camp a corregir: «${first.title}».\n${bulletList(first.issues)}\n\n`+
-      `${focus?"L’he ressaltat en groc i t’hi he portat. ":""}Revisa l’avís abans de decidir si vols continuar.`,
+      "Barry no t’hi portarà automàticament. Prem «Porta’m-hi» només si vols anar al primer camp.",
       "warning"
     );
     setFace("warning");
     cite(first.profile?.sources||FIELDS.defaultSources||[]);
-    if(focus)activateField(first.field);
     return{valid:false,problems};
   };
-  const clearConfirmation=resolution=>{
-    const current=pendingConfirmation;
-    pendingConfirmation=null;
-    panel.querySelector(".barrys-confirmation")?.remove();
-    if(current&&typeof resolution==="boolean")current.resolve(resolution);
-  };
-  const askConfirmation=(kind,result,extraProblems=[])=>{
-    clearConfirmation(false);
-    const isSend=kind==="send";
-    const problemLines=result.problems.slice(0,8).map(problem=>`• ${issueLabels[problem.kind]} · ${problem.title}`).join("\n");
-    const omitted=result.problems.length>8?`\n• …i ${result.problems.length-8} camps més.`:"";
-    const globalLine=extraProblems.length?`\n\nAvisos d’altres fitxes o del projecte: ${extraProblems.length}.`:"";
-    show(
-      `${isSend?"Resum abans d’enviar":"Resum abans de desar"}: ${result.problems.length?countsText(result.problems):"cap camp pendent"}.`+
-      `${problemLines?`\n\n${problemLines}${omitted}`:"\n\nLa fitxa supera les comprovacions locals configurades."}${globalLine}\n\n`+
-      "Barry no ha modificat cap dada. Tu decideixes si continues o tornes al formulari.",
-      result.problems.length||extraProblems.length?"warning":"local"
-    );
-    const box=document.createElement("div");
-    box.className="barrys-confirmation";
-    box.setAttribute("role","group");
-    box.setAttribute("aria-label",isSend?"Confirmació de l’enviament":"Confirmació del desament");
-    const question=document.createElement("p");
-    question.textContent=isSend?"Segur que vols enviar les fitxes?":"Segur que vols desar la fitxa?";
-    const actions=document.createElement("div");
-    actions.className="barrys-confirmation-actions";
-    const confirm=document.createElement("button");
-    confirm.type="button";
-    confirm.className="barrys-confirm-primary";
-    confirm.textContent=isSend?"Sí, envia":"Sí, desa";
-    const modify=document.createElement("button");
-    modify.type="button";
-    modify.className="barrys-confirm-secondary";
-    modify.textContent="No, modifica";
-    actions.append(confirm,modify);
-    box.append(question,actions);
-    answer.insertAdjacentElement("afterend",box);
-    open(true);
-    setFace("warning");
-    return new Promise(resolve=>{
-      pendingConfirmation={resolve,kind};
-      confirm.addEventListener("click",()=>{
-        pendingConfirmation=null;
-        box.remove();
-        setFace("happy");
-        resolve(true);
-      });
-      modify.addEventListener("click",()=>{
-        pendingConfirmation=null;
-        box.remove();
-        setFace("encouraging");
-        const first=result.problems[0];
-        lastProblem=first||lastProblem;
-        if(first)activateField(first.field);
-        resolve(false);
-      });
-      modify.focus({preventScroll:true});
-    });
+  const sectionForProblem=problem=>{
+    const tabPanel=problem?.field?.closest?.(".llb-tab-panel");
+    const panelKey=tabPanel?.dataset?.panel||"general";
+    const tab=panelKey!=="general"?document.querySelector(`.llb-tab[data-tab="${CSS.escape(panelKey)}"]`):null;
+    return{key:panelKey,title:String(tab?.textContent||"Dades generals").replace(/\s+/g," ").trim()};
   };
   const guardCurrent=({kind="save",extraProblems=[],externalField=null,externalMessage=""}={})=>{
-    const result=validateCurrent({focus:true,announce:true,mark:true});
-    if(result.valid&&extraProblems.length){
-      show(`Barry ha detectat ${extraProblems.length} ${extraProblems.length===1?"avís":"avisos"} en el conjunt de fitxes. Revisa’ls abans de continuar.`,"warning");
-      setFace("warning");
-      if(externalField){
-        const issues=[externalMessage||extraProblems[0]||"Revisa aquest camp abans de continuar."];
-        markFieldError(externalField,issues);
-        result.problems.push(decorateProblem(
-          externalField,
-          profileForField(externalField),
-          profileTitle(profileForField(externalField),externalField),
-          issues,
-          "incoherent"
-        ));
-        activateField(externalField);
-      }
+    const result=inspectCurrent();
+    if(externalField&&extraProblems.length){
+      const issues=[externalMessage||extraProblems[0]||"Revisa aquest camp abans de continuar."];
+      result.problems.push(decorateProblem(
+        externalField,
+        profileForField(externalField),
+        profileTitle(profileForField(externalField),externalField),
+        issues,
+        "incoherent"
+      ));
     }
-    return askConfirmation(kind,result,extraProblems);
+    if(!result.problems.length&&!extraProblems.length)return Promise.resolve(true);
+
+    const sections=result.problems.map(sectionForProblem);
+    if(extraProblems.length&&!externalField)sections.push({key:"projecte",title:"Conjunt de fitxes"});
+    const newSections=sections.filter((section,index,list)=>
+      !warnedSections.has(section.key)&&list.findIndex(item=>item.key===section.key)===index
+    );
+    newSections.forEach(section=>warnedSections.add(section.key));
+    if(!newSections.length)return Promise.resolve(true);
+
+    lastProblem=result.problems[0]||lastProblem;
+    const sectionList=newSections.map(section=>`• ${section.title}`).join("\n");
+    const first=result.problems[0];
+    const firstLine=first?`\n\nPrimer punt detectat: «${first.title}».`:"";
+    const willInterrupt=!guardInterceptionUsed;
+    show(
+      `Barry et recomana revisar ${newSections.length===1?"aquest apartat":"aquests apartats"}:\n${sectionList}${firstLine}\n\n`+
+      "No t’hi portaré automàticament. Prem «Porta’m-hi» si vols anar al primer camp. "+
+      (willInterrupt
+        ?`Aquest és l’únic avís que aturarà ${kind==="send"?"l’enviament":"el desament"}; si ho tornes a prémer, continuarà igualment.`
+        :`${kind==="send"?"L’enviament":"El desament"} continuarà sense quedar bloquejat.`),
+      "warning"
+    );
+    open(true);
+    setFace("warning");
+    cite(first?.profile?.sources||FIELDS.defaultSources||[]);
+    guardInterceptionUsed=true;
+    return Promise.resolve(!willInterrupt);
   };
   const topicScore=(topic,text)=>{
     const q=words(text);
@@ -684,6 +658,7 @@
   };
   const updateActiveField=field=>{
     active=field;
+    context.hidden=false;
     const profile=profileForField(field);
     context.textContent=profile?`Camp actiu: ${profileTitle(profile,field)}`:`Camp actiu: ${label(field)}`;
     setFace("attentive");
@@ -698,7 +673,7 @@
       const matching=result.problems.find(problem=>problem.field===active);
       if(matching)return matching;
     }
-    return result.problems.find(problem=>!deferredIssues.has(problem.key))||result.problems[0]||null;
+    return result.problems[0]||null;
   };
   const goToCurrentProblem=()=>{
     const problem=currentProblem();
@@ -716,25 +691,6 @@
       return;
     }
     showNextStep();
-  };
-  const deferCurrentProblem=()=>{
-    const problem=currentProblem();
-    if(!problem){
-      show("No hi ha cap incidència pendent per ajornar.","local");
-      setFace("happy");
-      return;
-    }
-    deferredIssues.set(problem.key,{value:fieldValue(problem.field),title:problem.title});
-    clearFieldError(problem.field);
-    lastProblem=null;
-    const remaining=inspectCurrent().problems.filter(item=>!deferredIssues.has(item.key));
-    show(
-      `He apartat temporalment «${problem.title}» de la cua guiada. Tornarà a aparèixer si modifiques el camp i sempre es revisarà abans de desar o enviar.`+
-      `\n\nQueden ${remaining.length} ${remaining.length===1?"incidència activa":"incidències actives"}.`,
-      "local"
-    );
-    status.textContent="Incidència ajornada només en la navegació guiada.";
-    setFace("encouraging");
   };
   const guideToControl=(control)=>{
     if(!control)return;
@@ -773,12 +729,14 @@
     const button=panel.querySelector('[data-barrys-action="collaborator-fields"]');
     if(button)button.hidden=!scope;
     if(!scope)return;
+    if(autoOpen)panel.classList.add("is-collaborator-intro");
+    context.hidden=true;
     const code=scope.actionCode?` de la fitxa ${scope.actionCode}`:" d’aquesta fitxa";
     if(scope.status==="pendent_revisio"){
-      show(`La versió${code} ja s’ha enviat a revisió. Ara els camps estan bloquejats fins que iServeis la revisi.`,"local");
+      show(`La versió${code} ja s’ha enviat a revisió i els camps estan bloquejats fins que iServeis la revisi.\n\nBarry és una eina d’ajuda opcional si necessites algun aclariment.`,"local");
       setFace("happy");
     }else if(!scope.editableBlocks?.length){
-      show(`Aquesta és una vista de consulta${code}. iServeis no t’ha assignat cap camp editable.`,"local");
+      show(`iServeis t’ha compartit${code} només per consultar-la.\n\nBarry és una eina d’ajuda opcional si necessites algun aclariment.`,"local");
       setFace("attentive");
     }else{
       const rows=scope.editableBlocks.map(block=>{
@@ -786,8 +744,8 @@
         return item?`• ${item.title}: ${item.fields}.`:`• ${block}.`;
       }).join("\n");
       show(
-        `En l’edició limitada${code}, iServeis et demana que completis només:\n\n${rows}\n\n`+
-        "La resta de camps són només de consulta i Barry no els inclourà en la revisió.",
+        `iServeis et demana que completis els apartats següents${code}:\n\n${rows}\n\n`+
+        "Barry és una eina d’ajuda opcional si necessites aclarir algun camp.",
         "local"
       );
       setFace("guiding");
@@ -797,33 +755,19 @@
     if(autoOpen)open(true);
   };
   const showNextStep=()=>{
-    clearConfirmation(false);
     setFace("curious");
     const result=validateCurrent({focus:false,announce:false,mark:false});
-    const outstanding=result.problems.filter(problem=>!deferredIssues.has(problem.key));
+    const outstanding=result.problems;
     if(outstanding.length){
-      validationFields().forEach(clearFieldError);
       const first=outstanding[0];
       lastProblem=first;
-      markFieldError(first.field,first.issues,first.kind);
       show(
         `El següent pas és completar «${first.title}».\n\nTipus: ${issueLabels[first.kind]}.\n${bulletList(first.issues)}\n\n`+
-        "T’hi porto ara i el deixo remarcat en groc.",
+        "Prem «Porta’m-hi» si vols que Barry et mostri aquest camp.",
         "warning"
       );
       cite(first.profile?.sources||FIELDS.defaultSources||[]);
       status.textContent="Següent pas: completar el primer camp pendent.";
-      activateField(first.field);
-      return;
-    }
-    if(!result.valid){
-      show(
-        `Has ajornat temporalment les ${result.problems.length} ${result.problems.length===1?"incidència pendent":"incidències pendents"}. `+
-        "Pots continuar treballant, però Barry les tornarà a mostrar abans de desar o enviar.",
-        "local"
-      );
-      status.textContent="No queden incidències actives a la cua guiada.";
-      setFace("encouraging");
       return;
     }
     const scope=readCollaboratorScope();
@@ -867,14 +811,12 @@
   document.addEventListener("input",event=>{
     const field=event.target.closest?.("textarea,input,select");
     if(field){
-      deferredIssues.delete(fieldKey(field));
       if(field.classList.contains("barrys-field-invalid"))clearFieldError(field);
     }
   });
   document.addEventListener("change",event=>{
     const field=event.target.closest?.("textarea,input,select");
     if(field){
-      deferredIssues.delete(fieldKey(field));
       if(field.classList.contains("barrys-field-invalid"))clearFieldError(field);
     }
   });
@@ -890,11 +832,8 @@
       return;
     }
     if(button.dataset.barrysAction==="goto"){
+      panel.classList.remove("is-collaborator-intro");
       goToCurrentProblem();
-      return;
-    }
-    if(button.dataset.barrysAction==="defer"){
-      deferCurrentProblem();
       return;
     }
     const prompts={explain:"què he de posar en aquest camp",example:"mostra’m un exemple orientatiu","all-missing":"quins camps em queden buits, insuficients o incoherents"};
@@ -915,12 +854,8 @@
     showCollaboratorScope({autoOpen});
   });
 
-  document.querySelectorAll(".barrys-rig-object").forEach(object=>{
-    object.addEventListener("load",()=>applyRigState(object));
-    applyRigState(object);
-  });
-  status.textContent=`Base documental ${KB.version} · ajuda contextual ${FIELDS.version||""} · Barry expressiu articulat 6.1.0 · revisió local sense API.`;
-  window.BARRYS_VALIDATOR=Object.freeze({validateCurrent,inspectCurrent,guardCurrent,clearFieldError,showNextStep,showCollaboratorScope,goToCurrentProblem,deferCurrentProblem});
+  status.textContent=`Base documental ${KB.version} · ajuda contextual ${FIELDS.version||""} · Barry 2D original · revisió local sense API.`;
+  window.BARRYS_VALIDATOR=Object.freeze({validateCurrent,inspectCurrent,guardCurrent,clearFieldError,showNextStep,showCollaboratorScope,goToCurrentProblem});
   setFace("attentive");
   if(llbRoot?.classList.contains("llb-collaborator-mode")&&readCollaboratorScope()){
     collaboratorScopeAnnounced=true;

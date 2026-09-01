@@ -4126,7 +4126,7 @@ svg {
         var chain = Promise.resolve();
         editableActions.forEach(function (action, actionIndex) {
           chain = chain.then(function () {
-            setStatus(
+            setSubmitStatus(
               "Desant la fitxa " + (actionIndex + 1) + " de " +
               editableActions.length + "…",
               "progress"
@@ -4160,7 +4160,7 @@ svg {
               editableActions.forEach(function (action, actionIndex) {
                 if (received[String(action.actionCode || "")]) return;
                 stageChain = stageChain.then(function () {
-                  setStatus(
+                  setSubmitStatus(
                     "Preparant el paquet " + (actionIndex + 1) + " de " +
                     editableActions.length + " per a revisió…",
                     "progress"
@@ -4185,7 +4185,7 @@ svg {
                 });
               });
               return stageChain.then(function () {
-                setStatus("Confirmant l’enviament complet…", "progress");
+                setSubmitStatus("Confirmant l’enviament complet…", "progress");
                 return retryStudioOperation(function () {
                   return window.fetch(COLLABORATOR_API, {
                     method: "PATCH",
@@ -4415,56 +4415,115 @@ svg {
         return loadChunk(0);
       }
 
+      function notifyCollaboratorHost(type, detail) {
+        if (!COLLABORATOR_EMBEDDED || window.parent === window) return;
+        window.parent.postMessage(
+          Object.assign({ type: type }, detail || {}),
+          window.location.origin
+        );
+      }
+
+      function waitForCollaboratorUi() {
+        var images = Array.prototype.slice.call(root.querySelectorAll("img"));
+        var imagePromises = images.map(function (image) {
+          if (image.complete) {
+            return typeof image.decode === "function"
+              ? image.decode().catch(function () {})
+              : Promise.resolve();
+          }
+          return new Promise(function (resolve) {
+            image.addEventListener("load", resolve, { once: true });
+            image.addEventListener("error", resolve, { once: true });
+          });
+        });
+        var imagesReady = Promise.all(imagePromises);
+        var safetyTimeout = new Promise(function (resolve) {
+          window.setTimeout(resolve, 4_000);
+        });
+        return Promise.race([imagesReady, safetyTimeout]).then(function () {
+          return new Promise(function (resolve) {
+            window.requestAnimationFrame(function () {
+              window.requestAnimationFrame(resolve);
+            });
+          });
+        });
+      }
+
       function hydrateCollaboratorAssignments(payload) {
         if (!payload || !payload.lazyActions || !Array.isArray(payload.assignments)) {
           return Promise.resolve(payload);
         }
-        var chain = Promise.resolve();
-        payload.assignments.forEach(function (assignment) {
-          chain = chain.then(function () {
-            setSubmitStatus(
-              "Carregant la fitxa " + (assignment.actionCode || "") + "…",
-              ""
-            );
-            return window.fetch(
-              COLLABORATOR_API +
-                "?t=" + encodeURIComponent(COLLABORATOR_TOKEN) +
-                "&actionCode=" + encodeURIComponent(assignment.actionCode || ""),
-              { cache: "no-store" }
-            ).then(function (response) {
-              return response.json().then(function (body) {
-                if (!response.ok) {
-                  throw new Error(
-                    body.error ||
-                      "No s’ha pogut carregar la fitxa " +
-                        (assignment.actionCode || "") +
-                        "."
-                  );
-                }
-                var actionPromise = body.actionTransport
-                  ? loadCollaboratorActionByChunks(
-                      assignment.actionCode,
-                      body.actionTransport
-                    )
-                  : Promise.resolve(body.baseAction || body.action || {});
-                return actionPromise.then(function (baseAction) {
-                  body.baseAction = cloneData(baseAction || {});
-                  body.action = applyStoredCollaboratorChanges(
-                    baseAction,
-                    body.changes || {},
-                    body.editableBlocks || []
-                  );
-                  delete body.actionTransport;
-                  delete body.changes;
-                  Object.keys(body).forEach(function (key) {
-                    assignment[key] = body[key];
-                  });
+        var assignments = payload.assignments;
+        var nextIndex = 0;
+        var completed = 0;
+        var maximumConcurrentActions = Math.min(4, assignments.length);
+        notifyCollaboratorHost("llb-collaborator-loading-progress", {
+          completed: 0,
+          total: assignments.length,
+          actionCode: ""
+        });
+
+        function hydrateAssignment(assignment) {
+          setSubmitStatus(
+            "Carregant la fitxa " + (assignment.actionCode || "") + "…",
+            ""
+          );
+          return window.fetch(
+            COLLABORATOR_API +
+              "?t=" + encodeURIComponent(COLLABORATOR_TOKEN) +
+              "&actionCode=" + encodeURIComponent(assignment.actionCode || ""),
+            { cache: "no-store" }
+          ).then(function (response) {
+            return response.json().then(function (body) {
+              if (!response.ok) {
+                throw new Error(
+                  body.error ||
+                    "No s’ha pogut carregar la fitxa " +
+                      (assignment.actionCode || "") +
+                      "."
+                );
+              }
+              var actionPromise = body.actionTransport
+                ? loadCollaboratorActionByChunks(
+                    assignment.actionCode,
+                    body.actionTransport
+                  )
+                : Promise.resolve(body.baseAction || body.action || {});
+              return actionPromise.then(function (baseAction) {
+                body.baseAction = cloneData(baseAction || {});
+                body.action = applyStoredCollaboratorChanges(
+                  baseAction,
+                  body.changes || {},
+                  body.editableBlocks || []
+                );
+                delete body.actionTransport;
+                delete body.changes;
+                Object.keys(body).forEach(function (key) {
+                  assignment[key] = body[key];
+                });
+                completed += 1;
+                notifyCollaboratorHost("llb-collaborator-loading-progress", {
+                  completed: completed,
+                  total: assignments.length,
+                  actionCode: assignment.actionCode || ""
                 });
               });
             });
           });
-        });
-        return chain.then(function () { return payload; });
+        }
+
+        function runWorker() {
+          if (nextIndex >= assignments.length) return Promise.resolve();
+          var assignment = assignments[nextIndex];
+          nextIndex += 1;
+          return hydrateAssignment(assignment).then(runWorker);
+        }
+
+        var workers = [];
+        for (var workerIndex = 0; workerIndex < maximumConcurrentActions; workerIndex += 1) {
+          workers.push(runWorker());
+        }
+        return Promise.all(workers).then(function () { return payload; });
       }
 
       function loadCollaboratorProject() {
@@ -4493,13 +4552,20 @@ svg {
                   "success"
                 );
               }
+              return waitForCollaboratorUi().then(function () {
+                notifyCollaboratorHost("llb-collaborator-ready", {
+                  assignmentCount: hydratedBody.assignments.length
+                });
+              });
             });
           });
         }).catch(function (error) {
           root.classList.add("llb-collaborator-mode");
-          setSubmitStatus(error && error.message ? error.message : "No s’ha pogut obrir l’accés.", "error");
+          var message = error && error.message ? error.message : "No s’ha pogut obrir l’accés.";
+          setSubmitStatus(message, "error");
           root.querySelector("#llb-action-editor").classList.add("llb-hidden");
           root.querySelector("#llb-project-actions-heading").textContent = "Accés no disponible";
+          notifyCollaboratorHost("llb-collaborator-error", { error: message });
         });
       }
 
@@ -4700,7 +4766,7 @@ svg {
         if (!mustPackage) {
           return postStudioJson(studioPayload);
         }
-        var chunkSize = 256000;
+        var chunkSize = 32000;
         var chunkCount = Math.ceil(dataJson.length / chunkSize);
         var metadata = cloneData(studioPayload);
         delete metadata.data;
@@ -4961,7 +5027,7 @@ svg {
         }
         window.BARRYS_VALIDATOR.guardCurrent({ kind: "save" }).then(function (confirmed) {
           if (!confirmed) {
-            setSubmitStatus("Barry ha aturat el desament perquè puguis modificar el camp remarcat en groc.", "warning");
+            setSubmitStatus("Barry t’ha mostrat l’avís únic abans de desar. Revisa’l o torna a prémer «Desar fitxa» per continuar igualment.", "warning");
             return;
           }
           saveCurrentAction({ skipDetailedValidation: true, allowEmpty: true });
@@ -6242,7 +6308,7 @@ svg {
           externalMessage: review.externalMessage
         }).then(function (confirmed) {
           if (!confirmed) {
-            setSubmitStatus("Barry ha aturat l’enviament perquè puguis modificar el camp remarcat en groc.", "warning");
+            setSubmitStatus("Barry t’ha mostrat l’avís únic abans d’enviar. Revisa’l o torna a prémer «Enviar a iServeis» per continuar igualment.", "warning");
             return;
           }
           submitProject({ skipBarryGuard: true, allowValidationOverride: true });
@@ -6671,18 +6737,17 @@ svg {
   </script>
 </main>
 
-<link rel="stylesheet" href="assets/barrys.css?v=6.1.0">
-<script src="assets/barrys.knowledge.js?v=6.1.0"></script>
-<script src="assets/barrys.fields.js?v=6.1.0"></script>
+<link rel="stylesheet" href="assets/barrys.css?v=5.0.5">
+<script src="assets/barrys.knowledge.js?v=5.0.5"></script>
+<script src="assets/barrys.fields.js?v=5.0.5"></script>
 <div class="barrys-stage" id="barrys-stage">
   <button class="barrys-launcher" id="barrys-launcher" type="button" aria-label="Obre l’assistent Barry" aria-expanded="false">
-    <object class="barrys-rig-object" data-barrys-face="attentive" data="assets/barry-articulated.svg?v=6.1.0" type="image/svg+xml" tabindex="-1" aria-hidden="true"></object>
+    <img class="barrys-character-image" src="assets/barry-neutral.png?v=5.0.5" alt="" aria-hidden="true">
   </button>
   <aside class="barrys-panel" id="barrys-panel" aria-label="Assistent Barry" aria-hidden="true">
-    <header><span class="barrys-avatar"><object class="barrys-rig-object" data-barrys-face="attentive" data="assets/barry-articulated.svg?v=6.1.0" type="image/svg+xml" tabindex="-1" aria-hidden="true"></object></span><span><strong>Barry</strong><small>Assistent contextual local · iServeis</small></span><button id="barrys-close" type="button" aria-label="Tanca Barry">×</button></header>
+    <header><span class="barrys-avatar"><img class="barrys-character-image" src="assets/barry-neutral.png?v=5.0.5" alt="Barry"></span><span><strong>Barry</strong><small>Assistent contextual local · iServeis</small></span><button id="barrys-close" type="button" aria-label="Tanca Barry">×</button></header>
     <div class="barrys-body">
       <p class="barrys-context" id="barrys-context">Selecciona un camp del formulari i t’ajudaré a completar-lo.</p>
-      <p>Hola! Puc explicar-te què es demana i identificar tots els camps que et queden per completar.</p>
       <div class="barrys-actions">
         <button class="barrys-next-action" type="button" data-barrys-action="next-step">Quin és el següent pas?</button>
         <button class="barrys-collaborator-action" type="button" data-barrys-action="collaborator-fields" hidden>Quins camps vol iServeis que ompli?</button>
@@ -6690,7 +6755,6 @@ svg {
         <button type="button" data-barrys-action="explain">Explica’m aquest camp</button>
         <button type="button" data-barrys-action="example">Mostra’m un exemple</button>
         <button type="button" data-barrys-action="all-missing">Què em falta?</button>
-        <button type="button" data-barrys-action="defer">Ho revisaré després</button>
       </div>
       <div class="barrys-answer" id="barrys-answer" aria-live="polite" aria-atomic="true" hidden></div>
       <div class="barrys-sources" id="barrys-sources" hidden></div>
@@ -6698,7 +6762,7 @@ svg {
     </div>
   </aside>
 </div>
-<script src="assets/barrys.js?v=6.1.0"></script>
+<script src="assets/barrys.js?v=5.0.5"></script>
 
 <script id="codex-visualization-floating-ui-core" src="https://unpkg.com/@floating-ui/core@1.7.3/dist/floating-ui.core.umd.min.js"></script>
 <script id="codex-visualization-floating-ui-dom" src="https://unpkg.com/@floating-ui/dom@1.7.4/dist/floating-ui.dom.umd.min.js"></script>
