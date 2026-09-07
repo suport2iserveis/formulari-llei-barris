@@ -14,16 +14,16 @@
   const KB=window.BARRYS_KNOWLEDGE||{topics:[],fallback:"No disposo d’una resposta validada per a aquesta consulta."};
   const FIELDS=window.BARRYS_FIELDS||{byId:{},byClass:{},defaultSources:[]};
   const FACE_ASSETS=Object.freeze({
-    attentive:"assets/barry-neutral.png?v=5.0.5",
-    thinking:"assets/barry-thinking.png?v=5.0.5",
-    explaining:"assets/barry-guiding.png?v=5.0.5",
-    happy:"assets/barry-happy.png?v=5.0.5",
-    warning:"assets/barry-warning.png?v=5.0.5",
-    curious:"assets/barry-surprised.png?v=5.0.5",
-    encouraging:"assets/barry-encouraging.png?v=5.0.5",
-    guiding:"assets/barry-guiding.png?v=5.0.5",
-    sad:"assets/barry-sad.png?v=5.0.5",
-    surprised:"assets/barry-surprised.png?v=5.0.5",
+    attentive:"assets/barry-neutral.png?v=5.0.7",
+    thinking:"assets/barry-thinking.png?v=5.0.7",
+    explaining:"assets/barry-guiding.png?v=5.0.7",
+    happy:"assets/barry-happy.png?v=5.0.7",
+    warning:"assets/barry-warning.png?v=5.0.7",
+    curious:"assets/barry-surprised.png?v=5.0.7",
+    encouraging:"assets/barry-encouraging.png?v=5.0.7",
+    guiding:"assets/barry-guiding.png?v=5.0.7",
+    sad:"assets/barry-sad.png?v=5.0.7",
+    surprised:"assets/barry-surprised.png?v=5.0.7",
   });
   const FACE_STATES=new Set(Object.keys(FACE_ASSETS));
   const faceImages=[...document.querySelectorAll(".barrys-character-image")];
@@ -144,7 +144,7 @@
     moveStage(0,0,"right");
   };
   const glideNearField=(field,{guided=false}={})=>{
-    if(!stage||!guided||reducedMotion())return;
+    if(!stage||!guided)return;
     const rect=field?.getBoundingClientRect?.();
     if(!rect)return;
     motion.field=field;
@@ -186,6 +186,30 @@
       if(motion.field&&panel.classList.contains("is-open"))glideNearField(motion.field,{guided:true});
     });
   };
+  let transmissionField=null;
+  const showTransmissionMessage=(message,{safe=false,error=false,target=null}={})=>{
+    transmissionField=target?.getBoundingClientRect?target:transmissionField||document.getElementById("llb-send-project");
+    panel.classList.remove("is-collaborator-intro");
+    panel.classList.add("is-transmission-message");
+    launcher.disabled=true;
+    sources.hidden=true;
+    open(true);
+    setFace(safe?"happy":error?"sad":"warning");
+    show(message,safe?"local":error?"error":"warning");
+    requestAnimationFrame(()=>glideNearField(transmissionField,{guided:true}));
+  };
+  const startTransmission=({target,message}={})=>showTransmissionMessage(
+    message||"Espera fins que et confirmi que l’enviament ha acabat. No tanquis ni actualitzis aquesta pestanya mentre es pugen i es processen tots els paquets.",
+    {target}
+  );
+  const finishTransmission=({target,message}={})=>showTransmissionMessage(
+    message||"L’enviament ha quedat confirmat i tots els paquets s’han processat. Ja pots tancar aquesta pestanya amb seguretat.",
+    {target,safe:true}
+  );
+  const failTransmission=({target,message}={})=>showTransmissionMessage(
+    message||"Ja no hi ha cap càrrega activa, però l’enviament no s’ha pogut confirmar. Comprova si el correu ha arribat abans de tornar-ho a provar.",
+    {target,error:true}
+  );
   const cite=list=>{
     sources.replaceChildren();
     if(!list?.length){sources.hidden=true;return}
@@ -841,11 +865,13 @@
   });
   document.addEventListener("keydown",event=>{
     if(event.key==="Escape"){
+      if(panel.classList.contains("is-transmission-message"))return;
       open(false);
       setFace("attentive");
     }
   });
   document.addEventListener("visibilitychange",()=>{
+    if(panel.classList.contains("is-transmission-message"))return;
     if(!document.hidden)setFace(panel.classList.contains("is-open")?"attentive":"attentive");
   });
   document.addEventListener("barry:collaborator-permissions",()=>{
@@ -856,6 +882,7 @@
 
   status.textContent=`Base documental ${KB.version} · ajuda contextual ${FIELDS.version||""} · Barry 2D original · revisió local sense API.`;
   window.BARRYS_VALIDATOR=Object.freeze({validateCurrent,inspectCurrent,guardCurrent,clearFieldError,showNextStep,showCollaboratorScope,goToCurrentProblem});
+  window.BARRYS_TRANSMISSION=Object.freeze({start:startTransmission,finish:finishTransmission,fail:failTransmission});
   setFace("attentive");
   if(llbRoot?.classList.contains("llb-collaborator-mode")&&readCollaboratorScope()){
     collaboratorScopeAnnounced=true;

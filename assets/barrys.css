@@ -34,6 +34,11 @@
 .barrys-panel.is-collaborator-intro .barrys-actions button[data-barrys-action="goto"]{display:block;width:100%;min-height:44px;border-color:#321299;background:#321299;color:#fff;text-align:center}
 .barrys-panel.is-collaborator-intro .barrys-actions button[data-barrys-action="goto"]:hover{border-color:#4826ad;background:#4826ad}
 .barrys-panel.is-collaborator-intro .barrys-context,.barrys-panel.is-collaborator-intro .barrys-sources,.barrys-panel.is-collaborator-intro .barrys-note{display:none!important}
+.barrys-panel.is-transmission-message .barrys-actions,.barrys-panel.is-transmission-message .barrys-context,.barrys-panel.is-transmission-message .barrys-sources,.barrys-panel.is-transmission-message .barrys-note,.barrys-panel.is-transmission-message header button{display:none!important}
+.barrys-panel.is-transmission-message .barrys-body{padding:14px}
+.barrys-panel.is-transmission-message .barrys-answer{margin-top:0;font-size:13px;font-weight:700;line-height:1.5}
+.barrys-panel.is-transmission-message[data-barrys-state="happy"]{border-color:#9bd8bd;box-shadow:0 20px 55px #14532d2b}
+.barrys-stage:has(.barrys-panel.is-transmission-message) .barrys-launcher{cursor:default}
 .barrys-answer{margin-top:14px;padding:13px;border-radius:12px;background:#f4f3f9;font-size:13px;white-space:pre-line}
 .barrys-note{display:block;margin-top:12px;color:#777783;font-size:11px}
 .barrys-answer.is-warning{border-left:3px solid #a47a18;background:#fff9e9}
